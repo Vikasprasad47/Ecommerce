@@ -414,7 +414,7 @@ const Login = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
-            className="mt-6 text-center text-sm text-gray-600"
+            className="mt-2 text-center text-sm text-gray-600"
           >
             Don't have an account?{' '}
             <Link 

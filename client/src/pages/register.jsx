@@ -359,7 +359,7 @@ const Register = () => {
                     </div>
 
                     {/* Social Login Buttons */}
-                    <div className="grid grid-cols-3 gap-3 mb-6">
+                    <div className="grid grid-cols-3 gap-3 mb-1">
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
