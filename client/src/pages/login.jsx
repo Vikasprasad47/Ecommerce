@@ -373,7 +373,7 @@ const Login = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="relative my-8"
+            className="relative my-4"
           >
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
