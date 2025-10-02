@@ -359,7 +359,7 @@ const Register = () => {
                     </div>
 
                     {/* Social Login Buttons */}
-                    <div className="grid grid-cols-3 gap-3 mb-1">
+                    <div className="grid grid-cols-2 gap-3 mb-1">
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -377,15 +377,6 @@ const Register = () => {
                         >
                             <FaFacebook className="text-blue-600 mr-2" />
                             <span className="text-xs sm:text-sm">Facebook</span>
-                        </motion.button>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center justify-center py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-                            onClick={() => handleSocialLogin('GitHub')}
-                        >
-                            <FaGithub className="text-gray-800 mr-2" />
-                            <span className="text-xs sm:text-sm">GitHub</span>
                         </motion.button>
                     </div>
 
