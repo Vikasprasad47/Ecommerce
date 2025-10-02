@@ -79,7 +79,7 @@ const CategoryLoadingSkeleton = () => (
 );
 
 const CategorySectionSkeleton = () => (
-  <div className="bg-white rounded-xl p-6 shadow-sm mt-6">
+  <div className="bg-white rounded-xl p-6 shadow-sm mt-3">
     <div className="h-8 bg-gray-200 rounded w-1/3 mb-2 animate-pulse"></div>
     <div className="h-4 bg-gray-200 rounded w-1/4 mb-4 animate-pulse"></div>
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-4 auto-rows-fr">
@@ -191,7 +191,7 @@ const DisplayCategoryWiseProduct = ({ id, name }) => {
       sub.category?.some((c) => c._id === id)
     );
     if (!subcategory) return "/";
-    return `/${validURLConvert(name)}-${id}/${validURLConvert(subcategory.name)}-${subcategory._id}`;
+    return `/products/${validURLConvert(name)}-${id}/${validURLConvert(subcategory.name)}-${subcategory._id}`;
   })();
 
   return (
@@ -266,7 +266,7 @@ const Home = () => {
         sub.category?.some((c) => c._id === id)
       );
       if (!subcategory) return;
-      const url = `/${validURLConvert(catName)}-${id}/${validURLConvert(
+      const url = `/products/${validURLConvert(catName)}-${id}/${validURLConvert(
         subcategory.name
       )}-${subcategory._id}`;
       navigate(url);
@@ -348,7 +348,7 @@ const Home = () => {
           {loadingCategory || categories.length === 0 ? (
             <CategorySectionSkeleton />
           ) : (
-            <div className="bg-white rounded-xl p-6 shadow-sm mt-6">
+            <div className="bg-white rounded-md p-6 shadow-sm mt-3">
               <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-1">
                 Best of Grocery & More
               </h2>

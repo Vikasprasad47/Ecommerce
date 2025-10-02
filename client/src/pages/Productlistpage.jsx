@@ -232,7 +232,7 @@ const Productlistpage = () => {
             <hr className="border-gray-200" />
             <div className="grid gap-2 pt-3">
               {displaySubcategory.map((s) => {
-                const link = `/${validURLConvert(s?.category[0]?.name)}-${s?.category[0]?._id}/${validURLConvert(s.name)}-${s._id}`;
+                const link = `/products/${validURLConvert(s?.category[0]?.name)}-${s?.category[0]?._id}/${validURLConvert(s.name)}-${s._id}`;
                 const isActive = subCategoryId === s._id;
                 return (
                   <Link
@@ -271,7 +271,7 @@ const Productlistpage = () => {
             <hr className="mb-2 border-gray-200" />
             <div className="grid gap-2">
               {displaySubcategory.map((s) => {
-                const link = `/${validURLConvert(s?.category[0]?.name)}-${s?.category[0]?._id}/${validURLConvert(s.name)}-${s._id}`;
+                const link = `/products/${validURLConvert(s?.category[0]?.name)}-${s?.category[0]?._id}/${validURLConvert(s.name)}-${s._id}`;
                 const isActive = subCategoryId === s._id;
 
                 return (

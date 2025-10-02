@@ -101,7 +101,7 @@ const DisplayCategoryWiseProduct = ({ id, name }) => {
     const rediredUrl = (() => {
         const subcategory = subCategoryData.find(sub => sub.category?.some(c => c._id === id));
         if (!subcategory) return '/';
-        return `/${validURLConvert(name)}-${id}/${validURLConvert(subcategory.name)}-${subcategory._id}`;
+        return `/products/${validURLConvert(name)}-${id}/${validURLConvert(subcategory.name)}-${subcategory._id}`;
     })();
 
     return (

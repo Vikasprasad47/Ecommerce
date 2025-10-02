@@ -34,6 +34,7 @@ import TermsAndConditions from "../pages/TermsAndConditions";
 import RefundPolicy from "../pages/RefundPolicy";
 import Contact from "../pages/Contact";
 import AnalyticsDashboard from "../components/AnalyticsDashboard";
+import NotFound from "../components/NotFound";
 
 const router = createBrowserRouter([
     {
@@ -139,11 +140,20 @@ const router = createBrowserRouter([
                     }
                 ]
             },
+            // {
+            //     path: ":category",
+            //     children: [
+            //         {
+            //             path: ":subCategory",
+            //             element: <Productlistpage/>
+            //         }
+            //     ]
+            // },
             {
-                path: ":category",
+                path: "products",
                 children: [
                     {
-                        path: ":subCategory",
+                        path: ":category/:subCategory",
                         element: <Productlistpage/>
                     }
                 ]
@@ -175,6 +185,10 @@ const router = createBrowserRouter([
             {
                 path: '/comming-soon',
                 element: <CommingSoon/>
+            },
+            {
+                path: "*",
+                element: <NotFound />
             }
         ]
     }

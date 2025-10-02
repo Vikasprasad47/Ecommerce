@@ -333,41 +333,86 @@ export const searchProducts = async (request, response) => {
   }
 };
 
-// searchSuggestion controller
-export const searchSuggestions = async (request, response) => {
+
+
+//get latest products
+export const latestProducts = async (request, response) => {
   try {
-    let { search } = request.body;
-
-    if (!search || search.trim() === "") {
-      return response.json({
-        message: "Please provide a search term",
-        error: false,
-        success: true,
-        data: [],
-      });
-    }
-
-    const searchRegex = new RegExp(search, "i");
-    
-    const suggestions = await ProductModel.find({
-      name: { $regex: searchRegex }
-    })
-    .select("name image")
-    .limit(10)
-    .sort({ createdAt: -1 });
+    const limit = parseInt(request.query.limit) || 10; // optional: set limit via query
+    const products = await ProductModel.find({ publish: true })
+      .sort({ createdAt: -1 })  // latest products first
+      .limit(limit)
+      .populate("category subCategory brand")  // optional
+      .select("name image price discount stock ratings"); // select only required fields
 
     return response.json({
-      message: "Search suggestions",
+      message: "Latest products fetched successfully",
       error: false,
       success: true,
-      data: suggestions,
+      data: products,
     });
   } catch (error) {
     return response.status(500).json({
       message: error.message || error,
       success: false,
-      error: true
+      error: true,
     });
   }
 };
+
+
+export const getSearchSuggestions = async (req, res) => {
+  try {
+    const { q, limit = 6 } = req.query;
+    
+    console.log('Search query received:', q); // Debug log
+    
+    if (!q || q.trim().length < 2) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+        message: 'Query too short'
+      });
+    }
+
+    const searchQuery = q.trim();
+    
+    // Use regex search instead of text index for better compatibility
+    const products = await ProductModel.find({
+      publish: true,
+      name: { 
+        $regex: searchQuery, 
+        $options: 'i' // case insensitive
+      }
+    })
+    .select('name image slug')
+    .limit(parseInt(limit))
+    .lean();
+
+    console.log('Found products:', products.length); // Debug log
+
+    // Format the response with minimal data
+    const suggestions = products.map(product => ({
+      id: product._id,
+      name: product.name,
+      image: product.image?.[0] || '/default-product.png',
+      slug: product.slug
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: suggestions,
+      message: 'Search suggestions fetched successfully'
+    });
+
+  } catch (error) {
+    console.error('Search suggestions error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+};
+
 

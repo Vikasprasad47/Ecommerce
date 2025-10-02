@@ -129,9 +129,13 @@ const SummaryApi = {
         url: '/api/product/search-product',
         method: 'POST'
     },
-    searchSuggestions: {
-        url: '/api/product/search-suggestions',
-        method: 'post'
+    getSearchSuggestions: {
+        url: "/api/product/productsearchsuggestions",
+        method: "get"
+    },
+    latestProducts: {
+        url: "/api/product/latest-products", // GET endpoint
+        method: "GET"
     },
     addToCart: {
         url: '/api/cart/create',
@@ -210,43 +214,44 @@ const SummaryApi = {
         method: "DELETE"
     }),
 
-    salesAnalytics: {
-        url: "/api/analytics/sales",
-        method: "get"
+    analytics: {
+    overview: {
+      url: "/api/analytics/overview",
+      method: "GET"
     },
-
-    inventoryAnalytics: {
-        url: "/api/analytics/inventory",
-        method: "get"
+    salesTrend: {
+      url: "/api/analytics/sales-trend",
+      method: "GET"
     },
-
-    customerAnalytics: {
-        url: "/api/analytics/customers",
-        method: "get"
+    topProducts: {
+      url: "/api/analytics/top-products",
+      method: "GET"
     },
-
-    revenueAnalytics: {
-        url: "/api/analytics/revenue",
-        method: "get"
+    categoryPerformance: {
+      url: "/api/analytics/category-performance",
+      method: "GET"
     },
-
-    dashboardStats: {
-        url: "/api/analytics/dashboard-stats",
-        method: "get"
+    userGrowth: {
+      url: "/api/analytics/user-growth",
+      method: "GET"
     },
-
-    performanceAnalytics: {
-        url: "/api/analytics/performance",
-        method: "get"
+    orderStatus: {
+      url: "/api/analytics/order-status",
+      method: "GET"
     },
-    productsFilter: {
-        url: "/api/analytics/products",
-        method: "get"
+    paymentMethod: {
+      url: "/api/analytics/payment-method",
+      method: "GET"
     },
-    predictiveAnalytics: {
-        url: "/api/analytics/predictive",
-        method: "get"
+    geoPerformance: {
+      url: "/api/analytics/geo",
+      method: "GET"
     },
+    todaySnapshot: {
+      url: "/api/analytics/today",
+      method: "GET"
+    }
+  }
 
 }
 

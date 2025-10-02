@@ -1,16 +1,10 @@
-import React, { useState } from 'react'
-import { FaUserCircle, FaChevronRight, FaStar, FaQuestionCircle, FaCamera } from 'react-icons/fa'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { FaUserCircle, FaStar, FaQuestionCircle, FaCamera } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { TbLogout, TbCategoryPlus, TbBrandProducthunt, TbHelp } from 'react-icons/tb';
 import {
-  TbLogout,
-  TbCategoryPlus,
-  TbBrandProducthunt,
-  TbDiscount,
-  TbHelp
-} from 'react-icons/tb'
-import {
-  MdOutlineCategory, 
+  MdOutlineCategory,
   MdOutlineCloudUpload,
   MdEmail,
   MdNotifications,
@@ -20,257 +14,254 @@ import {
   MdTransgender,
   MdCalendarToday,
   MdPhone
-} from 'react-icons/md'
-import { LuUsers, LuPackageCheck } from 'react-icons/lu'
-import { GrMapLocation } from 'react-icons/gr'
-import { RiCoinsLine } from 'react-icons/ri'
-import { IoIosArrowForward, IoIosArrowDown } from 'react-icons/io'
-import toast from 'react-hot-toast'
-import Axios from '../utils/axios'
-import SummaryApi from '../comman/summaryApi'
-import AxiosToastError from '../utils/AxiosToastErroe'
-import { logout, setUserDetails } from '../Store/userSlice'
-import isAdmin from '../utils/IsAdmin'
-import UserFileUploadAvatar from '../components/UserFileUploadAvatar'
-import fetchUserDetails from '../utils/featchUserDetails'
-import { motion, AnimatePresence } from 'framer-motion'
+} from 'react-icons/md';
+import { LuUsers, LuPackageCheck } from 'react-icons/lu';
+import { GrMapLocation } from 'react-icons/gr';
+import { RiCoinsLine } from 'react-icons/ri';
+import { IoIosArrowForward, IoIosArrowDown } from 'react-icons/io';
+import toast from 'react-hot-toast';
+import Axios from '../utils/axios';
+import SummaryApi from '../comman/summaryApi';
+import AxiosToastError from '../utils/AxiosToastErroe';
+import { logout, setUserDetails } from '../Store/userSlice';
+import isAdmin from '../utils/IsAdmin';
+import UserFileUploadAvatar from '../components/UserFileUploadAvatar';
+import fetchUserDetails from '../utils/featchUserDetails';
+import { motion, AnimatePresence } from 'framer-motion';
+import { IoCamera } from "react-icons/io5";
+import { IoLanguage } from "react-icons/io5";
+
+
 
 const UserAccount = () => {
-  const user = useSelector((state) => state.user)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const [activeSection, setActiveSection] = useState(null)
-  const [openAvatarEdit, setOpenAvatarEdit] = useState(false)
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [openAvatarEdit, setOpenAvatarEdit] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const checkScreenSize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (!mobile) navigate('/dashboard/profile');
+    };
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, [navigate]);
 
   const handleLogout = async () => {
-    if (!window.confirm("Are you sure you want to logout?")) return
+    if (!window.confirm("Are you sure you want to logout?")) return;
+    setIsLoggingOut(true);
     try {
-      const response = await Axios({ ...SummaryApi.logout })
+      const response = await Axios({ ...SummaryApi.logout });
       if (response.data.success) {
-        dispatch(logout())
-        localStorage.clear()
-        navigate('/')
-        toast.dismiss()
-        toast.success(response.data.message)
+        dispatch(logout());
+        localStorage.clear();
+        navigate('/');
+        toast.dismiss();
+        toast.success(response.data.message);
       }
     } catch (error) {
-      AxiosToastError(error)
+      AxiosToastError(error);
+    } finally {
+      setIsLoggingOut(false);
     }
-  }
-
-  const toggleSection = (section) => {
-    setActiveSection(activeSection === section ? null : section)
-  }
+  };
 
   const handleRemoveAvatar = async () => {
-    if (!window.confirm("Remove your avatar?")) return
+    if (!window.confirm("Remove your avatar?")) return;
     try {
-      const res = await Axios(SummaryApi.removeUserAvatar)
+      const res = await Axios(SummaryApi.removeUserAvatar);
       if (res.data.success) {
         toast.dismiss();
-        toast.success('Avatar removed successfully.')
-        const userdata = await fetchUserDetails()
-        dispatch(setUserDetails(userdata.data))
+        toast.success('Avatar removed successfully.');
+        const userdata = await fetchUserDetails();
+        dispatch(setUserDetails(userdata.data));
       } else {
         toast.dismiss();
-        toast.error(res.data.message || 'Failed to remove avatar.')
+        toast.error(res.data.message || 'Failed to remove avatar.');
       }
     } catch {
       toast.dismiss();
-      toast.error('Error removing avatar.')
+      toast.error('Error removing avatar.');
     }
+  };
+
+  if (!isMobile) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Redirecting to profile...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-4'>
-      <div className="max-w-3xl mx-auto space-y-6">
-        {/* Account Overview */}
-        <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{duration:0.3}} className='bg-white rounded-2xl shadow-md p-5 border border-gray-100'>
-          <section className="flex items-center justify-between gap-4">
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-md mx-auto space-y-4">
+
+        {/* User Overview */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl shadow-md p-5 border border-gray-200">
+          <div className="flex items-center justify-between gap-4">
             <div className="flex-1">
-              <h1 className="text-2xl font-semibold text-gray-900 mb-1">Hi, {user.name} 👋</h1>
+              <h1 className="text-xl font-semibold text-gray-900 mb-1">Hi, {user.name} 👋</h1>
               <p className="text-sm text-gray-600 flex items-center gap-1 mb-1">
-                <MdPhone className="text-indigo-500" size={14} />
-                {user.mobile}
+                <MdPhone className="text-blue-500" size={14} /> {user.mobile || 'Not set'}
               </p>
-              <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
-                <MdEmail className="text-indigo-500" size={14} />
-                {user.email}
+              <p className="text-sm text-gray-600 flex items-center gap-1 mb-1">
+                <MdEmail className="text-blue-500" size={14} /> {user.email}
               </p>
-              {
-                user.role === "ADMIN" && (
-                  <p className="text-sm text-gray-600 mb-1">
-                    Role: <span className="font-semibold text-indigo-600">{user.role || 'User'}</span>
-                  </p>
-                )
-              }
+              {user.role === "ADMIN" && (
+                <p className="text-sm text-gray-600 mb-1">Role: <span className="font-semibold text-blue-600">{user.role}</span></p>
+              )}
               <p className="text-sm text-gray-600 flex items-center gap-1">
-                <RiCoinsLine className="text-yellow-500" size={16} />
-                SuperCoins: 
-                <span className="text-yellow-600 font-semibold ml-1">
-                  {user.superCoins?.balance ?? 0}
-                </span>
+                <RiCoinsLine className="text-yellow-500" size={16} /> Quickoo Coins: 
+                <span className="text-yellow-600 font-semibold ml-1">{user.superCoins?.balance ?? 0}</span>
               </p>
             </div>
-            <div className="relative group">
-              <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-violet-100 border-2 border-indigo-300 shadow-md ring-4 ring-indigo-100">
+            <div className="relative w-24 h-24 mx-auto">
+              {/* Avatar */}
+              <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 border border-gray-300 shadow-sm">
                 {user.avatar ? (
                   <img src={user.avatar} alt="User" className="w-full h-full object-cover" />
                 ) : (
-                  <FaUserCircle className="text-6xl text-indigo-300" />
+                  <FaUserCircle size={85} className="text-gray-400" />
                 )}
               </div>
+
+              {/* Camera Button */}
               <button
                 onClick={() => setOpenAvatarEdit(true)}
-                className="absolute bottom-0 right-0 bg-indigo-600 text-white p-2 rounded-full shadow-md transition-all duration-300 hover:bg-indigo-700"
+                className="absolute left-1/2 bottom-0 transform -translate-x-1/2 bg-gray-700/50 p-2 rounded-full shadow hover:bg-gray-600 transition"
               >
-                <FaCamera size={12} />
+                <IoCamera size={20} className="text-white" />
               </button>
             </div>
-          </section>
+
+
+          </div>
         </motion.div>
 
+        {/* Quickoo Plus */}
+        <SectionCard title="Quickoo Plus" subtitle={`You have ${user.superCoins?.balance ?? 0} Quickoo Coins`} />
+
+        {/* Quick Actions */}
+        <SectionCard>
+          <AccountItem to="/dashboard/myorder" icon={<LuPackageCheck className="text-blue-600" />} label="Orders" />
+          <AccountItem to="/wishlist" icon={<FaStar className="text-blue-600" />} label="Wishlist" />
+          <AccountItem to="/coupons" icon={<TbBrandProducthunt className="text-blue-600" />} label="Coupons" />
+          <AccountItem to="/help" icon={<TbHelp className="text-blue-600" />} label="Help Center" />
+        </SectionCard>
+
         {/* Profile Details */}
-        <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:0.1}} className="bg-white rounded-2xl shadow-md p-4 border border-gray-100">
-          <div 
-            className="flex justify-between items-center cursor-pointer"
-            onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-          >
-            <h2 className="text-lg font-semibold text-gray-900">Profile Details</h2>
-            {profileDropdownOpen ? (
-              <IoIosArrowDown className="text-indigo-600" />
-            ) : (
-              <IoIosArrowForward className="text-indigo-600" />
-            )}
+        <SectionContainer title="Profile Details" open={true}>
+          <div className="grid grid-cols-2 gap-3">
+            <DetailCard icon={<MdCalendarToday className="text-blue-500" />} label="Date of Birth" value={user.dob ? new Date(user.dob).toLocaleDateString() : 'Not set'} />
+            <DetailCard icon={<MdTransgender className="text-blue-500" />} label="Gender" value={user.gender || 'Not set'} />
           </div>
-          <AnimatePresence>
-          {profileDropdownOpen && (
-            <motion.div initial={{opacity:0, height:0}} animate={{opacity:1, height:'auto'}} exit={{opacity:0, height:0}} className="mt-4 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                  <p className="text-xs text-gray-500">Date of Birth</p>
-                  <p className="text-sm font-medium text-gray-800 flex items-center gap-1">
-                    <MdCalendarToday className="text-indigo-500" size={14} />
-                    {user.dob ? new Date(user.dob).toLocaleDateString() : 'Not set'}
-                  </p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                  <p className="text-xs text-gray-500">Gender</p>
-                  <p className="text-sm font-medium text-gray-800 flex items-center gap-1">
-                    <MdTransgender className="text-indigo-500" size={14} />
-                    {user.gender || 'Not set'}
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Link 
-                  to="/dashboard/profile" 
-                  className="flex-1 text-center bg-indigo-50 text-indigo-700 py-2 rounded-lg text-sm font-medium hover:bg-indigo-100 transition"
-                >
-                  Edit Profile
-                </Link>
-                {user.avatar && (
-                  <button 
-                    onClick={handleRemoveAvatar}
-                    className="flex-1 text-center bg-rose-50 text-rose-700 py-2 rounded-lg text-sm font-medium hover:bg-rose-100 transition"
-                  >
-                    Remove Avatar
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          )}
-          </AnimatePresence>
+          <div className="flex gap-2 mt-3">
+            <Link to="/dashboard/profile" className="flex-1 text-center bg-blue-50 text-blue-700 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">Edit Profile</Link>
+            {user.avatar && <button onClick={handleRemoveAvatar} className="flex-1 text-center bg-red-50 text-red-700 py-2 rounded text-sm font-medium hover:bg-red-100 transition">Remove Avatar</button>}
+          </div>
+        </SectionContainer>
+
+        {/* Account Settings */}
+        <SectionContainer title="Account Settings" open={true}>
+          <AccountItem to="/plus" icon={<RiCoinsLine className="text-blue-600" />} label="Quickoo Plus" />
+          <AccountItem to="/dashboard/profile" icon={<FaUserCircle className="text-blue-600" />} label="Edit Profile" />
+          <AccountItem to="/cards" icon={<MdCreditCard className="text-blue-600" />} label="Saved Cards & Wallet" />
+          <AccountItem to="/dashboard/address" icon={<GrMapLocation className="text-blue-600" />} label="Saved Addresses" />
+          <AccountItem to="/language" icon={<IoLanguage className="text-blue-600 "/>} label="Select Language" />
+          <AccountItem to="/notifications" icon={<MdNotifications className="text-blue-600" />} label="Notification Settings" />
+        </SectionContainer>
+
+        {/* Admin Dashboard */}
+        {isAdmin(user.role) && (
+          <SectionContainer title="Dashboard" open={true}>
+            <AccountItem to="/dashboard/category" icon={<TbCategoryPlus className="text-blue-600" />} label="Category" />
+            <AccountItem to="/dashboard/subcategory" icon={<MdOutlineCategory className="text-blue-600" />} label="Sub Category" />
+            <AccountItem to="/dashboard/upload-product" icon={<MdOutlineCloudUpload className="text-blue-600" />} label="Upload Product" />
+            <AccountItem to="/dashboard/product" icon={<TbBrandProducthunt className="text-blue-600" />} label="Products" />
+            <AccountItem to="/dashboard/alluser" icon={<LuUsers className="text-blue-600" />} label="All Users" />
+          </SectionContainer>
+        )}
+
+        {/* My Activity */}
+        <SectionContainer title="My Activity" open={true}>
+          <AccountItem to="/reviews" icon={<MdReviews className="text-blue-600" />} label="Reviews" />
+          <AccountItem to="/questions" icon={<FaQuestionCircle className="text-blue-600" />} label="Questions & Answers" />
+        </SectionContainer>
+
+        {/* Earn with Quickoo */}
+        <SectionContainer title="Earn with Quickoo" open={true}>
+          <AccountItem to="/sell" icon={<TbCategoryPlus className="text-blue-600" />} label="Sell on Quickoo" />
+          <AccountItem to="/feedback" icon={<MdPrivacyTip className="text-blue-600" />} label="Feedback & Information" />
+          <AccountItem to="/terms" icon={<span className="text-blue-600 text-sm">📄</span>} label="Terms, Policies and Licenses" />
+          <AccountItem to="/faq" icon={<TbHelp className="text-blue-600" />} label="Browse FAQs" />
+        </SectionContainer>
+
+        {/* Logout */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl shadow-sm px-4 border border-gray-200 hover:shadow-md transition">
+          <button onClick={handleLogout} disabled={isLoggingOut} className="w-full flex items-center justify-center gap-2 text-red-600 font-medium py-3 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
+            {isLoggingOut ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div> : <><TbLogout size={18} /> Logout</>}
+          </button>
         </motion.div>
 
         {openAvatarEdit && <UserFileUploadAvatar close={() => setOpenAvatarEdit(false)} />}
-
-        {/* Quick Actions */}
-        <motion.section initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:0.2}} className="grid grid-cols-3 gap-3 bg-white rounded-2xl shadow-md p-4 border border-gray-100">
-          <QuickAction to="/dashboard/myorder" Icon={LuPackageCheck} label="Orders" />
-          <QuickAction to="/wishlist" Icon={FaStar} label="Wishlist" />
-          <QuickAction onClick={() => toggleSection('notifications')} Icon={MdNotifications} label="Updates" />
-        </motion.section>
-
-        {/* Dashboard */}
-        <SectionCard title="Dashboard">
-          {isAdmin(user.role) && (
-            <>
-              <NavItem to="/dashboard/category" label="Category" Icon={TbCategoryPlus} />
-              <NavItem to="/dashboard/subcategory" label="Sub Category" Icon={MdOutlineCategory} />
-              <NavItem to="/dashboard/upload-product" label="Upload Product" Icon={MdOutlineCloudUpload} />
-              <NavItem to="/dashboard/product" label="Products" Icon={TbBrandProducthunt} />
-              <NavItem to="/dashboard/alluser" label="All User" Icon={LuUsers} />
-              <NavItem to="/dashboard/manage-order" label="Manage Order" Icon={LuPackageCheck} />
-              <NavItem to="/dashboard/analytics" label="Analytics" Icon={LuPackageCheck} />
-            </>
-          )}
-          {user.role === 'DELIVERY-AGENT' && (
-            <NavItem to="/dashboard/manage-order" label="Manage Order" Icon={LuPackageCheck} />
-          )}
-          <NavItem to="/dashboard/myorder" label="My Orders" Icon={LuPackageCheck} />
-          <NavItem to="/dashboard/address" label="My Address" Icon={GrMapLocation} />
-        </SectionCard>
-
-        {/* Settings */}
-        <SectionCard title="Settings">
-          <NavItem to="/dashboard/profile" label="Edit Profile" Icon={FaUserCircle} />
-          <NavItem to="#" label="Saved Cards" Icon={MdCreditCard} />
-          <NavItem to="/dashboard/address" label="Saved Address" Icon={GrMapLocation} />
-          <NavItem to="#" label="Notification Settings" Icon={MdNotifications} />
-          <NavItem to="#" label="Privacy Center" Icon={MdPrivacyTip} />
-        </SectionCard>
-
-        {/* My Activity */}
-        <SectionCard title="My Activity">
-          <NavItem to="#" label="Reviews" Icon={MdReviews} />
-          <NavItem to="#" label="Questions & Answers" Icon={FaQuestionCircle} />
-        </SectionCard>
-
-        {/* Logout */}
-        <div className="text-center py-4">
-          <button
-            onClick={handleLogout}
-            className="inline-flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-indigo-700 transition shadow-md hover:shadow-lg"
-          >
-            <TbLogout size={18} /> Logout
-          </button>
-        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-const SectionCard = ({ title, children }) => (
-  <motion.section initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} className="bg-white rounded-2xl shadow-md p-4 border border-gray-100">
-    <h2 className="text-lg font-semibold mb-3 text-gray-900 pl-2">{title}</h2>
-    <nav className="divide-y divide-gray-100">{children}</nav>
-  </motion.section>
-)
-
-const NavItem = ({ to, label, Icon }) => (
-  <Link 
-    to={to} 
-    className="flex justify-between items-center py-3 px-2 hover:bg-gray-50 text-gray-700 font-medium rounded-xl transition-colors group"
-  >
-    <div className="flex items-center gap-3">
-      <Icon size={18} className="text-indigo-600" />
-      <span className="text-sm">{label}</span>
+// Reusable Account Item
+const AccountItem = ({ to, icon, label }) => {
+  const content = (
+    <div className="flex items-center justify-between w-full py-2">
+      <div className="flex items-center gap-3">{icon}<span className="text-sm text-gray-900">{label}</span></div>
+      <IoIosArrowForward className="text-gray-400" size={16} />
     </div>
-    <IoIosArrowForward className="text-gray-400 group-hover:text-indigo-600 transition-colors" size={16} />
-  </Link>
-)
+  );
+  return to ? <Link to={to} className="block hover:bg-gray-50 rounded-lg -mx-2 px-2 transition-colors">{content}</Link> : <div className="block hover:bg-gray-50 rounded-lg -mx-2 px-2 transition-colors cursor-pointer">{content}</div>;
+};
 
-const QuickAction = ({ to, onClick, Icon, label }) => {
-  const Wrapper = to ? Link : 'button'
-  const props = to ? { to } : { onClick }
+// Collapsible Section Container
+const SectionContainer = ({ title, children, open }) => {
+  const [isOpen, setIsOpen] = useState(open || false);
   return (
-    <Wrapper {...props} className="flex flex-col items-center justify-center py-3 text-indigo-700 rounded-xl hover:bg-indigo-50 transition-colors shadow-sm">
-      <Icon size={20} />
-      <span className="text-xs mt-1">{label}</span>
-    </Wrapper>
-  )
-}
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl shadow-sm p-4 border border-gray-200 hover:shadow-md transition">
+      <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+        <h3 className="text-sm font-medium text-gray-900">{title}</h3>
+        {isOpen ? <IoIosArrowDown className="text-blue-600" size={16} /> : <IoIosArrowForward className="text-blue-600" size={16} />}
+      </div>
+      <AnimatePresence>
+        {isOpen && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-3">{children}</motion.div>}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
-export default UserAccount
+// Simple Card with optional subtitle
+const SectionCard = ({ title, subtitle, children }) => (
+  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl shadow-sm p-4 border border-gray-200 hover:shadow-md transition">
+    {title && <p className="text-sm font-medium text-gray-900 mb-1">{title}</p>}
+    {subtitle && <p className="text-xs text-gray-600">{subtitle}</p>}
+    {children}
+  </motion.div>
+);
+
+// Detail Card
+const DetailCard = ({ icon, label, value }) => (
+  <div className="bg-gray-50 p-3 rounded border border-gray-200">
+    <p className="text-xs text-gray-500">{label}</p>
+    <p className="text-sm font-medium text-gray-800 flex items-center gap-1">{icon}{value}</p>
+  </div>
+);
+
+export default UserAccount;

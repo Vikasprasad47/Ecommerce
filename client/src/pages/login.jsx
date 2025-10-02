@@ -387,7 +387,7 @@ const Login = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="grid grid-cols-3 gap-3 mb-6"
+            className="grid grid-cols-3 gap-3 mb-3"
           >
             {[
               { name: 'Google', icon: FaGoogle, color: 'text-red-500' },
