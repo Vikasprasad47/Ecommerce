@@ -61,6 +61,10 @@ const SummaryApi = {
         url: "/api/user/update-user",
         method: "PUT"
     },
+    getUserReviews: {
+        url: "/api/user/user-reviews",
+        method: "GET"
+    }, 
     addCategory: {
         url: "/api/category/add-category",
         method: 'POST'

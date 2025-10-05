@@ -17,7 +17,7 @@ const OutOfStockOverlay = ({
     },
     xl: {
       overlay: "absolute inset-0 bg-black/60 flex items-center justify-center rounded-t-xl",
-      text: "bg-gray-800 text-white text-sm font-bold px-6 py-2 rounded"
+      text: "bg-gray-800 text-white text-sm font-bold px-3 py-2 rounded"
     }
   };
 

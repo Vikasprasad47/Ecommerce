@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerUserController, verifyEmailController, loginController, logoutController, uploadAvatar, removeAvatar, updateUserDetails, forgotPasswordController, verifyForgotPasswordOtp, resetPasswordController, refreshToken ,userDetails, getAllUsersController, addToWishlistController, removeFromWishlistController, getUserWishlistProducts } from "../controllers/user.controller.js";
+import { registerUserController, verifyEmailController, loginController, logoutController, uploadAvatar, removeAvatar, updateUserDetails, forgotPasswordController, verifyForgotPasswordOtp, resetPasswordController, refreshToken ,userDetails, getAllUsersController, addToWishlistController, removeFromWishlistController, getUserWishlistProducts, getUserReviews } from "../controllers/user.controller.js";
 import auth from "../middleware/auth.js"
 import upload from "../middleware/multer.js"
 const userRouter = Router(); 
@@ -16,6 +16,7 @@ userRouter.put("/verify-forgot-password-otp", verifyForgotPasswordOtp)
 userRouter.put("/reset-password", resetPasswordController)
 userRouter.post("/refresh-token", refreshToken)
 userRouter.get("/user-Details",auth, userDetails )
+userRouter.get("/user-reviews", auth, getUserReviews);
 userRouter.get('/get-all-users', auth, getAllUsersController);
 userRouter.post("/wishlist/add", auth, addToWishlistController);
 userRouter.delete("/wishlist/remove/:productId", auth, removeFromWishlistController);

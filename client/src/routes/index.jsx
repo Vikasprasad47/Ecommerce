@@ -38,6 +38,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import PageLoader from "../components/PageLoader"; // Use your loader component
+import UserReview from "../pages/UserReview";
 
 // Lazy imports
 const App = lazy(() => import("../App"));
@@ -112,7 +113,6 @@ const router = createBrowserRouter([
             },
             {
                 path:"user",
-                // element: <UserMenuMobile/>
                 element:<UserAccount/>
             },
             {
@@ -152,6 +152,10 @@ const router = createBrowserRouter([
                         element: <UserWishList/>
                     },
                     {
+                        path: "reviews",
+                        element: <UserReview/>
+                    },
+                    {
                         path: "category",
                         element: <AdminPermission><Categorypage/></AdminPermission>
                     },
@@ -181,15 +185,6 @@ const router = createBrowserRouter([
                     }
                 ]
             },
-            // {
-            //     path: ":category",
-            //     children: [
-            //         {
-            //             path: ":subCategory",
-            //             element: <Productlistpage/>
-            //         }
-            //     ]
-            // },
             {
                 path: "products",
                 children: [
@@ -220,11 +215,7 @@ const router = createBrowserRouter([
                 element: <Cancel/>
             },
             {
-                path: 'wishlist',
-                element: <UserWishList/>
-            },
-            {
-                path: '/comming-soon',
+                path: 'comming-soon',
                 element: <CommingSoon/>
             },
             {

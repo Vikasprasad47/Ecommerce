@@ -814,3 +814,49 @@ export const getUserWishlistProducts = async (req, res) => {
     });
   }
 };
+
+
+export const getUserReviews = async (req, res) => {
+  try {
+    const userId = req.userId; // ✅ From auth middleware
+
+    // 🔍 Find user and populate their reviews
+    const user = await UserModel.findById(userId)
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "product",
+          select: "name image price ratings slug"
+        }
+      })
+      .select("name email avatar reviews");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    if (!user.reviews || user.reviews.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No reviews found for this user",
+        data: []
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: user.reviews.length,
+      data: user.reviews
+    });
+  } catch (error) {
+    console.error("❌ Error fetching user reviews:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user reviews",
+      error: error.message
+    });
+  }
+};

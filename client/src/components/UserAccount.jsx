@@ -431,12 +431,12 @@ const UserAccount = () => {
                 <h2 className="text-lg font-bold text-gray-900 truncate">
                   Hi, {user.name}
                 </h2>
+                <span className="text-lg">👋</span>
                 {isAdmin(user.role) && (
                   <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
                     Admin
                   </span>
                 )}
-                <span className="text-lg">👋</span>
               </div>
               
               <div className="space-y-1">
@@ -494,19 +494,19 @@ const UserAccount = () => {
             description="Track your orders & purchases"
           />
           <AccountItem 
-            to="/wishlist" 
+            to="/dashboard/wishlist" 
             icon={<FaStar className="text-red-500" />}
             label="Wishlist"
             description="Your saved items"
           />
           <AccountItem 
-            to="/coupons" 
+            to="/dashboard/coupons" 
             icon={<TbBrandProducthunt className="text-green-500" />}
             label="Coupons & Offers"
             description="Available discounts & deals"
           />
           <AccountItem 
-            to="/help" 
+            to="/dashboard/help" 
             icon={<TbHelp className="text-orange-500" />}
             label="Help Center"
             description="Get support & answers"
@@ -550,7 +550,7 @@ const UserAccount = () => {
         {/* Account Settings - Always Open */}
         <SectionContainer title="Account Settings" icon="">
           <AccountItem 
-            to="/plus" 
+            to="/dashboard/plus" 
             icon={<RiCoinsLine className="text-purple-500" />}
             label="Quickoo Plus"
             description="Premium features & benefits"
@@ -562,7 +562,7 @@ const UserAccount = () => {
             description="Update personal information"
           />
           <AccountItem 
-            to="/cards" 
+            to="/dashboard/cards" 
             icon={<MdCreditCard className="text-green-500" />}
             label="Saved Cards & Wallet"
             description="Payment methods & balance"
@@ -574,13 +574,13 @@ const UserAccount = () => {
             description="Delivery & billing addresses"
           />
           <AccountItem 
-            to="/language" 
+            to="/dashboard/language" 
             icon={<IoLanguage className="text-indigo-500" />}
             label="Select Language"
             description="App language preferences"
           />
           <AccountItem 
-            to="/notifications" 
+            to="/dashboard/notifications" 
             icon={<MdNotifications className="text-yellow-500" />}
             label="Notification Settings"
             description="Manage alerts & updates"
@@ -626,7 +626,7 @@ const UserAccount = () => {
         {/* My Activity - Always Open */}
         <SectionContainer title="My Activity" icon="">
           <AccountItem 
-            to="/reviews" 
+            to="/dashboard/reviews" 
             icon={<MdReviews className="text-green-500" />}
             label="My Reviews"
             description="Product reviews & ratings"
