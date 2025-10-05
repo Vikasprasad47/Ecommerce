@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaHeart, FaRegHeart, FaStar, FaStarHalfAlt, FaRegStar, FaShoppingBag } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import AddToCartButton from "../components/AddToCartButton";
+import OutOfStockOverlay from "../components/OutOfStockOverlay";
 
 const renderRatingStars = (rating) => {
   const stars = [];
@@ -168,7 +169,7 @@ const UserWishList = () => {
                 >
                   <Link to={`/product/${product.name.replace(/\s+/g, "-")}-${product._id}`}>
                     {/* Image Section */}
-                    <div className="relative h-40 bg-white overflow-hidden">
+                    <div className="relative h-35 bg-white overflow-hidden">
                       <img
                         src={product.image?.[0]}
                         alt={product.name}
@@ -187,9 +188,7 @@ const UserWishList = () => {
                       
                       {/* Out of Stock Overlay */}
                       {product.stock <= 0 && (
-                        <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-white bg-black/50 rounded-t-lg">
-                        SOLD OUT
-                      </span>
+                        <OutOfStockOverlay variant="lg" showSoldOut={true} />
                       )}
                     </div>
                   </Link>

@@ -7,6 +7,7 @@ import SummaryApi, { baseUrl } from "../comman/summaryApi";
 import { DisplayPriceInRupees } from "../utils/DisplayPriceInRupees";
 import { priceWithDiscount } from "../utils/PriceWithDiscount";
 import { validURLConvert } from "../utils/validURLConvert";
+import OutOfStockOverlay from "./OutOfStockOverlay";
 
 // Cache configuration
 const CACHE_KEYS = {
@@ -92,11 +93,7 @@ const ProductCard = memo(({ item }) => {
           
           {/* Out of Stock Overlay */}
           {item.stock <= 0 && (
-            <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-t-lg">
-              <span className="bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded">
-                OUT OF STOCK
-              </span>
-            </div>
+            <OutOfStockOverlay variant="default" showSoldOut={true}/>
           )}
         </div>
 

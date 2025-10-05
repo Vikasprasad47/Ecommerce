@@ -1,3 +1,88 @@
+// import { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useNavigate } from "react-router-dom";
+// import toast from "react-hot-toast";
+// import Axios from "../utils/axios";
+// import SummaryApi from "../comman/summaryApi";
+// import AxiosToastError from "../utils/AxiosToastErroe";
+// import { logout, setUserDetails } from "../Store/userSlice";
+// import fetchUserDetails from "../utils/featchUserDetails";
+// import useMobile from "./useMobile"; // your existing mobile hook
+
+// const useUserAccount = () => {
+//   const user = useSelector((state) => state.user);
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const [activeSection, setActiveSection] = useState(null);
+//   const [openAvatarEdit, setOpenAvatarEdit] = useState(false);
+//   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+//   const [isMobile] = useMobile(1024); // detect small screen
+
+//   // Redirect desktop users to profile
+//   useEffect(() => {
+//     if (!isMobile) navigate("/dashboard/profile");
+//   }, [isMobile, navigate]);
+
+//   // Logout action
+//   const handleLogout = async () => {
+//     if (!window.confirm("Are you sure you want to logout?")) return;
+//     try {
+//       const response = await Axios({ ...SummaryApi.logout });
+//       if (response.data.success) {
+//         dispatch(logout());
+//         localStorage.clear();
+//         navigate("/");
+//         toast.dismiss();
+//         toast.success(response.data.message);
+//       }
+//     } catch (error) {
+//       AxiosToastError(error);
+//     }
+//   };
+
+//   // Toggle sections like notifications
+//   const toggleSection = (section) => {
+//     setActiveSection(activeSection === section ? null : section);
+//   };
+
+//   // Remove user avatar
+//   const handleRemoveAvatar = async () => {
+//     if (!window.confirm("Remove your avatar?")) return;
+//     try {
+//       const res = await Axios(SummaryApi.removeUserAvatar);
+//       if (res.data.success) {
+//         toast.dismiss();
+//         toast.success("Avatar removed successfully.");
+//         const userdata = await fetchUserDetails();
+//         dispatch(setUserDetails(userdata.data));
+//       } else {
+//         toast.dismiss();
+//         toast.error(res.data.message || "Failed to remove avatar.");
+//       }
+//     } catch {
+//       toast.dismiss();
+//       toast.error("Error removing avatar.");
+//     }
+//   };
+
+//   return {
+//     user,
+//     activeSection,
+//     openAvatarEdit,
+//     profileDropdownOpen,
+//     setOpenAvatarEdit,
+//     setProfileDropdownOpen,
+//     handleLogout,
+//     toggleSection,
+//     handleRemoveAvatar,
+//     isMobile,
+//   };
+// };
+
+// export default useUserAccount;
+
+
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +92,7 @@ import SummaryApi from "../comman/summaryApi";
 import AxiosToastError from "../utils/AxiosToastErroe";
 import { logout, setUserDetails } from "../Store/userSlice";
 import fetchUserDetails from "../utils/featchUserDetails";
-import useMobile from "./useMobile"; // your existing mobile hook
+import useMobile from "./useMobile";
 
 const useUserAccount = () => {
   const user = useSelector((state) => state.user);
@@ -16,53 +101,64 @@ const useUserAccount = () => {
   const [activeSection, setActiveSection] = useState(null);
   const [openAvatarEdit, setOpenAvatarEdit] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const [isMobile] = useMobile(1024); // detect small screen
+  const [isMobile] = useMobile(1024);
 
   // Redirect desktop users to profile
   useEffect(() => {
-    if (!isMobile) navigate("/dashboard/profile");
+    if (!isMobile) {
+      navigate("/dashboard/profile", { replace: true });
+    }
   }, [isMobile, navigate]);
 
-  // Logout action
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Logout action with better loading state
   const handleLogout = async () => {
     if (!window.confirm("Are you sure you want to logout?")) return;
+    
+    setIsLoggingOut(true);
     try {
       const response = await Axios({ ...SummaryApi.logout });
       if (response.data.success) {
         dispatch(logout());
         localStorage.clear();
-        navigate("/");
+        navigate("/", { replace: true });
         toast.dismiss();
-        toast.success(response.data.message);
+        toast.success(response.data.message || "Logged out successfully");
       }
     } catch (error) {
       AxiosToastError(error);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
-  // Toggle sections like notifications
+  // Toggle sections
   const toggleSection = (section) => {
     setActiveSection(activeSection === section ? null : section);
   };
 
-  // Remove user avatar
+  // Remove user avatar with better confirmation
   const handleRemoveAvatar = async () => {
-    if (!window.confirm("Remove your avatar?")) return;
+    if (!window.confirm("Are you sure you want to remove your avatar?")) return;
+    
     try {
       const res = await Axios(SummaryApi.removeUserAvatar);
       if (res.data.success) {
-        toast.dismiss();
-        toast.success("Avatar removed successfully.");
+        toast.success("Avatar removed successfully");
         const userdata = await fetchUserDetails();
         dispatch(setUserDetails(userdata.data));
       } else {
-        toast.dismiss();
-        toast.error(res.data.message || "Failed to remove avatar.");
+        toast.error(res.data.message || "Failed to remove avatar");
       }
-    } catch {
-      toast.dismiss();
-      toast.error("Error removing avatar.");
+    } catch (error) {
+      toast.error("Error removing avatar");
+      console.error("Avatar removal error:", error);
     }
   };
 
@@ -71,6 +167,7 @@ const useUserAccount = () => {
     activeSection,
     openAvatarEdit,
     profileDropdownOpen,
+    isLoggingOut,
     setOpenAvatarEdit,
     setProfileDropdownOpen,
     handleLogout,

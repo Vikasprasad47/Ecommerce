@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import useMobile from "../Hooks/useMobile";
 import UserMenu from "./userMenu";
 import { useGlobalContext } from "../provider/globalProvider";
+import UserDropDownMenu from "./UserDropDownMenu";
 
 const Header = () => {
   const [isMobile] = useMobile();
@@ -82,8 +83,8 @@ const Header = () => {
                     )}
                   </button>
                   {openUserMenu && (
-                    <div className="absolute right-0 top-10 bg-white rounded-xl shadow-xl p-4 min-w-[240px] z-50 border border-gray-200">
-                      <UserMenu close={() => setOpenUserMenu(false)} />
+                    <div className="absolute right-0 top-10 bg-white rounded-xl shadow-xl min-w-[240px] z-50 border border-gray-200">
+                      <UserDropDownMenu close={() => setOpenUserMenu(false)} />
                     </div>
                   )}
                 </div>

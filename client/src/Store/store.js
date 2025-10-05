@@ -16,5 +16,6 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false, // ⬅️ disable the warning in dev
+      immutableCheck: false,
     }),
 })

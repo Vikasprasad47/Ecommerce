@@ -134,4 +134,3 @@ const userMenu = ({close, rightContainerRef}) => {
 }
 
 export default userMenu
-

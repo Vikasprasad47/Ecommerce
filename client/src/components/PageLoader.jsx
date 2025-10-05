@@ -22,7 +22,7 @@ const PageLoader = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-900 px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
       
       {/* Spinner with cart icon */}
       <div className="relative mb-6">
@@ -33,12 +33,12 @@ const PageLoader = () => {
       </div>
 
       {/* Loading text */}
-      <h3 className="text-lg md:text-xl font-medium text-gray-700 dark:text-gray-300 mb-2 text-center">
+      <h3 className="text-lg md:text-xl font-medium text-gray-700 mb-2 text-center">
         Loading <span className="text-amber-600">Store</span>
       </h3>
 
       {/* Waiting message */}
-      <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base mb-3 text-center animate-fade">
+      <p className="text-gray-500 text-sm md:text-base mb-3 text-center animate-fade">
         {currentMessage}
       </p>
 

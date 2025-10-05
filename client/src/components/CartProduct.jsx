@@ -11,6 +11,8 @@ import AddToCartButton from "./AddToCartButton";
 import { useSelector } from "react-redux";
 import { useGlobalContext } from "../provider/globalProvider";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import OutOfStockOverlay from "./OutOfStockOverlay";
+
 
 const renderRatingStars = (rating) => {
   const stars = [];
@@ -113,9 +115,7 @@ const CartProduct = ({ data, searchText }) => {
 
         {/* SOLD Overlay */}
         {data.stock <= 0 && (
-          <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-white bg-black/50 rounded-t-xl">
-            SOLD OUT
-          </span>
+          <OutOfStockOverlay variant="xl" showSoldOut={true} />
         )}
 
         {/* Wishlist Button */}
