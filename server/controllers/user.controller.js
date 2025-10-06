@@ -224,6 +224,138 @@ export async function loginController(req, res) {
   } 
 }
 
+export async function googleLoginController(req, res) {
+  try {
+    const { code } = req.body;
+
+    if (!code) {
+      return res.status(400).json({
+        message: "Missing Google authorization code.",
+        error: true,
+        success: false,
+      });
+    }
+
+    // 1️⃣ Exchange code for tokens
+    const params = new URLSearchParams();
+    params.append("code", code);
+    params.append("client_id", process.env.GOOGLE_CLIENT_ID);
+    params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
+    params.append("redirect_uri", "postmessage"); // SPA redirect
+    params.append("grant_type", "authorization_code");
+
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
+
+    const tokenData = await tokenRes.json();
+
+    if (tokenData.error) {
+      return res.status(400).json({
+        message: tokenData.error_description || "Failed to exchange code for token",
+        error: true,
+        success: false,
+      });
+    }
+
+    const { id_token } = tokenData;
+    if (!id_token) {
+      return res.status(400).json({
+        message: "ID token not found from Google.",
+        error: true,
+        success: false,
+      });
+    }
+
+    // 2️⃣ Verify ID token and get user info
+    const userInfoRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${id_token}`);
+    const userInfo = await userInfoRes.json();
+
+    const { email, name, picture, email_verified } = userInfo;
+
+    if (!email_verified) {
+      return res.status(403).json({
+        message: "Google account not verified.",
+        error: true,
+        success: false,
+      });
+    }
+
+    // 3️⃣ Check if user exists
+    let user = await UserModel.findOne({ email });
+
+    if (!user) {
+      // 3.1 Create new user without password
+      user = new UserModel({
+        name,
+        email,
+        password: "google-auth-user", // placeholder
+        avatar: picture || "",
+        verify_email: true,
+        status: "Active",
+      });
+      await user.save();
+    }
+
+    // 4️⃣ Check account status
+    if (user.status !== "Active") {
+      return res.status(403).json({
+        message: "Account is not active. Please contact support.",
+        error: true,
+        success: false
+      });
+    }
+
+    // 5️⃣ Generate tokens
+    const accessToken = await generateAccessToken(user._id);
+    const refreshToken = await generateRefreshToken(user._id);
+
+    await UserModel.findByIdAndUpdate(
+      user._id,
+      { refresh_token: refreshToken, last_login_date: new Date() },
+      { new: true }
+    );
+
+    // 6️⃣ Optional cookies
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    };
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
+    // 7️⃣ Return response (same as loginController)
+    return res.status(200).json({
+      message: "Google login successful!",
+      error: false,
+      success: true,
+      data: {
+        accessToken,
+        refreshToken,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          avatar: user.avatar
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Google login error:", error);
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+      error: true,
+      success: false
+    });
+  }
+}
+
 export async function logoutController(req, res) {
     try {
         const userId = req.userId;

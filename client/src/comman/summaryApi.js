@@ -9,6 +9,10 @@ const SummaryApi = {
         url: "/api/user/login",
         method: "POST"
     },
+    google_login: {
+        url: "/api/user/google-login",
+        method: "POST"
+    }, 
     forgot_password : {
         url: "/api/user/forgot-password",
         method: "PUT"

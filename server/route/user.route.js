@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerUserController, verifyEmailController, loginController, logoutController, uploadAvatar, removeAvatar, updateUserDetails, forgotPasswordController, verifyForgotPasswordOtp, resetPasswordController, refreshToken ,userDetails, getAllUsersController, addToWishlistController, removeFromWishlistController, getUserWishlistProducts, getUserReviews } from "../controllers/user.controller.js";
+import { registerUserController, verifyEmailController, loginController, logoutController, uploadAvatar, removeAvatar, updateUserDetails, forgotPasswordController, verifyForgotPasswordOtp, resetPasswordController, refreshToken ,userDetails, getAllUsersController, addToWishlistController, removeFromWishlistController, getUserWishlistProducts, getUserReviews, googleLoginController } from "../controllers/user.controller.js";
 import auth from "../middleware/auth.js"
 import upload from "../middleware/multer.js"
 const userRouter = Router(); 
@@ -7,6 +7,7 @@ const userRouter = Router();
 userRouter.post("/register", registerUserController);
 userRouter.post("/verify-email", verifyEmailController);
 userRouter.post("/login", loginController)
+userRouter.post("/google-login", googleLoginController) // Google Login
 userRouter.get('/logout', auth , logoutController)
 userRouter.put('/upload-avatar', auth, upload.single('avatar'), uploadAvatar)
 userRouter.delete('/remove-avatar', auth, removeAvatar)
