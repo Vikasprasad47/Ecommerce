@@ -463,12 +463,10 @@
 // };
 
 // export default Login;
-
-
 import React, { useState, useEffect } from 'react';
 import { IoMdEyeOff, IoMdLock } from "react-icons/io";
 import { IoEye, IoClose, IoMailOutline } from "react-icons/io5";
-import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import toast, { Toaster } from 'react-hot-toast';
 import Axios from '../utils/axios';
 import SummaryApi from '../comman/summaryApi';
@@ -478,22 +476,63 @@ import { useDispatch } from 'react-redux';
 import { setUserDetails } from '../Store/userSlice';
 import welcomeimg from '../assets/wecomeback.jpg';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FcGoogle } from "react-icons/fc";
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 
 // Google Login Component
-const GoogleLoginButton = ({ onSuccess, onError }) => {
+const GoogleLoginButton = ({ onSuccess, onError, isLoading }) => {
+  const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+  // Debug client ID on component mount
+  useEffect(() => {
+    console.log('🔑 Google Client ID loaded:', GOOGLE_CLIENT_ID ? 'Yes' : 'No');
+    if (!GOOGLE_CLIENT_ID) {
+      console.error('❌ Missing VITE_GOOGLE_CLIENT_ID in environment variables');
+      toast.error('Google login not configured', {
+        duration: 5000,
+        icon: '⚙️'
+      });
+    }
+  }, [GOOGLE_CLIENT_ID]);
+
   const login = useGoogleLogin({
     onSuccess: (response) => {
-      console.log('Google login success:', response);
-      onSuccess(response.access_token);
+      console.log('✅ Google OAuth success:', response);
+      
+      // Send access_token to backend (Method 1 in your controller)
+      if (response.access_token) {
+        onSuccess(response.access_token);
+      } else {
+        onError(new Error('No access token received from Google'));
+      }
     },
     onError: (error) => {
-      console.error('Google login failed:', error);
-      onError(error);
+      console.error('❌ Google OAuth error:', error);
+      
+      let errorMessage = "Google authentication failed";
+      if (error?.error === 'popup_closed') {
+        errorMessage = "Google login was cancelled";
+      } else if (error?.error === 'access_denied') {
+        errorMessage = "Google login was denied";
+      } else if (error?.error === 'idpiframe_initialization_failed') {
+        errorMessage = "Google login not configured properly. Check your Client ID.";
+      }
+      
+      onError(new Error(errorMessage));
     },
+    // Using implicit flow for access tokens (simpler)
     flow: 'implicit',
+    scope: 'email profile openid',
   });
+
+  if (!GOOGLE_CLIENT_ID) {
+    return (
+      <div className="w-full py-3 px-4 rounded-xl bg-yellow-50 border border-yellow-200 text-center">
+        <span className="text-sm font-medium text-yellow-700">
+          ⚠️ Google login not configured
+        </span>
+      </div>
+    );
+  }
 
   return (
     <motion.button
@@ -503,12 +542,33 @@ const GoogleLoginButton = ({ onSuccess, onError }) => {
         boxShadow: "0 5px 15px -3px rgba(0, 0, 0, 0.1)"
       }}
       whileTap={{ scale: 0.95 }}
-      className="flex items-center justify-center w-full py-3 rounded-xl bg-slate-200 hover:bg-white transition-all duration-200 border border-gray-200 hover:border-gray-300"
-      onClick={() => login()}
+      disabled={isLoading}
+      className={`flex items-center justify-center w-full py-3 rounded-xl border transition-all duration-200 ${
+        isLoading 
+          ? 'bg-gray-100 border-gray-300 cursor-not-allowed opacity-70' 
+          : 'bg-white border-gray-300 hover:border-amber-300 hover:bg-amber-50 cursor-pointer'
+      }`}
+      onClick={() => {
+        console.log('🔄 Starting Google OAuth flow...');
+        login();
+      }}
       type="button"
     >
-      <FcGoogle size={24} />
-      <span className="ml-3 text-sm font-medium text-gray-700">Continue with Google</span>
+      {isLoading ? (
+        <div className="flex items-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full mr-2"
+          />
+          <span className="text-sm font-medium text-gray-500">Connecting to Google...</span>
+        </div>
+      ) : (
+        <>
+          <FcGoogle size={20} />
+          <span className="ml-3 text-sm font-medium text-gray-700">Continue with Google</span>
+        </>
+      )}
     </motion.button>
   );
 };
@@ -523,7 +583,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Google Client ID - Replace with your actual Google Client ID
+  // Google Client ID
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   // Load saved credentials
@@ -547,73 +607,86 @@ const Login = () => {
   // Handle Google Login Success
   const handleGoogleLoginSuccess = async (googleAccessToken) => {
     setIsGoogleLoading(true);
-    const loadingToast = toast.loading("Signing in with Google...", {
-      style: {
-        background: '#EFF6FF',
-        color: '#1E40AF'
-      }
-    });
+    const loadingToast = toast.loading("Authenticating with Google...");
 
     try {
-      // Send the Google access token to your backend
-      const response = await Axios({ 
-        ...SummaryApi.google_login, 
-        data: { credential: googleAccessToken } 
+      console.log('📤 Sending Google access token to backend...', {
+        tokenLength: googleAccessToken?.length,
+        first10: googleAccessToken?.substring(0, 10) + '...'
       });
 
-      console.log("Google login response:", response);
+      const response = await Axios({ 
+        ...SummaryApi.google_login, 
+        data: { accessToken: googleAccessToken } // Send as accessToken
+      });
 
-      if (!response.data) throw new Error("No response data received");
+      console.log("✅ Backend response:", response);
+
+      if (!response.data) {
+        throw new Error("No response data received from server");
+      }
 
       if (response.data.error) {
-        throw new Error(response.data.message || "Google login failed");
+        throw new Error(response.data.message || "Google authentication failed");
       }
 
       if (response.data.success) {
         const { accessToken, refreshToken, user } = response.data.data;
-        if (!accessToken || !refreshToken) throw new Error("Missing tokens");
+        
+        if (!accessToken || !refreshToken) {
+          throw new Error("Authentication tokens missing from response");
+        }
 
-        // Store tokens
+        // Store tokens in localStorage
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
         // Update toast to success
         toast.dismiss(loadingToast);
-        toast.success(response.data.message, { 
+        toast.success("login successful!", { 
           duration: 2000,
-          style: {
-            background: '#D1FAE5',
-            color: '#065F46',
-            border: '1px solid #10B981'
-          }
         });
 
-        // Dispatch basic user info immediately
-        if (user) dispatch(setUserDetails(user));
+        // Dispatch user info to Redux store
+        if (user) {
+          dispatch(setUserDetails(user));
+        }
 
-        // Navigate after showing success message
+        // Navigate to home page after success message
         setTimeout(() => {
-          setData({ email: "", password: "" });
           navigate("/");
         }, 1500);
 
         // Fetch additional user details in background
-        fetchUserDetails()
-          .then((userDetails) => {
-            if (userDetails?.data) dispatch(setUserDetails(userDetails.data));
-          })
-          .catch((err) => console.warn("Error fetching user details:", err));
+        try {
+          const userDetails = await fetchUserDetails();
+          if (userDetails?.data) {
+            dispatch(setUserDetails(userDetails.data));
+          }
+        } catch (err) {
+          console.warn("Note: Could not fetch additional user details:", err);
+        }
       }
     } catch (error) {
-      console.error("Google login error:", error);
+      console.error("❌ Google login error:", error);
+      
+      let errorMessage = "Google login failed";
+      
+      if (error.response) {
+        // Server responded with error status
+        errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+        console.error('Server error details:', error.response.data);
+      } else if (error.request) {
+        // Request was made but no response received
+        errorMessage = "No response from server. Please check your connection.";
+      } else {
+        // Something else happened
+        errorMessage = error.message || "Google authentication failed";
+      }
+
       toast.dismiss(loadingToast);
-      toast.error(error?.response?.data?.message || error.message || "Google login failed", { 
-        duration: 4000,
-        style: {
-          background: '#FEE2E2',
-          color: '#DC2626',
-          border: '1px solid #EF4444'
-        }
+      toast.error(`❌ ${errorMessage}`, { 
+        duration: 5000,
       });
     } finally {
       setIsGoogleLoading(false);
@@ -622,42 +695,30 @@ const Login = () => {
 
   // Handle Google Login Error
   const handleGoogleLoginError = (error) => {
-    console.error('Google OAuth error:', error);
-    toast.error("Google authentication failed. Please try again.", {
-      duration: 4000,
-      style: {
-        background: '#FEE2E2',
-        color: '#DC2626',
-        border: '1px solid #EF4444'
-      }
+    console.error('❌ Google OAuth component error:', error);
+    setIsGoogleLoading(false);
+    
+    toast.error(`❌ ${error.message}`, {
+      duration: 5000,
     });
   };
 
+  // Regular email/password login handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm) {
       toast.error("Please fill all fields", { 
         duration: 3000,
-        style: {
-          background: '#FEF3C7',
-          color: '#92400E',
-          border: '1px solid #F59E0B'
-        }
+        icon: '📝'
       });
       return;
     }
 
     setIsLoading(true);
-    const loadingToast = toast.loading("Authenticating...", {
-      style: {
-        background: '#EFF6FF',
-        color: '#1E40AF'
-      }
-    });
+    const loadingToast = toast.loading("Signing in...");
 
     try {
       const response = await Axios({ ...SummaryApi.login, data });
-      console.log("Login response:", response);
 
       if (!response.data) throw new Error("No response data received");
 
@@ -667,24 +728,14 @@ const Login = () => {
 
       if (response.data.success) {
         const { accessToken, refreshToken, user } = response.data.data;
+        
         if (!accessToken || !refreshToken) throw new Error("Missing tokens");
 
         // Store tokens
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
-        // Update toast to success
-        toast.dismiss(loadingToast);
-        toast.success(response.data.message, { 
-          duration: 2000,
-          style: {
-            background: '#D1FAE5',
-            color: '#065F46',
-            border: '1px solid #10B981'
-          }
-        });
-
-        // Remember credentials
+        // Remember credentials if checked
         if (rememberMe) {
           localStorage.setItem('rememberedEmail', data.email);
           localStorage.setItem('rememberedPassword', data.password);
@@ -693,10 +744,15 @@ const Login = () => {
           localStorage.removeItem('rememberedPassword');
         }
 
-        // Dispatch basic user info immediately
+        toast.dismiss(loadingToast);
+        toast.success("Login successful!", { 
+          duration: 2000,
+        });
+
+        // Dispatch user info
         if (user) dispatch(setUserDetails(user));
 
-        // Navigate after showing success message
+        // Navigate to home
         setTimeout(() => {
           setData({ email: "", password: "" });
           navigate("/");
@@ -707,35 +763,18 @@ const Login = () => {
           .then((userDetails) => {
             if (userDetails?.data) dispatch(setUserDetails(userDetails.data));
           })
-          .catch((err) => console.warn("Error fetching user details:", err));
+          .catch((err) => console.warn("Note: Error fetching user details:", err));
       }
     } catch (error) {
       console.error("Login error:", error);
       toast.dismiss(loadingToast);
       toast.error(error?.response?.data?.message || error.message || "Login failed", { 
         duration: 4000,
-        style: {
-          background: '#FEE2E2',
-          color: '#DC2626',
-          border: '1px solid #EF4444'
-        }
+        icon: '❌'
       });
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Social login placeholder for other providers
-  const handleSocialLogin = (provider) => {
-    toast(`🚧 ${provider} login coming soon!`, { 
-      duration: 3000,
-      icon: '🔜',
-      style: {
-        background: '#FFFBEB',
-        color: '#D97706',
-        border: '1px solid #F59E0B'
-      }
-    });
   };
 
   return (
@@ -787,18 +826,48 @@ const Login = () => {
               <p className="text-gray-600 text-sm sm:text-base">Sign in to your account to continue</p>
             </motion.div>
 
+            {/* Google Login Button - At the top */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-1"
+            >
+              <GoogleLoginButton 
+                onSuccess={handleGoogleLoginSuccess}
+                onError={handleGoogleLoginError}
+                isLoading={isGoogleLoading}
+              />
+            </motion.div>
+
+            {/* Divider */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="relative my-3"
+            >
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-3 text-sm bg-white text-gray-500 font-medium">OR SIGN IN WITH EMAIL</span>
+              </div>
+            </motion.div>
+
+            {/* Email/Password Form */}
             <motion.form 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.5 }}
               className="space-y-6" 
               onSubmit={handleSubmit}
             >
-              {/* Email */}
+              {/* Email Field */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0.6 }}
               >
                 <label htmlFor="email" className="block text-sm font-semibold mb-2 text-gray-700">
                   Email Address
@@ -821,11 +890,11 @@ const Login = () => {
                 </div>
               </motion.div>
 
-              {/* Password */}
+              {/* Password Field */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.7 }}
               >
                 <div className="flex justify-between items-center mb-2">
                   <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
@@ -876,11 +945,11 @@ const Login = () => {
                 </div>
               </motion.div>
 
-              {/* Remember Me & Submit */}
+              {/* Remember Me & Submit Button */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.8 }}
                 className="flex flex-col items-start justify-between flex-wrap gap-4 pt-2 w-full"
               >
                 <div className="flex items-center group cursor-pointer">
@@ -947,6 +1016,7 @@ const Login = () => {
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                           className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
                         />
+                        <span>Signing In...</span>
                       </motion.div>
                     ) : (
                       <motion.span
@@ -963,38 +1033,12 @@ const Login = () => {
               </motion.div>
             </motion.form>
 
-            {/* Social Login */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="relative my-4"
-            >
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center">
-                <span className="px-3 text-sm bg-white text-gray-500 font-medium">OR CONTINUE WITH</span>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="grid grid-cols-1 gap-3 mb-3"
-            >
-              <GoogleLoginButton 
-                onSuccess={handleGoogleLoginSuccess}
-                onError={handleGoogleLoginError}
-              />
-            </motion.div>
-
+            {/* Sign Up Link */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9 }}
-              className="mt-2 text-center text-sm text-gray-600"
+              className="mt-6 text-center text-sm text-gray-600"
             >
               Don't have an account?{' '}
               <Link 
