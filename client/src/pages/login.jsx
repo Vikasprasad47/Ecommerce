@@ -809,9 +809,7 @@ const Login = () => {
 
         // Update toast to success
         toast.dismiss(loadingToast);
-        toast.success("login successful!", { 
-          duration: 2000,
-        });
+        toast.success("login successful!");
 
         // Dispatch user info to Redux store
         if (user) {
