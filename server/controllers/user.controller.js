@@ -226,72 +226,91 @@ export async function loginController(req, res) {
 
 export async function googleLoginController(req, res) {
   try {
-    const { code } = req.body;
+    const { code, accessToken: googleAccessToken } = req.body;
+    let userInfo;
 
-    if (!code) {
+    // ✅ Step 1: Verify Google token or code
+    if (googleAccessToken) {
+      // Direct Access Token flow (simpler)
+      const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${googleAccessToken}` },
+      });
+
+      if (!userInfoResponse.ok) {
+        const errorData = await userInfoResponse.json();
+        console.error('❌ Google API error:', errorData);
+        return res.status(400).json({
+          message: "Invalid Google access token",
+          error: true,
+          success: false,
+        });
+      }
+
+      userInfo = await userInfoResponse.json();
+    } else if (code) {
+      // Authorization Code flow (for safety if using redirect)
+      const params = new URLSearchParams();
+      params.append("code", code);
+      params.append("client_id", process.env.GOOGLE_CLIENT_ID);
+      params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
+      params.append("redirect_uri", "postmessage");
+      params.append("grant_type", "authorization_code");
+
+      const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params.toString(),
+      });
+
+      const tokenData = await tokenRes.json();
+
+      if (tokenData.error) {
+        console.error('❌ Token exchange error:', tokenData);
+        return res.status(400).json({
+          message: tokenData.error_description || "Failed to exchange code for token",
+          error: true,
+          success: false,
+        });
+      }
+
+      const { id_token } = tokenData;
+      if (!id_token) {
+        return res.status(400).json({
+          message: "Missing ID token from Google",
+          error: true,
+          success: false,
+        });
+      }
+
+      const userInfoRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${id_token}`);
+      userInfo = await userInfoRes.json();
+    } else {
       return res.status(400).json({
-        message: "Missing Google authorization code.",
+        message: "Missing Google authentication parameters",
         error: true,
         success: false,
       });
     }
 
-    // 1️⃣ Exchange code for tokens
-    const params = new URLSearchParams();
-    params.append("code", code);
-    params.append("client_id", process.env.GOOGLE_CLIENT_ID);
-    params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
-    params.append("redirect_uri", "postmessage"); // SPA redirect
-    params.append("grant_type", "authorization_code");
-
-    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params.toString(),
-    });
-
-    const tokenData = await tokenRes.json();
-
-    if (tokenData.error) {
-      return res.status(400).json({
-        message: tokenData.error_description || "Failed to exchange code for token",
-        error: true,
-        success: false,
-      });
-    }
-
-    const { id_token } = tokenData;
-    if (!id_token) {
-      return res.status(400).json({
-        message: "ID token not found from Google.",
-        error: true,
-        success: false,
-      });
-    }
-
-    // 2️⃣ Verify ID token and get user info
-    const userInfoRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${id_token}`);
-    const userInfo = await userInfoRes.json();
-
+    // ✅ Step 2: Extract and validate user info
     const { email, name, picture, email_verified } = userInfo;
 
     if (!email_verified) {
       return res.status(403).json({
-        message: "Google account not verified.",
+        message: "Google account not verified",
         error: true,
         success: false,
       });
     }
 
-    // 3️⃣ Check if user exists
+    // ✅ Step 3: Find or create user in DB
     let user = await UserModel.findOne({ email });
 
     if (!user) {
-      // 3.1 Create new user without password
       user = new UserModel({
         name,
         email,
-        password: "google-auth-user", // placeholder
+        password: await bcryptjs.hash("google-auth-user", 10),
         avatar: picture || "",
         verify_email: true,
         status: "Active",
@@ -299,36 +318,40 @@ export async function googleLoginController(req, res) {
       await user.save();
     }
 
-    // 4️⃣ Check account status
+    // ✅ Step 4: Check user status
     if (user.status !== "Active") {
       return res.status(403).json({
         message: "Account is not active. Please contact support.",
         error: true,
-        success: false
+        success: false,
       });
     }
 
-    // 5️⃣ Generate tokens
+    // ✅ Step 5: Generate Access and Refresh Tokens
     const accessToken = await generateAccessToken(user._id);
     const refreshToken = await generateRefreshToken(user._id);
 
     await UserModel.findByIdAndUpdate(
       user._id,
-      { refresh_token: refreshToken, last_login_date: new Date() },
+      {
+        refresh_token: refreshToken,
+        last_login_date: new Date(),
+      },
       { new: true }
     );
 
-    // 6️⃣ Optional cookies
+    // ✅ Step 6: (Optional) Set Cookies for cross-site sessions
     const cookieOptions = {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     };
+
     res.cookie("accessToken", accessToken, cookieOptions);
     res.cookie("refreshToken", refreshToken, cookieOptions);
 
-    // 7️⃣ Return response (same as loginController)
+    // ✅ Step 7: Send success response (identical to custom login)
     return res.status(200).json({
       message: "Google login successful!",
       error: false,
@@ -341,17 +364,17 @@ export async function googleLoginController(req, res) {
           name: user.name,
           email: user.email,
           role: user.role,
-          avatar: user.avatar
-        }
-      }
+          avatar: user.avatar,
+        },
+      },
     });
 
   } catch (error) {
-    console.error("Google login error:", error);
+    console.error("❌ Google login error:", error);
     return res.status(500).json({
       message: error.message || "Internal server error",
       error: true,
-      success: false
+      success: false,
     });
   }
 }
@@ -736,40 +759,6 @@ export async function resetPasswordController(req, res) {
     }
 }
 
-// export async function refreshToken(req, res) {
-//   try {
-//     const refreshToken =
-//       req.cookies?.refreshToken ||
-//       req.body?.refreshToken ||
-//       (req.headers?.authorization?.startsWith("Bearer ")
-//         ? req.headers.authorization.split(" ")[1]
-//         : null);
-
-//     if (!refreshToken) {
-//       return res.status(401).json({ message: "Refresh token not provided.", error: true, success: false });
-//     }
-
-//     const decoded = jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH_TOKEN);
-//     const userId = decoded?.id;
-
-//     const user = await UserModel.findById(userId);
-
-//     if (!user || user.refresh_token !== refreshToken) {
-//       return res.status(403).json({ message: "Invalid refresh token.", error: true, success: false });
-//     }
-
-//     const newAccessToken = await generateAccessToken(userId);
-
-//     return res.status(200).json({
-//       message: "New access token generated.",
-//       error: false,
-//       success: true,
-//       data: { accessToken: newAccessToken }
-//     });
-//   } catch (error) {
-//     return res.status(401).json({ message: "Invalid or expired refresh token.", error: true, success: false });
-//   }
-// }
 export async function refreshToken(req, res) {
   try {
     const refreshToken =
