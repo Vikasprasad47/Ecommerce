@@ -29,7 +29,7 @@ const Search = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSearchPage, setIsSearchPage] = useState(false);
-  const [isMobile] = useMobile();
+  const isMobile = useMobile();
   const inputRef = useRef(null);
   const isClosingRef = useRef(false);
 

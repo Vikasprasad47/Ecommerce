@@ -16,7 +16,7 @@ import { useGlobalContext } from "../provider/globalProvider";
 const UserDropDownMenu = lazy(() => import("./UserDropDownMenu"));
 
 const Header = () => {
-  const [isMobile] = useMobile();
+  const isMobile = useMobile();
   const navigate = useNavigate();
   const { totalQty } = useGlobalContext();
 

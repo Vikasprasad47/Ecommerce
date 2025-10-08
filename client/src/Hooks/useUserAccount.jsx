@@ -103,7 +103,7 @@ const useUserAccount = () => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const [isMobile] = useMobile(1024);
+  const isMobile = useMobile(1024);
 
   // Redirect desktop users to profile
   useEffect(() => {

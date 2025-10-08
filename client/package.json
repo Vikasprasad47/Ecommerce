@@ -30,6 +30,7 @@
     "browser-image-compression": "^2.0.2",
     "cloudinary": "^2.6.0",
     "DatePicker": "^2.0.0",
+    "eruda": "^3.4.3",
     "firebase": "^11.6.0",
     "framer-motion": "^12.6.5",
     "html2canvas": "^1.4.1",
