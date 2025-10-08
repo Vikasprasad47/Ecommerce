@@ -795,6 +795,7 @@ import { IoIosArrowForward } from 'react-icons/io';
 import { IoCamera, IoLanguage } from 'react-icons/io5';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { SiAnalogue } from "react-icons/si";
 
 import Axios from '../utils/axios';
 import SummaryApi from '../comman/summaryApi';
@@ -936,7 +937,9 @@ const UserAccount = () => {
             <AccountItem to="/dashboard/subcategory" icon={<MdOutlineCategory className="text-green-500" />} label="Sub Categories" description="Organize sub-categories" />
             <AccountItem to="/dashboard/upload-product" icon={<MdOutlineCloudUpload className="text-orange-500" />} label="Upload Product" description="Add new products" />
             <AccountItem to="/dashboard/product" icon={<TbBrandProducthunt className="text-purple-500" />} label="Product Management" description="Manage all products" />
+            <AccountItem to="/dashboard/manage-order" icon={<LuPackageCheck  className="text-amber-500" />} label="Order Management" description="Manage all orders" />
             <AccountItem to="/dashboard/alluser" icon={<LuUsers className="text-red-500" />} label="User Management" description="Administer user accounts" />
+            <AccountItem to="/dashboard/analytics" icon={<SiAnalogue  className="text-gray-500" />} label="Analytics" description="SEO for products" />
           </SectionContainer>
         )}
 
