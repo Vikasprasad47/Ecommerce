@@ -1353,8 +1353,10 @@ const Login = () => {
         : localStorage.removeItem('rememberedEmail') || localStorage.removeItem('rememberedPassword');
 
       if (user) dispatch(setUserDetails(user));
+
       toast.dismiss(loadingToast);
       toast.success("Login successful!");
+      
 
       setTimeout(() => {
         setData({ email: "", password: "" });
