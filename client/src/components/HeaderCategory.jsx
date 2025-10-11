@@ -90,7 +90,7 @@ const HeaderSubCategory = () => {
       {/* Horizontal Scroll */}
       <div className="flex items-center gap-6 overflow-x-auto px-2 py-4 scrollbar-hide snap-x snap-mandatory">
         {loading
-          ? [...Array(8)].map((_, i) => <SkeletonItem key={i} />)
+          ? [...Array(16)].map((_, i) => <SkeletonItem key={i} />)
           : subCategories.map((sub) => (
               <SubCategoryItem
                 key={sub._id}

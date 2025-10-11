@@ -11,9 +11,10 @@ import { GoHomeFill } from "react-icons/go";
 import { useSelector, shallowEqual } from "react-redux";
 import useMobile from "../Hooks/useMobile";
 import { useGlobalContext } from "../provider/globalProvider";
+import UserDropDownMenu from './UserDropDownMenu'
 
 // Lazy load UserDropDownMenu
-const UserDropDownMenu = lazy(() => import("./UserDropDownMenu"));
+// const UserDropDownMenu = lazy(() => import("./UserDropDownMenu"));
 
 const Header = () => {
   const isMobile = useMobile();
@@ -77,11 +78,11 @@ const Header = () => {
                 <div className="relative hidden md:flex items-center" ref={userMenuRef}>
                   <button
                     onClick={() => setOpenUserMenu(!openUserMenu)}
-                    className="flex items-center gap-1 font-medium text-sm hover:text-purple-700 transition"
+                    className="flex items-center gap-1 font-medium text-sm hover:text-purple-700 transition cursor-pointer"
                   >
                     {user.name?.length > 14
                       ? `${user.name.slice(0, 10)}...`
-                      : user.name || user.phone}
+                      : `Hi, ${user.name || user.phone}`}
                     {openUserMenu ? <CiCircleChevUp size={18} /> : <CiCircleChevDown size={18} />}
                   </button>
 
@@ -113,7 +114,7 @@ const Header = () => {
             ) : (
               <button
                 onClick={redirectToLoginPage}
-                className="flex items-center gap-1 text-sm font-medium hover:text-purple-700 transition"
+                className="flex items-center gap-1 text-sm font-medium hover:text-purple-700 transition cursor-pointer"
               >
                 <FaUserCircle size={20} />
                 Login
@@ -123,7 +124,7 @@ const Header = () => {
             {/* Cart */}
             <button
               onClick={() => setOpenCartSection(true)}
-              className="relative flex items-center gap-1 text-sm font-medium hover:text-purple-700 transition"
+              className="relative flex items-center gap-1 text-sm font-medium hover:text-purple-700 transition cursor-pointer"
             >
               <FaCartShopping size={24} />
               <span className="hidden sm:inline">Cart</span>
@@ -136,7 +137,7 @@ const Header = () => {
 
             {/* Seller */}
             <button
-              className="hidden lg:flex items-center gap-1 text-sm font-medium hover:text-purple-700 transition"
+              className="hidden cursor-pointer items-center gap-1 text-sm font-medium hover:text-purple-700 transition"
               title="Become A Seller"
             >
               <BsShop size={22} />

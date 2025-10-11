@@ -13,7 +13,7 @@ import { IoLogoInstagram } from "react-icons/io";
 const Footer = () => {
   return (
     <footer className="bg-gray-50 border-t border-gray-200 text-gray-700 py-14 px-6 sm:px-12">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
+      <div className="max-w-full mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
         
         {/* Brand + Description */}
         <div className="flex flex-col space-y-5">

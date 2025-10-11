@@ -132,7 +132,7 @@ const UserDropDownMenu = ({ close }) => {
                 key={i}
                 to={item.to}
                 onClick={close}
-                className="flex items-center justify-between px-4 py-3 hover:bg-orange-50 transition-all duration-200 group"
+                className="flex items-center justify-between px-4 py-3 hover:bg-slate-200 transition-all duration-200 group"
               >
                 <div className="flex items-center gap-3">
                   <Icon className="text-orange-500 group-hover:text-orange-600 transition-colors" size={18} />
@@ -142,7 +142,7 @@ const UserDropDownMenu = ({ close }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   {item.badge > 0 && (
-                    <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                    <span className="text-xs bg-orange-500 text-white px-2 py-1 rounded-full min-w-[20px] text-center">
                       {item.badge}
                     </span>
                   )}
@@ -163,7 +163,7 @@ const UserDropDownMenu = ({ close }) => {
                   key={i}
                   to={item.to}
                   onClick={close}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-orange-100 transition-all duration-200 group"
+                  className="flex items-center justify-between px-4 py-3 hover:bg-blue-100 transition-all duration-200 group"
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="text-orange-600 group-hover:text-orange-700 transition-colors" size={18} />
@@ -209,7 +209,7 @@ const UserDropDownMenu = ({ close }) => {
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 py-3 
                        bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 
-                       text-white rounded-xl font-medium text-sm transition-all duration-200 shadow-sm hover:shadow-md"
+                       text-white rounded-xl font-medium text-sm transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
           >
             <IoLogOutOutline size={16} />
             Logout

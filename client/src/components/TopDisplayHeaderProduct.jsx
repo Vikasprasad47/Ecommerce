@@ -534,7 +534,7 @@ const TopDisplayHeaderProduct = () => {
 
   return (
     <section className="w-full mt-3 rounded-md bg-white py-6 px-4 sm:px-6 border-b border-gray-200">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-full mx-auto">
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Latest Products</h2>

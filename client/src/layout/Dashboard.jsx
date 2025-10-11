@@ -12,7 +12,7 @@ const Dashboard = () => {
       <div className="lg:container lg:max-w-[1440px] lg:px-3 md:grid lg:grid-cols-[250px_1fr] gap-4">
         
         {/* Left menu */}
-        <div className='hidden lg:block sticky top-30 h-fit self-start'>
+        <div className='hidden lg:block sticky top-18 h-fit self-start'>
           <UserMenu rightContainerRef={rightContainerRef} />
         </div>
 
