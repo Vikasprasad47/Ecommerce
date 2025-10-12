@@ -631,7 +631,7 @@ const CheckOutPage = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto py-4 ">
+      <div className="max-w-full mx-auto p-4 ">
         {/* Header - Consistent with other pages */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm">
           <div className="flex items-center gap-3 mb-3 sm:mb-0">
