@@ -738,7 +738,7 @@ const CheckOutPage = () => {
                       Placing Order...
                     </div>
                   ) : selectedPayment === 'cod' ? (
-                    'Selected: Cash on Delivery'
+                    'Cash on Delivery'
                   ) : (
                     'Cash on Delivery'
                   )}

@@ -361,7 +361,7 @@ const UserMenu = ({ close, rightContainerRef }) => {
             className="w-12 h-12 rounded-full object-cover border-2 border-slate-200"
           />
           <div>
-            <p className="font-semibold text-slate-800 truncate">{user.name || user.mobile}</p>
+            <p className="font-semibold text-slate-800 truncate">{`${user.name.slice(0, 10)}...`}</p>
             <span className="text-xs text-slate-500 capitalize">
               {user.role === "ADMIN" ? 'ADMIN' : user.role === "DELIVERY-AGENT" ? 'Delivery Agent' : user.role === "USER" ? `${user?.email.toLowerCase()}`: ""}
             </span>
