@@ -1,11 +1,244 @@
+// import React, { useEffect, useState, useCallback, useMemo } from "react";
+// import { useSelector } from "react-redux";
+// import Axios from "../utils/axios";
+// import SummaryApi from "../comman/summaryApi";
+// import { motion, AnimatePresence } from "framer-motion";
+// import { FaStar, FaRegStar } from "react-icons/fa";
+// import { MdErrorOutline, MdReviews, MdOutlinePhotoLibrary } from "react-icons/md";
+// import { FiRefreshCcw, FiSearch } from "react-icons/fi";
+// import { TbPhotoOff, TbMoodEmpty } from "react-icons/tb";
+
+// const UserReview = () => {
+//   const user = useSelector((state) => state.user);
+//   const [reviews, setReviews] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [sortBy, setSortBy] = useState("newest");
+//   const [filterRating, setFilterRating] = useState("all");
+//   const [selectedReview, setSelectedReview] = useState(null);
+
+//   // Filtered & sorted reviews
+//   const processedReviews = useMemo(() => {
+//     let filtered = reviews.filter((review) => {
+//       const name = review?.product?.name?.toLowerCase() || "";
+//       const matchesSearch = name.includes(searchTerm.toLowerCase());
+//       const matchesRating = filterRating === "all" || review.rating === +filterRating;
+//       return matchesSearch && matchesRating;
+//     });
+
+//     return filtered.sort((a, b) => {
+//       switch (sortBy) {
+//         case "newest": return new Date(b.createdAt) - new Date(a.createdAt);
+//         case "oldest": return new Date(a.createdAt) - new Date(b.createdAt);
+//         case "highest": return b.rating - a.rating;
+//         case "lowest": return a.rating - b.rating;
+//         default: return 0;
+//       }
+//     });
+//   }, [reviews, searchTerm, sortBy, filterRating]);
+
+//   const fetchUserReviews = useCallback(async () => {
+//     try {
+//       setLoading(true);
+//       setError("");
+//       const res = await Axios(SummaryApi.getUserReviews);
+//       if (res.data?.success) setReviews(res.data.data || []);
+//       else throw new Error(res.data?.message || "Failed to fetch reviews");
+//     } catch (err) {
+//       console.error(err);
+//       setError(err.response?.data?.message || "Unable to load reviews");
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     if (user?._id) fetchUserReviews();
+//   }, [user?._id, fetchUserReviews]);
+
+//   const StarRating = ({ rating, interactive = false, onRate }) => {
+//     const [hoverRating, setHoverRating] = useState(0);
+//     return (
+//       <div className="flex gap-1">
+//         {[...Array(5)].map((_, i) => {
+//           const value = i + 1;
+//           const filled = value <= (hoverRating || rating);
+//           return (
+//             <button
+//               key={i}
+//               type={interactive ? "button" : "div"}
+//               onMouseEnter={() => interactive && setHoverRating(value)}
+//               onMouseLeave={() => interactive && setHoverRating(0)}
+//               onClick={() => interactive && onRate(value)}
+//               className={`transition ${interactive ? "hover:scale-110" : ""}`}
+//             >
+//               {filled ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-gray-300" />}
+//             </button>
+//           );
+//         })}
+//       </div>
+//     );
+//   };
+
+//   const SkeletonCard = () => (
+//     <div className="animate-pulse bg-gray-100 rounded-lg p-4">
+//       <div className="h-40 bg-gray-200 mb-3 rounded"></div>
+//       <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+//       <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+//     </div>
+//   );
+
+//   const ReviewModal = ({ review, onClose }) => (
+//     <motion.div
+//       initial={{ opacity: 0 }}
+//       animate={{ opacity: 1 }}
+//       exit={{ opacity: 0 }}
+//       className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+//       onClick={onClose}
+//     >
+//       <motion.div
+//         initial={{ scale: 0.95, opacity: 0 }}
+//         animate={{ scale: 1, opacity: 1 }}
+//         exit={{ scale: 0.95, opacity: 0 }}
+//         className="bg-white rounded-lg max-w-md w-full overflow-hidden"
+//         onClick={(e) => e.stopPropagation()}
+//       >
+//         {review?.product?.images?.[0] && (
+//           <div className="h-40 flex items-center justify-center bg-gray-50">
+//             <img src={review.product.images[0]} alt={review.product.name} className="h-32 object-contain" />
+//           </div>
+//         )}
+//         <div className="p-4">
+//           <h3 className="font-bold text-lg">{review?.product?.name || "Unnamed Product"}</h3>
+//           <div className="flex items-center gap-2 my-2">
+//             <StarRating rating={review.rating} />
+//             <span className="text-sm text-gray-500">{review.rating}/5</span>
+//           </div>
+//           <p className="text-gray-700 mb-4">{review.comment || "No comment provided."}</p>
+//           <div className="flex justify-end gap-2 text-sm text-gray-500">
+//             <span>Reviewed on {new Date(review.createdAt).toLocaleDateString()}</span>
+//             <button onClick={onClose} className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">Close</button>
+//           </div>
+//         </div>
+//       </motion.div>
+//     </motion.div>
+//   );
+
+//   return (
+//     <div className="min-h-screen py-8 px-4 bg-gray-50">
+//       <div className="max-w-6xl mx-auto text-center mb-8">
+//         <div className="inline-flex items-center gap-3 mb-4">
+//           <MdReviews className="text-3xl text-blue-600" />
+//           <div>
+//             <h2 className="text-3xl font-bold text-gray-800">My Reviews</h2>
+//             <p className="text-gray-600 text-sm">{reviews.length} review{reviews.length !== 1 ? 's' : ''}</p>
+//           </div>
+//         </div>
+//         <div className="flex flex-col md:flex-row gap-3 justify-center">
+//           <div className="relative">
+//             <FiSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
+//             <input
+//               type="text"
+//               value={searchTerm}
+//               onChange={(e) => setSearchTerm(e.target.value)}
+//               placeholder="Search reviews..."
+//               className="pl-8 pr-3 py-2 border rounded-md w-full md:w-64"
+//             />
+//           </div>
+//           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="py-2 border rounded-md w-full md:w-40">
+//             <option value="newest">Newest</option>
+//             <option value="oldest">Oldest</option>
+//             <option value="highest">Highest Rated</option>
+//             <option value="lowest">Lowest Rated</option>
+//           </select>
+//           <select value={filterRating} onChange={(e) => setFilterRating(e.target.value)} className="py-2 border rounded-md w-full md:w-40">
+//             <option value="all">All Ratings</option>
+//             {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Stars</option>)}
+//           </select>
+//         </div>
+//       </div>
+
+//       {loading && (
+//         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+//           {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
+//         </div>
+//       )}
+
+//       {!loading && error && (
+//         <div className="text-center py-20">
+//           <MdErrorOutline className="text-6xl text-red-500 mb-4" />
+//           <p className="text-gray-700 mb-4">{error}</p>
+//           <button onClick={fetchUserReviews} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2 mx-auto">
+//             <FiRefreshCcw /> Retry
+//           </button>
+//         </div>
+//       )}
+
+//       {!loading && !error && processedReviews.length === 0 && (
+//         <div className="text-center py-20 text-gray-500">
+//           <TbMoodEmpty className="text-6xl mb-4 mx-auto" />
+//           <p>No reviews found.</p>
+//         </div>
+//       )}
+
+//       {!loading && !error && processedReviews.length > 0 && (
+//         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+//           <AnimatePresence>
+//             {processedReviews.map((review) => {
+//               const product = review.product || {};
+//               const image = product.images?.[0] || null;
+//               return (
+//                 <motion.div
+//                   key={review._id}
+//                   layout
+//                   initial={{ opacity: 0, scale: 0.95 }}
+//                   animate={{ opacity: 1, scale: 1 }}
+//                   exit={{ opacity: 0, scale: 0.95 }}
+//                   whileHover={{ scale: 1.02 }}
+//                   className="border rounded-lg bg-white cursor-pointer overflow-hidden shadow-sm hover:shadow-md transition"
+//                   onClick={() => setSelectedReview(review)}
+//                 >
+//                   {image ? (
+//                     <img src={image} alt={product.name} className="w-full h-40 object-contain bg-gray-100" />
+//                   ) : (
+//                     <div className="flex items-center justify-center h-40 bg-gray-100 text-gray-400">
+//                       <TbPhotoOff className="text-3xl" />
+//                     </div>
+//                   )}
+//                   <div className="p-3">
+//                     <h3 className="font-semibold text-gray-800 mb-1 text-sm line-clamp-2">{product.name || "Unnamed Product"}</h3>
+//                     <div className="flex items-center justify-between mb-2">
+//                       <StarRating rating={review.rating} />
+//                       <span className="text-xs text-gray-500">{review.rating}/5</span>
+//                     </div>
+//                     <p className="text-gray-600 text-sm line-clamp-3 mb-2">{review.comment || "No comment"}</p>
+//                     <span className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</span>
+//                   </div>
+//                 </motion.div>
+//               );
+//             })}
+//           </AnimatePresence>
+//         </div>
+//       )}
+
+//       <AnimatePresence>
+//         {selectedReview && <ReviewModal review={selectedReview} onClose={() => setSelectedReview(null)} />}
+//       </AnimatePresence>
+//     </div>
+//   );
+// };
+
+// export default UserReview;
+
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import Axios from "../utils/axios";
 import SummaryApi from "../comman/summaryApi";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaStar, FaRegStar } from "react-icons/fa";
+import { FaStar, FaRegStar, FaSearch } from "react-icons/fa";
 import { MdErrorOutline, MdReviews, MdOutlinePhotoLibrary } from "react-icons/md";
-import { FiRefreshCcw, FiSearch } from "react-icons/fi";
+import { FiRefreshCcw } from "react-icons/fi";
 import { TbPhotoOff, TbMoodEmpty } from "react-icons/tb";
 
 const UserReview = () => {
@@ -57,24 +290,21 @@ const UserReview = () => {
     if (user?._id) fetchUserReviews();
   }, [user?._id, fetchUserReviews]);
 
-  const StarRating = ({ rating, interactive = false, onRate }) => {
-    const [hoverRating, setHoverRating] = useState(0);
+  const StarRating = ({ rating, size = "sm" }) => {
+    const sizeClasses = {
+      sm: "text-sm",
+      md: "text-base",
+      lg: "text-lg"
+    };
+
     return (
-      <div className="flex gap-1">
+      <div className={`flex gap-1 ${sizeClasses[size]}`}>
         {[...Array(5)].map((_, i) => {
-          const value = i + 1;
-          const filled = value <= (hoverRating || rating);
-          return (
-            <button
-              key={i}
-              type={interactive ? "button" : "div"}
-              onMouseEnter={() => interactive && setHoverRating(value)}
-              onMouseLeave={() => interactive && setHoverRating(0)}
-              onClick={() => interactive && onRate(value)}
-              className={`transition ${interactive ? "hover:scale-110" : ""}`}
-            >
-              {filled ? <FaStar className="text-yellow-500" /> : <FaRegStar className="text-gray-300" />}
-            </button>
+          const filled = i < rating;
+          return filled ? (
+            <FaStar key={i} className="text-amber-500" />
+          ) : (
+            <FaRegStar key={i} className="text-gray-300" />
           );
         })}
       </div>
@@ -82,10 +312,11 @@ const UserReview = () => {
   };
 
   const SkeletonCard = () => (
-    <div className="animate-pulse bg-gray-100 rounded-lg p-4">
-      <div className="h-40 bg-gray-200 mb-3 rounded"></div>
-      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+    <div className="animate-pulse bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+      <div className="h-40 bg-gray-200 mb-4 rounded-xl"></div>
+      <div className="h-4 bg-gray-200 rounded-lg w-3/4 mb-3"></div>
+      <div className="h-3 bg-gray-200 rounded-lg w-1/2 mb-2"></div>
+      <div className="h-3 bg-gray-200 rounded-lg w-2/3"></div>
     </div>
   );
 
@@ -94,31 +325,72 @@ const UserReview = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white rounded-lg max-w-md w-full overflow-hidden"
+        className="bg-white rounded-2xl shadow-xl w-full max-w-md border border-gray-200 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {review?.product?.images?.[0] && (
-          <div className="h-40 flex items-center justify-center bg-gray-50">
-            <img src={review.product.images[0]} alt={review.product.name} className="h-32 object-contain" />
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-50 rounded-xl">
+              <MdReviews className="text-amber-600 text-xl" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-gray-800">Review Details</h2>
+              <p className="text-sm text-gray-600">Product review information</p>
+            </div>
           </div>
-        )}
-        <div className="p-4">
-          <h3 className="font-bold text-lg">{review?.product?.name || "Unnamed Product"}</h3>
-          <div className="flex items-center gap-2 my-2">
-            <StarRating rating={review.rating} />
-            <span className="text-sm text-gray-500">{review.rating}/5</span>
+          <button 
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+          >
+            <MdErrorOutline size={24} className="text-gray-500 hover:text-gray-700" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {review?.product?.images?.[0] && (
+            <div className="flex items-center justify-center bg-gray-50 rounded-xl p-4 mb-4">
+              <img 
+                src={review.product.images[0]} 
+                alt={review.product.name} 
+                className="h-32 object-contain rounded-lg" 
+              />
+            </div>
+          )}
+          
+          <h3 className="font-semibold text-gray-800 text-lg mb-3">
+            {review?.product?.name || "Unnamed Product"}
+          </h3>
+          
+          <div className="flex items-center gap-3 mb-4">
+            <StarRating rating={review.rating} size="md" />
+            <span className="text-sm font-medium text-gray-700 bg-amber-50 px-2 py-1 rounded-lg">
+              {review.rating}/5
+            </span>
           </div>
-          <p className="text-gray-700 mb-4">{review.comment || "No comment provided."}</p>
-          <div className="flex justify-end gap-2 text-sm text-gray-500">
+          
+          <div className="bg-gray-50 rounded-xl p-4">
+            <p className="text-gray-700 leading-relaxed">
+              {review.comment || "No comment provided."}
+            </p>
+          </div>
+          
+          <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
             <span>Reviewed on {new Date(review.createdAt).toLocaleDateString()}</span>
-            <button onClick={onClose} className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">Close</button>
+            <button 
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-colors"
+            >
+              Close
+            </button>
           </div>
         </div>
       </motion.div>
@@ -126,105 +398,163 @@ const UserReview = () => {
   );
 
   return (
-    <div className="min-h-screen py-8 px-4 bg-gray-50">
-      <div className="max-w-6xl mx-auto text-center mb-8">
-        <div className="inline-flex items-center gap-3 mb-4">
-          <MdReviews className="text-3xl text-blue-600" />
-          <div>
-            <h2 className="text-3xl font-bold text-gray-800">My Reviews</h2>
-            <p className="text-gray-600 text-sm">{reviews.length} review{reviews.length !== 1 ? 's' : ''}</p>
+    <div className="min-h-screen">
+      <div className="max-w-full mx-auto px-4">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm">
+          <div className="flex items-center gap-3 mb-3 sm:mb-0">
+            <div className="p-2 bg-amber-50 rounded-xl">
+              <MdReviews className="text-amber-600 text-xl" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-xl text-gray-800">My Reviews</h2>
+              <p className="text-sm text-gray-600">{reviews.length} review{reviews.length !== 1 ? 's' : ''}</p>
+            </div>
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-64">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search reviews..."
+                className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-200 focus:border-amber-500 transition"
+              />
+            </div>
+            
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)} 
+              className="px-3 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-200 focus:border-amber-500 transition"
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="highest">Highest Rated</option>
+              <option value="lowest">Lowest Rated</option>
+            </select>
+            
+            <select 
+              value={filterRating} 
+              onChange={(e) => setFilterRating(e.target.value)} 
+              className="px-3 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-200 focus:border-amber-500 transition"
+            >
+              <option value="all">All Ratings</option>
+              {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Stars</option>)}
+            </select>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row gap-3 justify-center">
-          <div className="relative">
-            <FiSearch className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search reviews..."
-              className="pl-8 pr-3 py-2 border rounded-md w-full md:w-64"
-            />
+
+        {/* Loading State */}
+        {loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="py-2 border rounded-md w-full md:w-40">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="highest">Highest Rated</option>
-            <option value="lowest">Lowest Rated</option>
-          </select>
-          <select value={filterRating} onChange={(e) => setFilterRating(e.target.value)} className="py-2 border rounded-md w-full md:w-40">
-            <option value="all">All Ratings</option>
-            {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Stars</option>)}
-          </select>
-        </div>
+        )}
+
+        {/* Error State */}
+        {!loading && error && (
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
+            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <MdErrorOutline className="text-3xl text-red-500" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Unable to Load Reviews</h3>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <button 
+              onClick={fetchUserReviews} 
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-orange-600 shadow-md transition-all"
+            >
+              <FiRefreshCcw /> Try Again
+            </button>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && processedReviews.length === 0 && (
+          <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center shadow-sm">
+            <div className="w-20 h-20 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <TbMoodEmpty className="text-4xl text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">No Reviews Found</h3>
+            <p className="text-gray-600 mb-2">
+              {searchTerm || filterRating !== "all" 
+                ? "Try adjusting your search or filters" 
+                : "You haven't reviewed any products yet"}
+            </p>
+          </div>
+        )}
+
+        {/* Reviews Grid */}
+        {!loading && !error && processedReviews.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <AnimatePresence>
+              {processedReviews.map((review) => {
+                const product = review.product || {};
+                const image = product.images?.[0] || null;
+                
+                return (
+                  <motion.div
+                    key={review._id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    whileHover={{ scale: 1.02 }}
+                    className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden cursor-pointer"
+                    onClick={() => setSelectedReview(review)}
+                  >
+                    {/* Product Image */}
+                    {image ? (
+                      <div className="h-48 bg-gray-50 flex items-center justify-center p-4">
+                        <img 
+                          src={image} 
+                          alt={product.name} 
+                          className="h-32 object-contain rounded-lg" 
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-48 bg-gray-50 flex flex-col items-center justify-center text-gray-400 p-4">
+                        <TbPhotoOff className="text-4xl mb-2" />
+                        <span className="text-sm">No Image</span>
+                      </div>
+                    )}
+
+                    {/* Review Content */}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-800 text-sm line-clamp-2 mb-3">
+                        {product.name || "Unnamed Product"}
+                      </h3>
+                      
+                      <div className="flex items-center justify-between mb-3">
+                        <StarRating rating={review.rating} />
+                        <span className="text-xs font-medium text-gray-700 bg-amber-50 px-2 py-1 rounded-lg">
+                          {review.rating}/5
+                        </span>
+                      </div>
+                      
+                      <p className="text-gray-600 text-sm line-clamp-3 mb-3 leading-relaxed">
+                        {review.comment || "No comment provided"}
+                      </p>
+                      
+                      <div className="flex justify-between items-center text-xs text-gray-500">
+                        <span>{new Date(review.createdAt).toLocaleDateString()}</span>
+                        <span className="text-amber-600 font-medium">View Details</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {/* Review Modal */}
+        <AnimatePresence>
+          {selectedReview && <ReviewModal review={selectedReview} onClose={() => setSelectedReview(null)} />}
+        </AnimatePresence>
       </div>
-
-      {loading && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
-          {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
-        </div>
-      )}
-
-      {!loading && error && (
-        <div className="text-center py-20">
-          <MdErrorOutline className="text-6xl text-red-500 mb-4" />
-          <p className="text-gray-700 mb-4">{error}</p>
-          <button onClick={fetchUserReviews} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2 mx-auto">
-            <FiRefreshCcw /> Retry
-          </button>
-        </div>
-      )}
-
-      {!loading && !error && processedReviews.length === 0 && (
-        <div className="text-center py-20 text-gray-500">
-          <TbMoodEmpty className="text-6xl mb-4 mx-auto" />
-          <p>No reviews found.</p>
-        </div>
-      )}
-
-      {!loading && !error && processedReviews.length > 0 && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
-          <AnimatePresence>
-            {processedReviews.map((review) => {
-              const product = review.product || {};
-              const image = product.images?.[0] || null;
-              return (
-                <motion.div
-                  key={review._id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="border rounded-lg bg-white cursor-pointer overflow-hidden shadow-sm hover:shadow-md transition"
-                  onClick={() => setSelectedReview(review)}
-                >
-                  {image ? (
-                    <img src={image} alt={product.name} className="w-full h-40 object-contain bg-gray-100" />
-                  ) : (
-                    <div className="flex items-center justify-center h-40 bg-gray-100 text-gray-400">
-                      <TbPhotoOff className="text-3xl" />
-                    </div>
-                  )}
-                  <div className="p-3">
-                    <h3 className="font-semibold text-gray-800 mb-1 text-sm line-clamp-2">{product.name || "Unnamed Product"}</h3>
-                    <div className="flex items-center justify-between mb-2">
-                      <StarRating rating={review.rating} />
-                      <span className="text-xs text-gray-500">{review.rating}/5</span>
-                    </div>
-                    <p className="text-gray-600 text-sm line-clamp-3 mb-2">{review.comment || "No comment"}</p>
-                    <span className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
-      )}
-
-      <AnimatePresence>
-        {selectedReview && <ReviewModal review={selectedReview} onClose={() => setSelectedReview(null)} />}
-      </AnimatePresence>
     </div>
   );
 };

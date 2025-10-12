@@ -327,8 +327,8 @@ const Categorypage = () => {
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 py-4">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen">
+      <div className="max-w-full mx-auto px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm">
           <h2 className="font-semibold text-xl text-gray-800">Category Management</h2>
@@ -355,9 +355,9 @@ const Categorypage = () => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 transition-all duration-300 hover:shadow-md">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-2 transition-all duration-300 hover:shadow-md">
           {!filteredData[0] && !loading && <Nodata />}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-5 py-4">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-2 py-4">
             {loading
               ? Array.from({ length: itemsPerPage }).map((_, i) => (
                   <div

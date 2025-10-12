@@ -355,7 +355,7 @@ const Subcategorypage = () => {
     <section className="bg-gradient-to-br from-slate-50 to-gray-100 min-h-screen">
       <div className="max-w-full mx-auto px-4">
         {/* Header */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5 flex flex-row justify-between sm:items-center gap-4">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Subcategories</h2>
             <p className="text-gray-600 text-sm mt-1">Manage all product subcategories</p>
@@ -363,7 +363,7 @@ const Subcategorypage = () => {
 
           <button
             onClick={() => setOpenAddSubCategory(true)}
-            className="flex items-center gap-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2.5 rounded-lg hover:shadow-md hover:scale-[1.02] transition-all duration-200"
+            className="flex items-center gap-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2.5 rounded-lg hover:shadow-md hover:scale-[1.02] transition-all duration-200 w-fit"
           >
             <FiPlus size={18} />
             Add Subcategory
@@ -371,8 +371,8 @@ const Subcategorypage = () => {
         </div>
 
         {/* Table Section */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm h-[calc(100vh-220px)] overflow-hidden hover:overflow-y-auto transition-all duration-200">
-          <div className="p-4 w-full overflow-x-auto">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm h-[calc(100vh-110px)] overflow-y-auto transition-all duration-200">
+          <div className="w-full overflow-x-auto">
             <DisplayTable data={data} column={column} loading={loading} />
           </div>
         </div>

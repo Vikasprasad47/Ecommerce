@@ -285,7 +285,7 @@ const ProductReviewPage = ({ productId, productData, onReviewSubmitted }) => {
 
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pt-0 sm:px-6 py-3">
+    <div className="max-w-full mx-auto px-4 pt-0 sm:px-6 py-3">
 
       <div>
         {/* Rating Summary */}

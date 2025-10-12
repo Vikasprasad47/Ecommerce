@@ -205,6 +205,10 @@ import { logout } from '../Store/userSlice'
 import toast from 'react-hot-toast'
 import AxiosToastError from '../utils/AxiosToastErroe'
 import isAdmin from '../utils/IsAdmin'
+import { MdReviews } from "react-icons/md";
+import { MdOutlineReviews } from "react-icons/md";
+
+
 
 // Icons
 import {
@@ -286,14 +290,14 @@ const UserMenu = ({ close, rightContainerRef }) => {
       <Link
         to={to}
         onClick={handelClose}
-        className={`group relative flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300
+        className={`group relative flex items-center justify-between px-4 py-3 rounded-sm transition-all duration-300
           ${isActive
-            ? 'bg-slate-100 text-gray-600 shadow-md border-l-4 border-orange-400'
-            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border-l-4 border-transparent hover:border-orange-400'
+            ? 'bg-slate-200 text-gray-600 border-l-4 border-blue-700'
+            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border-l-4 border-transparent hover:border-orange-400'
           }`}
       >
         <div className="flex items-center gap-3">
-          <Icon size={20} className={`${isActive ? 'text-gray-500' : 'text-slate-400 group-hover:text-slate-600'}`} />
+          <Icon size={20} className={`${isActive ? 'text-gray-600' : 'text-slate-600 group-hover:text-slate-600'}`} />
           <span className="font-medium text-sm">{children}</span>
         </div>
       </Link>
@@ -315,10 +319,15 @@ const UserMenu = ({ close, rightContainerRef }) => {
     { to: "/dashboard/myorder", icon: LuPackageCheck, label: "My Orders" },
     { to: "/dashboard/wishlist", icon: FaRegHeart, label: "Wishlist" },
     { to: "/dashboard/address", icon: GrMapLocation, label: "Address" },
+    { to: "/dashboard/reviews", icon: MdOutlineReviews , label: "My Reviews" },
   ]
 
   const agentMenu = [
     { to: "/dashboard/manage-order", icon: LuUsers, label: "Manage Orders" },
+    { to: "/dashboard/myorder", icon: LuPackageCheck, label: "My Orders" },
+    { to: "/dashboard/wishlist", icon: FaRegHeart, label: "Wishlist" },
+    { to: "/dashboard/address", icon: GrMapLocation, label: "Address" },
+    { to: "/dashboard/reviews", icon: MdOutlineReviews , label: "My Reviews" },
   ]
 
   // Choose menu based on role
@@ -347,14 +356,14 @@ const UserMenu = ({ close, rightContainerRef }) => {
       <div className="flex items-center justify-between bg-white/70 backdrop-blur-md rounded-2xl shadow-sm border border-slate-100 px-3 py-3 mb-3 hover:shadow-md transition-all">
         <div className="flex items-center gap-3">
           <img
-            src={user.avatar}
+            src={user.avatar || "https://api.dicebear.com/9.x/initials/svg?seed=" + user.name}
             alt={user.name}
             className="w-12 h-12 rounded-full object-cover border-2 border-slate-200"
           />
           <div>
             <p className="font-semibold text-slate-800 truncate">{user.name || user.mobile}</p>
             <span className="text-xs text-slate-500 capitalize">
-              {user.role === "ADMIN" ? 'Admin' : user.role === "DELIVERY-AGENT" ? 'Delivery Agent' : 'User'}
+              {user.role === "ADMIN" ? 'ADMIN' : user.role === "DELIVERY-AGENT" ? 'Delivery Agent' : user.role === "USER" ? `${user?.email.toLowerCase()}`: ""}
             </span>
           </div>
         </div>

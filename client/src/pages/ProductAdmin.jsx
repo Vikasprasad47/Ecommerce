@@ -213,12 +213,12 @@ const ProductAdmin = () => {
   );
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
-      <div className="max-w-full mx-auto">
+    <section className="min-h-screen">
+      <div className="max-w-full mx-auto px-4">
         
 
         {/* Main Content */}
-        <div className="p-4 sm:p-6">
+        <div className="">
           {/* Header */}
           <div className="bg-white border-gray-200 rounded-2xl shadow-sm p-4 sm:p-6 mb-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

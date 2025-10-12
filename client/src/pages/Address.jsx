@@ -184,8 +184,8 @@ const Address = () => {
   }, [addressList])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 py-4">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen">
+      <div className="max-w-ful mx-auto px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm">
           <h2 className="font-semibold text-xl text-gray-800">Saved Addresses</h2>

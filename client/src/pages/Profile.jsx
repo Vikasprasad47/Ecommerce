@@ -590,8 +590,8 @@ const Profile = () => {
   ], [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 py-4">
-      <div className="max-w-full mx-auto px-4">
+    <div className="min-h-screen">
+      <div className="max-w-full mx-auto px-4 pb-4">
         {openAvatarEdit && <UserFileUploadAvatar close={() => setOpenAvatarEdit(false)} />}
 
         {/* Tabs */}
@@ -719,6 +719,20 @@ const Profile = () => {
                     Remove Avatar
                   </button>
                 )}
+
+                {
+                  (!avatar) && (
+                    <button
+                      type="button"
+                      onClick={() => setOpenAvatarEdit(true)}
+                      disabled={loading}
+                      className="flex-1 px-6 py-3 rounded-xl border border-red-300 text-red-600 font-semibold hover:bg-red-50 transition"
+                    >
+                      Upload Avatar
+                    </button>
+                  )
+                }
+                
               </div>
             </form>
           )}
@@ -741,7 +755,7 @@ const Profile = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           {quickActions.map((action, i) => (
             <button
               key={i}
