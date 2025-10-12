@@ -446,7 +446,7 @@ const MyOrder = () => {
                 <div key={step.id} className="flex flex-col items-center">
                   <div className={`
                     w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-300
-                    ${isCompleted ? 'bg-amber-500 border-amber-500 text-white' : 'border-gray-200 bg-white text-gray-400'}
+                    ${isCompleted ? 'bg-amber-500/50 border-amber-500/50 text-white' : 'border-gray-200 bg-white text-gray-400'}
                     ${isCurrent ? 'ring-4 ring-amber-100' : ''}
                   `}>
                     {isCompleted ? (
@@ -476,8 +476,8 @@ const MyOrder = () => {
     const isOngoing = orderStatus !== 'delivered';
 
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-4 hover:shadow-md transition-shadow">
-        <div className='p-6 cursor-pointer' onClick={onToggle}>
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow mb-3">
+        <div className='p-3 cursor-pointer' onClick={onToggle}>
           <div className="flex items-start gap-4">
             <div className="relative">
               {order.items.length > 1 && (
@@ -532,8 +532,8 @@ const MyOrder = () => {
         </div>
 
         {isExpanded && (
-          <div className="border-t border-gray-100 px-6 py-4 bg-gray-50">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="border-t border-gray-100 px-3 py-2 bg-gray-50">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               <div className="bg-white p-5 rounded-xl border border-gray-200">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
                   <LuTruck className="text-indigo-500" size={16} />
@@ -608,7 +608,7 @@ const MyOrder = () => {
     <div className="min-h-screen">
       <div className="max-w-full mx-auto px-4">
         {/* Header - Consistent with other pages */}
-        <div className="flex flex-row sm:flex-col justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm gap-4">
+        <div className="flex flex-col lg:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm gap-4">
 
         {/* Div 1: Icon + Title + Search */}
         <div className="flex flex-row sm:flex-row items-center justify-space sm:items-center gap-3 w-full sm:w-auto">
@@ -651,13 +651,13 @@ const MyOrder = () => {
       </div>
 
         {/* Orders List */}
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="">
           {!filteredOrders.length ? (
             <div className="p-8 text-center">
               <NoData message={`No ${activeFilter === 'all' ? '' : activeFilter + ' '}orders found`} />
             </div>
           ) : (
-            <div className="p-4">
+            <div className="">
               {filteredOrders.map((order) => (
                 <OrderCard
                   key={order._id}
