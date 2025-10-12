@@ -60,7 +60,7 @@ const Login = () => {
       if (user) dispatch(setUserDetails(user));
 
       toast.dismiss(loadingToast);
-      toast.success("Login successful!");
+      // toast.success("Login successful!");
       navigate("/", { replace: true });
 
       const userDetails = await fetchUserDetails();
@@ -106,7 +106,7 @@ const Login = () => {
       if (user) dispatch(setUserDetails(user));
       
       toast.dismiss(loadingToast);
-      toast.success("Login successful!");
+      // toast.success("Login successful!");
       navigate("/", { replace: true });
      
       const userDetails = await fetchUserDetails();
