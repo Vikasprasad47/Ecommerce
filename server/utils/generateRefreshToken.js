@@ -14,7 +14,6 @@ const generateRefreshToken = async (userId) => {
     {refresh_token: token}
   )
 
-  await UserModel.updateOne({ _id: userId }, { refresh_token: token });
   return token;
 };
 

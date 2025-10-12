@@ -142,8 +142,10 @@ export async function loginController(req, res) {
       });
     }
 
+    const sanitizedEmail = email.toLowerCase().trim();
+
     // 2️⃣ Find user
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email: sanitizedEmail });
     if (!user) {
       return res.status(404).json({
         message: "User not found. Please register first.",
@@ -174,6 +176,7 @@ export async function loginController(req, res) {
     // 5️⃣ Generate tokens
     const accessToken = await generateAccessToken(user._id);
     const refreshToken = await generateRefreshToken(user._id);
+    
     await UserModel.findByIdAndUpdate(
         user._id,
         {
