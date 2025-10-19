@@ -1,8 +1,3 @@
-// export const priceWithDiscount = (price, dis) => {
-//     const discountAmount = Math.ceil((Number(price) * Number(dis))/100)
-//     const actualPrice = Number(price) - Number(discountAmount)
-//     return actualPrice
-// }
 export const priceWithDiscount = (price, dis) => {
   // Ensure price and discount are numbers and handle undefined or null values
   const priceValue = Number(price);

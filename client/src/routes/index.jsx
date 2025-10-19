@@ -39,6 +39,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import PageLoader from "../components/PageLoader"; // Use your loader component
 import UserReview from "../pages/UserReview";
+import Couponpage from "../pages/Couponpage";
 
 // Lazy imports
 const App = lazy(() => import("../App"));
@@ -182,6 +183,10 @@ const router = createBrowserRouter([
                     {
                         path: "analytics",
                         element: <AdminPermission><AnalyticsDashboard/></AdminPermission>
+                    },
+                    {
+                        path: "coupons",
+                        element: <AdminPermission><Couponpage/></AdminPermission>
                     }
                 ]
             },

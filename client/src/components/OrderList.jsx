@@ -6,6 +6,8 @@ import Axios from '../utils/axios';
 import SummaryApi from '../comman/summaryApi';
 import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees';
 import OrderInvoicePDF from './OrderInvoicePDF';
+import { RiCoupon2Fill } from "react-icons/ri";
+
 
 const STATUS_OPTIONS = [
   { value: 'confirmed', label: 'Confirmed' },
@@ -17,6 +19,7 @@ const STATUS_OPTIONS = [
 const OrderList = ({ orders, onDelete, onRefresh }) => {
   const [expandedOrderIds, setExpandedOrderIds] = useState([]);
   const [loadingOrderId, setLoadingOrderId] = useState(null);
+  console.log("items", expandedOrderIds)
 
   const handleUpdateAllStatus = useCallback(async (orderId, newStatus) => {
     if (!orderId || !newStatus) return;
@@ -110,6 +113,7 @@ const OrderList = ({ orders, onDelete, onRefresh }) => {
     return acc;
   }, {});
 
+  console.log("groupedOrders", groupedOrders);
   return (
     <div className="space-y-6">
       {Object.entries(groupedOrders).map(([date, dateOrders]) => (
@@ -141,18 +145,29 @@ const OrderList = ({ orders, onDelete, onRefresh }) => {
                   {/* Order Header */}
                   <div 
                     onClick={() => !isDelivered && toggleExpand(order.orderId)}
-                    className={`p-4 sm:p-6 flex flex-col md:flex-row justify-between gap-4 ${
+                    className={`p-4 sm:p-6 flex flex-col md:flex-row justify-between gap-4 relative ${
                       isDelivered ? 'cursor-default' : 'cursor-pointer hover:bg-gray-50'
                     }`}
                   >
                     <div className="flex-1 space-y-3 min-w-0">
                       <div className="flex justify-between items-start gap-2">
                         <div>
-                          <h2 className={`text-lg font-semibold ${
+                          <div>
+                            {order.couponDiscount > 0 && (
+                              <div className="text-black text-xs font-semibold bg-green-200 px-2 py-1 w-fit rounded-lg mb-2">
+                                <div className='flex items-center gap-1'>
+                                  <RiCoupon2Fill />
+                                  <p>Coupon: {DisplayPriceInRupees(order.couponDiscount)}</p>
+                                </div>
+                              </div>
+                            )}
+                            <h2 className={`text-lg font-semibold ${
                             isDelivered ? 'text-gray-600' : 'text-gray-800'
-                          }`}>
-                            Order: #{order.orderId}
-                          </h2>
+                            }`}>
+                              Order: #{order.orderId}
+                            </h2>
+                          </div>
+                          
                           <p className={`text-sm ${
                             isDelivered ? 'text-gray-400' : 'text-gray-500'
                           }`}>
@@ -252,6 +267,8 @@ const OrderList = ({ orders, onDelete, onRefresh }) => {
                             +{order.items.length - 1}
                           </div>
                         )}
+
+
                       </div>
                       <div className="text-right">
                         <p className={`text-sm ${isDelivered ? 'text-gray-400' : 'text-gray-500'}`}>Total Amount</p>
@@ -285,7 +302,7 @@ const OrderList = ({ orders, onDelete, onRefresh }) => {
                           ))}
                         </select>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                         {order.items?.map(item => (
                           <div key={item._id} className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
                             <div className="flex gap-3">
@@ -299,9 +316,13 @@ const OrderList = ({ orders, onDelete, onRefresh }) => {
                                   {item.product_details?.name}
                                 </p>
                                 <div className="text-xs text-gray-500 mt-1 space-y-1">
-                                  <p><strong>Price:</strong> {DisplayPriceInRupees(item.pricePerUnit?.toFixed(2))}</p>
-                                  <p><strong>Qty:</strong> {item.quantity}</p>
-                                  <p><strong>Total:</strong> {DisplayPriceInRupees(item.totalAmt?.toFixed(2))}</p>
+                                  <div className='flex items-center justify-between'>
+                                    <p><strong>Price:</strong> {DisplayPriceInRupees(item.product.price?.toFixed(2))}</p>
+                                    <p><strong>Qty:</strong> {item.quantity}</p>
+                                  </div>
+                                  <p><strong>Discount:</strong> {DisplayPriceInRupees(Math.ceil(item.product.price*(item.product.discount/100)))}</p>
+                                  <p><strong>discountedPrice: </strong>{DisplayPriceInRupees(item.product.discountedPrice)}</p>
+                                  <p><strong>Total:</strong> {DisplayPriceInRupees((item.product.discountedPrice)*item.quantity)}</p>
                                 </div>
                                 <div className="flex items-center gap-2 mt-2">
                                   {getStatusIcon(item.status)}

@@ -207,6 +207,7 @@ import AxiosToastError from '../utils/AxiosToastErroe'
 import isAdmin from '../utils/IsAdmin'
 import { MdReviews } from "react-icons/md";
 import { MdOutlineReviews } from "react-icons/md";
+import { BiSolidCoupon } from "react-icons/bi";
 
 
 
@@ -312,6 +313,7 @@ const UserMenu = ({ close, rightContainerRef }) => {
     { to: "/dashboard/product", icon: TbBrandProducthunt, label: "Products" },
     { to: "/dashboard/alluser", icon: LuUsers, label: "All Users" },
     { to: "/dashboard/manage-order", icon: LuUsers, label: "Manage Orders" },
+    { to: "/dashboard/coupons", icon: BiSolidCoupon , label: "Coupon" },
     { to: "/dashboard/analytics", icon: IoMdAnalytics, label: "Analytics" },
   ]
 

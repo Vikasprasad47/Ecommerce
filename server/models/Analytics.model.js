@@ -61,6 +61,6 @@ const analyticsSnapshotSchema = new mongoose.Schema({
   salesForecastNext30Days: mongoose.Schema.Types.Mixed,
 
   createdAt: { type: Date, default: Date.now }
-}, { collection: "analytics_snapshots" });
+}, { collection: "analytics" });
 
-export default mongoose.model("AnalyticsSnapshot", analyticsSnapshotSchema);
+export default mongoose.model("Analytics", analyticsSnapshotSchema);

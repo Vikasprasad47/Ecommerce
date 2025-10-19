@@ -376,7 +376,7 @@ function App() {
           <Toaster toastOptions={{
             className: '',
             style: {
-              fontWeight: '600', // make text semi-bold
+              fontWeight: '100', // make text semi-bold
               fontFamily: 'Arial, sans-serif', // optional: change font
             },
           }}/>

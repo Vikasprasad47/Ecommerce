@@ -584,9 +584,17 @@ const MyOrder = () => {
                     <span>Subtotal:</span>
                     <span>{DisplayPriceInRupees(order.subtotalAmt)}</span>
                   </div>
+                  {
+                    order.couponDiscount > 0 && (
+                      <div className="flex justify-between text-gray-700">
+                        <span>Coupon Discount:</span>
+                        <span className="text-green-600">-{DisplayPriceInRupees(order.couponDiscount)}</span>
+                      </div>
+                    )
+                  }
                   <div className="flex justify-between text-gray-700">
                     <span>Shipping:</span>
-                    <span>{DisplayPriceInRupees(order.totalAmt - order.subtotalAmt)}</span>
+                    <span>{order?.Shipping_charge || "Free"}</span>
                   </div>
                   <div className="flex justify-between font-bold text-lg text-gray-900 pt-2 border-t border-gray-100">
                     <span>Total:</span>
@@ -608,10 +616,10 @@ const MyOrder = () => {
     <div className="min-h-screen">
       <div className="max-w-full mx-auto px-4">
         {/* Header - Consistent with other pages */}
-        <div className="flex flex-col lg:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm gap-4">
+        <div className="flex flex-col justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm gap-4">
 
         {/* Div 1: Icon + Title + Search */}
-        <div className="flex flex-row sm:flex-row items-center justify-space sm:items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-row sm:flex-row items-center justify-space sm:items-center gap-3 w-full">
           <div className="flex items-center gap-1">
             <div className="p-2 bg-amber-50 rounded-xl">
               <LuPackageOpen className="text-amber-600 text-xl" />
@@ -632,7 +640,7 @@ const MyOrder = () => {
         </div>
 
         {/* Div 2: Status buttons */}
-        <div className="flex gap-2 overflow-x-auto w-full sm:w-auto">
+        <div className="flex gap-2 overflow-x-auto w-full">
           {['all', 'confirmed', 'packed', 'shipped', 'delivered'].map(status => (
             <button
               key={status}
