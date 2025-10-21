@@ -446,7 +446,7 @@ const SingleProductDisplayPage = () => {
                       onClick={() => setShowPopup(false)}
                     />
                     
-                    <div className="fixed top-35% p-5 -bottom-60% left-0 0right-0 m-auto flex items-center justify-center">
+                    <div className="fixed top-35% p-5 -bottom-60% left-0 right-0 m-auto flex items-center justify-center">
                       <div 
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}

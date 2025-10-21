@@ -48,12 +48,14 @@ const UserFileUploadAvatar = ({ close }) => {
     
         const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
         if (!allowedTypes.includes(file.type)) {
+            toast.dismiss()
             toast.error("Only PNG and JPEG images are allowed.");
             return;
         }
     
         // Check file size (before compression)
         if (file.size > 10 * 1024 * 1024) { // 10MB limit
+            toast.dismiss()
             toast.error("Image size must be less than 10MB");
             return;
         }

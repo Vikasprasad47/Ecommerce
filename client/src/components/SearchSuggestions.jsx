@@ -27,19 +27,14 @@ const SearchSuggestions = ({
     if (!query || query.length < 2) {
         setProductSuggestions([]);
         return;
-    }
-
-    console.log('Fetching suggestions for:', query); // Debug log
-    
+    }    
     setLoading(true);
     try {
         const response = await Axios({
         ...SummaryApi.getSearchSuggestions,
         params: { q: query, limit: 6 }
         });
-        
-        console.log('API Response:', response.data); // Debug log
-        
+                
         if (response.data.success) {
         setProductSuggestions(response.data.data);
         }

@@ -66,6 +66,7 @@ const OrderQRScanner = ({ onClose, orders, onOrderUpdate }) => {
       await handleUpdateOrderStatus(matchedOrder._id, 'delivered');
       await onOrderUpdate();
 
+      toast.dismiss()
       toast.success(`Order ${orderData.orderId} marked as delivered`);
 
       setTimeout(() => {
@@ -74,6 +75,7 @@ const OrderQRScanner = ({ onClose, orders, onOrderUpdate }) => {
       }, 1000);
     } catch (error) {
       console.error('QR scan error:', error);
+      toast.dismiss()
       toast.error(error.message);
       setCameraError(error.message);
     } finally {
@@ -103,6 +105,7 @@ const OrderQRScanner = ({ onClose, orders, onOrderUpdate }) => {
       } catch (err) {
         console.error('Scanner initialization error:', err);
         setCameraError(err.message || 'Failed to access camera. Please check permissions.');
+        toast.dismiss()
         toast.error('Camera access denied');
       }
     };

@@ -76,6 +76,7 @@ const Login = () => {
 
   const handleGoogleLoginError = (error) => {
     console.error(error);
+    toast.dismiss()
     toast.error(error.message || "Google login failed");
     setIsGoogleLoading(false);
   };
@@ -171,7 +172,7 @@ const Login = () => {
 
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <div className="flex items-center justify-center p-4 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
+      <div className="flex h-screen items-center justify-center p-4 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
         <Toaster
           position="top-center"
           toastOptions={{

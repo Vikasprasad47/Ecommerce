@@ -1,40 +1,3 @@
-// import { createBrowserRouter } from "react-router-dom";
-// import App from "../App";
-// import Home from "../pages/home";
-// import SearchPage from "../pages/SearchPage";
-// import Login from "../pages/login";
-// import Register from "../pages/register";
-// import ForgotPassword from "../pages/forgotPassword";
-// import OtpVerification from "../pages/OtpVerification";
-// import ResetPassword from "../pages/ResetPassword";
-// import UserMenuMobile from "../pages/UserMenuMobile";
-// import Dashboard from "../layout/Dashboard";
-// import Profile from "../pages/Profile";
-// import MyOrder from "../pages/MyOrder";
-// import Address from "../pages/Address";
-// import Categorypage from "../pages/Categorypage";
-// import Subcategorypage from "../pages/Subcategorypage";
-// import Uploadproductpage from "../pages/Uploadproductpage";
-// import Productpage from "../pages/Productpage";
-// import AdminPermission from "../layout/AdminPermission";
-// import ProductAdmin from "../pages/ProductAdmin";
-// import Productlistpage from "../pages/Productlistpage";
-// import AllUser from "../pages/AllUser";
-// import SingleProductDisplayPage from "../pages/SingleProductDisplayPage";
-// import CartMobile from "../pages/CartMobile";
-// import CheckOutPage from "../pages/CheckOutPage";
-// import Cancel from "../pages/Cancel";
-// import Success from "../pages/Success";
-// import ManageOrder from "../pages/ManageOrder";
-// import CommingSoon from "../pages/CommingSoon";
-// import UserAccount from "../components/UserAccount";
-// import UserWishList from "../pages/UserWishList";
-// import PrivacyPolicy from "../pages/PrivacyPolicy";
-// import TermsAndConditions from "../pages/TermsAndConditions";
-// import RefundPolicy from "../pages/RefundPolicy";
-// import Contact from "../pages/Contact";
-// import AnalyticsDashboard from "../components/AnalyticsDashboard";
-// import NotFound from "../components/NotFound";
 import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import PageLoader from "../components/PageLoader"; // Use your loader component
@@ -78,7 +41,8 @@ const RefundPolicy = lazy(() => import("../pages/RefundPolicy"));
 const Contact = lazy(() => import("../pages/Contact"));
 const AnalyticsDashboard = lazy(() => import("../components/AnalyticsDashboard"));
 const NotFound = lazy(() => import("../components/NotFound"));
-
+const About = lazy(() => import("../pages/About"))
+const OnlinePaymentList = lazy(() => import("../pages/OnlinePaymentList"));
 const router = createBrowserRouter([
     {
         path: "/", // Home page
@@ -131,6 +95,10 @@ const router = createBrowserRouter([
             {
                 path: "contact",
                 element: <Contact />
+            },
+            {
+                path: "about-us",
+                element: <About />
             },
             {
                 path: "dashboard",
@@ -187,6 +155,10 @@ const router = createBrowserRouter([
                     {
                         path: "coupons",
                         element: <AdminPermission><Couponpage/></AdminPermission>
+                    },
+                    {
+                        path: "list-online-payments",
+                        element: <AdminPermission><OnlinePaymentList/></AdminPermission>
                     }
                 ]
             },

@@ -258,7 +258,7 @@ const orderSchema = new mongoose.Schema(
     },
     payment_status: {
       type: String,
-      enum: ["", "pending", "completed", "failed", "CASH ON DELIVERY"],
+      enum: ["", "pending", "completed", "paid", "failed", "CASH ON DELIVERY"],
       default: "",
     },
     subtotalAmt: {

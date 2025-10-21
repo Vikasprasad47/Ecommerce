@@ -429,9 +429,9 @@ const MyOrder = () => {
     return (
       <div className="mt-6 px-4">
         <div className="relative">
-          <div className="absolute left-0 right-0 top-[18px] h-[2px] bg-gray-200 rounded-full"></div>
+          <div className="absolute left-0 right-0 top-[15px] h-[2px] bg-gray-200 rounded-full"></div>
           <div
-            className="absolute left-0 top-[18px] h-[2px] bg-amber-500 rounded-full transition-all duration-500"
+            className="absolute left-0 top-[15px] h-[2px] bg-amber-500 rounded-full transition-all duration-500"
             style={{
               width: `${activeIndex === steps.length - 1 ? '100%' : (activeIndex / (steps.length - 1)) * 100}%`
             }}
@@ -499,9 +499,19 @@ const MyOrder = () => {
                     {order.items[0].product_details.name}
                     {order.items.length > 1 && ` + ${order.items.length - 1} more`}
                   </h2>
+                  {
+                    order.paymentId && (
+                      <div className="mt-1 text-sm text-gray-500 flex items-center gap-1">
+                        <p>
+                          Payment ID: <span className="font-medium">{order.paymentId}</span>
+                        </p>
+                        <p className='text-green-600 font-semibold'>({order.payment_status})</p>
+                      </div>
+                    )
+                  }
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2">
                     <p className="text-sm text-gray-500">
-                      <span className="font-medium">#{order.orderId.slice(-8)}</span>
+                      <span className="font-medium">Order Id: #{order.orderId.slice(-8)}</span>
                     </p>
                     <p className="text-sm text-gray-500 flex items-center gap-1">
                       <LuCalendar size={14} />

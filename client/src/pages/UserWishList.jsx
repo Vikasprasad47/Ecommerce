@@ -305,6 +305,7 @@ const UserWishList = () => {
         setWishlistProducts(res.data.data);
       }
     } catch (error) {
+      toast.dismiss()
       toast.error("Failed to fetch wishlist");
     } finally {
       setLoading(false);
@@ -320,10 +321,12 @@ const UserWishList = () => {
         data: { productId },
         withCredentials: true,
       });
+      toast.dismiss()
       toast.success("Removed from wishlist");
       await fetchUserDetails();
       setWishlistProducts((prev) => prev.filter((item) => item._id !== productId));
     } catch (error) {
+      toast.dismiss()
       toast.error("Failed to remove from wishlist");
     } finally {
       setRemovingItems(prev => {
@@ -478,6 +481,7 @@ const UserWishList = () => {
             <button
               onClick={(e) => {
                 e.preventDefault();
+                toast.dismiss()
                 toast.success("We'll notify you when this item is back in stock!");
               }}
               className="w-full px-3 h-10 text-sm rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-medium transition cursor-pointer"

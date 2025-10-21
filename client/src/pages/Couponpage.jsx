@@ -1,779 +1,3 @@
-// import React, { useState, useEffect, useCallback } from "react";
-// import Axios from "../utils/axios";
-// import toast from "react-hot-toast";
-// import { FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaInfoCircle, FaCalendarAlt, FaUsers, FaTags, FaPercentage, FaRupeeSign, FaBox, FaShoppingCart } from "react-icons/fa";
-
-// const initialFormState = {
-//   code: "",
-//   discountType: "percent",
-//   discountValue: 0,
-//   minAmount: 0,
-//   maxDiscount: 0,
-//   startDate: "",
-//   endDate: "",
-//   isActive: true,
-//   usageLimit: 0,
-//   userUsageLimit: 1,
-//   minProducts: 1,
-//   maxProducts: 0,
-//   stackable: false,
-//   autoApply: false,
-//   firstOrderOnly: false,
-//   customerEligibility: "all",
-//   eligibleCustomers: [],
-//   description: "",
-//   termsAndConditions: "",
-//   priority: 1,
-//   applicableCategories: [],
-//   excludedCategories: [],
-//   applicableProducts: [],
-//   excludedProducts: [],
-//   applicableBrands: [],
-// };
-
-// const CouponPage = () => {
-//   const [formData, setFormData] = useState(initialFormState);
-//   const [coupons, setCoupons] = useState([]);
-//   const [editId, setEditId] = useState(null);
-//   const [loading, setLoading] = useState(false);
-//   const [activeTab, setActiveTab] = useState("create");
-//   const [stats, setStats] = useState({
-//     total: 0,
-//     active: 0,
-//     expired: 0,
-//     usageRate: 0,
-//   });
-
-//   // Fetch all coupons with stats
-//   const fetchCoupons = async () => {
-//     try {
-//       const { data } = await Axios.get("/api/coupon/list");
-//       if (data.success) {
-//         setCoupons(data.data);
-        
-//         // Calculate stats
-//         const total = data.data.length;
-//         const active = data.data.filter(c => c.isCurrentlyActive).length;
-//         const expired = data.data.filter(c => c.isExpired).length;
-//         const usageRate = total > 0 ? (data.data.reduce((sum, c) => sum + c.usedCount, 0) / total).toFixed(1) : 0;
-        
-//         setStats({ total, active, expired, usageRate });
-//       }
-//     } catch (err) {
-//       toast.error(err?.response?.data?.message || err.message);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchCoupons();
-//   }, []);
-
-//   // Enhanced validation
-//   const validateForm = () => {
-//     if (!formData.code.trim()) {
-//       toast.error("Coupon code is required");
-//       return false;
-//     }
-
-//     if (formData.code.length < 3 || formData.code.length > 20) {
-//       toast.error("Coupon code must be between 3-20 characters");
-//       return false;
-//     }
-
-//     if (!/^[A-Z0-9_-]+$/.test(formData.code)) {
-//       toast.error("Coupon code can only contain uppercase letters, numbers, hyphens, and underscores");
-//       return false;
-//     }
-
-//     if (formData.discountValue <= 0) {
-//       toast.error("Discount value must be greater than 0");
-//       return false;
-//     }
-
-//     if (formData.discountType === "percent" && formData.discountValue > 100) {
-//       toast.error("Percentage discount cannot exceed 100%");
-//       return false;
-//     }
-
-//     if (!formData.startDate || !formData.endDate) {
-//       toast.error("Start and end dates are required");
-//       return false;
-//     }
-
-//     if (new Date(formData.startDate) >= new Date(formData.endDate)) {
-//       toast.error("End date must be after start date");
-//       return false;
-//     }
-
-//     if (formData.minProducts > formData.maxProducts && formData.maxProducts > 0) {
-//       toast.error("Max products cannot be less than min products");
-//       return false;
-//     }
-
-//     return true;
-//   };
-
-//   // Handle input changes with proper type conversion
-//   const handleChange = (e) => {
-//     const { name, type, value, checked } = e.target;
-    
-//     let processedValue = type === "checkbox" ? checked : value;
-    
-//     // Convert number fields
-//     if (["discountValue", "minAmount", "maxDiscount", "usageLimit", "userUsageLimit", "minProducts", "maxProducts", "priority"].includes(name)) {
-//       processedValue = processedValue === "" ? 0 : Number(processedValue);
-//     }
-
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: processedValue,
-//     }));
-
-//     // Reset maxDiscount if discountType changes to fixed
-//     if (name === "discountType" && value === "fixed") {
-//       setFormData((prev) => ({ ...prev, maxDiscount: 0 }));
-//     }
-//   };
-
-//   // Handle form submission
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     if (!validateForm()) return;
-
-//     try {
-//       setLoading(true);
-
-//       const payload = {
-//         ...formData,
-//         code: formData.code.toUpperCase().trim(),
-//       };
-
-//       let response;
-//       if (editId) {
-//         response = await Axios.put(`/api/coupon/update/${editId}`, payload);
-//       } else {
-//         response = await Axios.post("/api/coupon/create", payload);
-//       }
-
-//       if (response.data.success) {
-//         toast.success(editId ? "Coupon updated successfully!" : "Coupon created successfully!");
-//         resetForm();
-//         fetchCoupons();
-//         setActiveTab("list");
-//       }
-//     } catch (err) {
-//       const errorMsg = err?.response?.data?.message || err.message;
-//       if (errorMsg.includes("unique")) {
-//         toast.error("Coupon code already exists");
-//       } else {
-//         toast.error(errorMsg);
-//       }
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // Reset form
-//   const resetForm = () => {
-//     setFormData(initialFormState);
-//     setEditId(null);
-//   };
-
-//   // Handle edit
-//   const handleEdit = (coupon) => {
-//     setEditId(coupon._id);
-//     setFormData({
-//       ...coupon,
-//       startDate: coupon.startDate?.slice(0, 10) || "",
-//       endDate: coupon.endDate?.slice(0, 10) || "",
-//       eligibleCustomers: coupon.eligibleCustomers || [],
-//       applicableCategories: coupon.applicableCategories || [],
-//       excludedCategories: coupon.excludedCategories || [],
-//       applicableProducts: coupon.applicableProducts || [],
-//       excludedProducts: coupon.excludedProducts || [],
-//       applicableBrands: coupon.applicableBrands || [],
-//     });
-//     setActiveTab("create");
-//     window.scrollTo({ top: 0, behavior: "smooth" });
-//   };
-
-//   // Handle delete
-//   const handleDelete = async (id) => {
-//     if (!window.confirm("Are you sure you want to delete this coupon? This action cannot be undone.")) return;
-    
-//     try {
-//       const { data } = await Axios.delete(`/api/coupon/delete/${id}`);
-//       if (data.success) {
-//         toast.success("Coupon deleted successfully");
-//         fetchCoupons();
-//       }
-//     } catch (err) {
-//       toast.error(err?.response?.data?.message || err.message);
-//     }
-//   };
-
-//   // Handle toggle status
-//   const handleToggle = async (id, currentStatus) => {
-//     try {
-//       const { data } = await Axios.patch(`/api/coupon/toggle/${id}`);
-//       if (data.success) {
-//         toast.success(`Coupon ${!currentStatus ? "activated" : "deactivated"}`);
-//         fetchCoupons();
-//       }
-//     } catch (err) {
-//       toast.error(err?.response?.data?.message || err.message);
-//     }
-//   };
-
-//   // Format date for display
-//   const formatDate = (dateString) => {
-//     return new Date(dateString).toLocaleDateString('en-IN', {
-//       day: '2-digit',
-//       month: 'short',
-//       year: 'numeric'
-//     });
-//   };
-
-//   // Check if coupon is currently active
-//   const isCouponActive = (coupon) => {
-//     const now = new Date();
-//     const start = new Date(coupon.startDate);
-//     const end = new Date(coupon.endDate);
-//     return coupon.isActive && now >= start && now <= end && 
-//            (coupon.usageLimit === 0 || coupon.usedCount < coupon.usageLimit);
-//   };
-
-//   // Stats cards
-//   const StatCard = ({ title, value, icon, color }) => (
-//     <div className={`bg-white rounded-xl p-6 border-l-4 ${color} shadow-sm`}>
-//       <div className="flex items-center justify-between">
-//         <div>
-//           <p className="text-sm font-medium text-gray-600">{title}</p>
-//           <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
-//         </div>
-//         <div className="text-2xl opacity-80">{icon}</div>
-//       </div>
-//     </div>
-//   );
-
-//   return (
-//     <div className="min-h-screen bg-gray-50/30 p-6">
-//       <div className="max-w-7xl mx-auto">
-//         {/* Header */}
-//         <div className="mb-8">
-//           <h1 className="text-3xl font-bold text-gray-900">Coupon Management</h1>
-//           <p className="text-gray-600 mt-2">Create and manage discount coupons for your store</p>
-//         </div>
-
-//         {/* Stats Overview */}
-//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-//           <StatCard 
-//             title="Total Coupons" 
-//             value={stats.total} 
-//             icon={<FaTags />} 
-//             color="border-blue-500" 
-//           />
-//           <StatCard 
-//             title="Active Coupons" 
-//             value={stats.active} 
-//             icon={<FaToggleOn />} 
-//             color="border-green-500" 
-//           />
-//           <StatCard 
-//             title="Expired Coupons" 
-//             value={stats.expired} 
-//             icon={<FaCalendarAlt />} 
-//             color="border-red-500" 
-//           />
-//           <StatCard 
-//             title="Avg Usage Rate" 
-//             value={`${stats.usageRate}`} 
-//             icon={<FaUsers />} 
-//             color="border-purple-500" 
-//           />
-//         </div>
-
-//         {/* Tabs */}
-//         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mb-8">
-//           <div className="flex border-b border-gray-200">
-//             <button
-//               onClick={() => setActiveTab("create")}
-//               className={`flex-1 py-4 px-6 text-center font-medium transition-all ${
-//                 activeTab === "create"
-//                   ? "text-amber-600 border-b-2 border-amber-600 bg-amber-50/50"
-//                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-//               }`}
-//             >
-//               {editId ? "Edit Coupon" : "Create Coupon"}
-//             </button>
-//             <button
-//               onClick={() => setActiveTab("list")}
-//               className={`flex-1 py-4 px-6 text-center font-medium transition-all ${
-//                 activeTab === "list"
-//                   ? "text-amber-600 border-b-2 border-amber-600 bg-amber-50/50"
-//                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-//               }`}
-//             >
-//               All Coupons
-//             </button>
-//           </div>
-
-//           {/* Create/Edit Form */}
-//           {activeTab === "create" && (
-//             <form onSubmit={handleSubmit} className="p-8">
-//               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-//                 {/* Basic Information */}
-//                 <div className="space-y-6">
-//                   <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-//                     <FaInfoCircle className="text-amber-600" />
-//                     Basic Information
-//                   </h3>
-                  
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-2">
-//                       Coupon Code *
-//                     </label>
-//                     <input
-//                       type="text"
-//                       name="code"
-//                       value={formData.code}
-//                       onChange={handleChange}
-//                       placeholder="SUMMER25"
-//                       className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       required
-//                     />
-//                     <p className="text-xs text-gray-500 mt-1">
-//                       3-20 characters, uppercase letters, numbers, hyphens, and underscores only
-//                     </p>
-//                   </div>
-
-//                   <div className="grid grid-cols-2 gap-4">
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         Discount Type *
-//                       </label>
-//                       <select
-//                         name="discountType"
-//                         value={formData.discountType}
-//                         onChange={handleChange}
-//                         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       >
-//                         <option value="percent">Percentage (%)</option>
-//                         <option value="fixed">Fixed Amount (₹)</option>
-//                       </select>
-//                     </div>
-
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         Discount Value *
-//                       </label>
-//                       <div className="relative">
-//                         <input
-//                           type="number"
-//                           name="discountValue"
-//                           value={formData.discountValue}
-//                           onChange={handleChange}
-//                           min="0"
-//                           max={formData.discountType === "percent" ? "100" : undefined}
-//                           step={formData.discountType === "percent" ? "0.1" : "1"}
-//                           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition pr-12"
-//                           required
-//                         />
-//                         <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
-//                           {formData.discountType === "percent" ? <FaPercentage /> : <FaRupeeSign />}
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </div>
-
-//                   {formData.discountType === "percent" && (
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         Maximum Discount (₹)
-//                       </label>
-//                       <input
-//                         type="number"
-//                         name="maxDiscount"
-//                         value={formData.maxDiscount}
-//                         onChange={handleChange}
-//                         min="0"
-//                         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       />
-//                       <p className="text-xs text-gray-500 mt-1">
-//                         Maximum discount amount for percentage discounts (0 = no limit)
-//                       </p>
-//                     </div>
-//                   )}
-
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-2">
-//                       Minimum Order Amount (₹)
-//                     </label>
-//                     <input
-//                       type="number"
-//                       name="minAmount"
-//                       value={formData.minAmount}
-//                       onChange={handleChange}
-//                       min="0"
-//                       className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                     />
-//                   </div>
-//                 </div>
-
-//                 {/* Validity & Limits */}
-//                 <div className="space-y-6">
-//                   <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-//                     <FaCalendarAlt className="text-amber-600" />
-//                     Validity & Limits
-//                   </h3>
-
-//                   <div className="grid grid-cols-2 gap-4">
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         Start Date *
-//                       </label>
-//                       <input
-//                         type="date"
-//                         name="startDate"
-//                         value={formData.startDate}
-//                         onChange={handleChange}
-//                         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                         required
-//                       />
-//                     </div>
-
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         End Date *
-//                       </label>
-//                       <input
-//                         type="date"
-//                         name="endDate"
-//                         value={formData.endDate}
-//                         onChange={handleChange}
-//                         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                         required
-//                       />
-//                     </div>
-//                   </div>
-
-//                   <div className="grid grid-cols-2 gap-4">
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         Total Usage Limit
-//                       </label>
-//                       <input
-//                         type="number"
-//                         name="usageLimit"
-//                         value={formData.usageLimit}
-//                         onChange={handleChange}
-//                         min="0"
-//                         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       />
-//                       <p className="text-xs text-gray-500 mt-1">0 = Unlimited</p>
-//                     </div>
-
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         Per User Limit
-//                       </label>
-//                       <input
-//                         type="number"
-//                         name="userUsageLimit"
-//                         value={formData.userUsageLimit}
-//                         onChange={handleChange}
-//                         min="1"
-//                         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       />
-//                     </div>
-//                   </div>
-
-//                   <div className="grid grid-cols-2 gap-4">
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         Min Products
-//                       </label>
-//                       <input
-//                         type="number"
-//                         name="minProducts"
-//                         value={formData.minProducts}
-//                         onChange={handleChange}
-//                         min="1"
-//                         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       />
-//                     </div>
-
-//                     <div>
-//                       <label className="block text-sm font-medium text-gray-700 mb-2">
-//                         Max Products
-//                       </label>
-//                       <input
-//                         type="number"
-//                         name="maxProducts"
-//                         value={formData.maxProducts}
-//                         onChange={handleChange}
-//                         min="0"
-//                         className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       />
-//                       <p className="text-xs text-gray-500 mt-1">0 = Unlimited</p>
-//                     </div>
-//                   </div>
-
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-2">
-//                       Priority
-//                     </label>
-//                     <input
-//                       type="number"
-//                       name="priority"
-//                       value={formData.priority}
-//                       onChange={handleChange}
-//                       min="1"
-//                       max="10"
-//                       className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                     />
-//                     <p className="text-xs text-gray-500 mt-1">1 = Highest, 10 = Lowest</p>
-//                   </div>
-//                 </div>
-
-//                 {/* Advanced Settings */}
-//                 <div className="lg:col-span-2 space-y-6">
-//                   <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-//                     <FaShoppingCart className="text-amber-600" />
-//                     Advanced Settings
-//                   </h3>
-
-//                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-//                     <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition">
-//                       <input
-//                         type="checkbox"
-//                         name="stackable"
-//                         checked={formData.stackable}
-//                         onChange={handleChange}
-//                         className="w-4 h-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-//                       />
-//                       <span className="text-sm font-medium text-gray-700">Stackable</span>
-//                     </label>
-
-//                     <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition">
-//                       <input
-//                         type="checkbox"
-//                         name="autoApply"
-//                         checked={formData.autoApply}
-//                         onChange={handleChange}
-//                         className="w-4 h-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-//                       />
-//                       <span className="text-sm font-medium text-gray-700">Auto Apply</span>
-//                     </label>
-
-//                     <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition">
-//                       <input
-//                         type="checkbox"
-//                         name="firstOrderOnly"
-//                         checked={formData.firstOrderOnly}
-//                         onChange={handleChange}
-//                         className="w-4 h-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-//                       />
-//                       <span className="text-sm font-medium text-gray-700">First Order Only</span>
-//                     </label>
-
-//                     <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition">
-//                       <input
-//                         type="checkbox"
-//                         name="isActive"
-//                         checked={formData.isActive}
-//                         onChange={handleChange}
-//                         className="w-4 h-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-//                       />
-//                       <span className="text-sm font-medium text-gray-700">Active</span>
-//                     </label>
-//                   </div>
-
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-2">
-//                       Customer Eligibility
-//                     </label>
-//                     <select
-//                       name="customerEligibility"
-//                       value={formData.customerEligibility}
-//                       onChange={handleChange}
-//                       className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                     >
-//                       <option value="all">All Customers</option>
-//                       <option value="new_customers">New Customers Only</option>
-//                       <option value="existing_customers">Existing Customers Only</option>
-//                       <option value="specific_customers">Specific Customers</option>
-//                     </select>
-//                   </div>
-
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-2">
-//                       Description
-//                     </label>
-//                     <textarea
-//                       name="description"
-//                       value={formData.description}
-//                       onChange={handleChange}
-//                       rows="2"
-//                       className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       placeholder="Describe the purpose of this coupon..."
-//                     />
-//                   </div>
-
-//                   <div>
-//                     <label className="block text-sm font-medium text-gray-700 mb-2">
-//                       Terms & Conditions
-//                     </label>
-//                     <textarea
-//                       name="termsAndConditions"
-//                       value={formData.termsAndConditions}
-//                       onChange={handleChange}
-//                       rows="3"
-//                       className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition"
-//                       placeholder="Any specific terms and conditions for this coupon..."
-//                     />
-//                   </div>
-//                 </div>
-//               </div>
-
-//               {/* Form Actions */}
-//               <div className="flex gap-4 pt-8 mt-8 border-t border-gray-200">
-//                 <button
-//                   type="submit"
-//                   disabled={loading}
-//                   className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-//                 >
-//                   {loading ? (
-//                     <div className="flex items-center justify-center gap-2">
-//                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-//                       {editId ? "Updating..." : "Creating..."}
-//                     </div>
-//                   ) : (
-//                     editId ? "Update Coupon" : "Create Coupon"
-//                   )}
-//                 </button>
-                
-//                 {editId && (
-//                   <button
-//                     type="button"
-//                     onClick={resetForm}
-//                     disabled={loading}
-//                     className="px-8 py-4 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition"
-//                   >
-//                     Cancel Edit
-//                   </button>
-//                 )}
-//               </div>
-//             </form>
-//           )}
-
-//           {/* Coupons List */}
-//           {activeTab === "list" && (
-//             <div className="p-6">
-//               {coupons.length === 0 ? (
-//                 <div className="text-center py-12">
-//                   <FaTags className="mx-auto text-4xl text-gray-300 mb-4" />
-//                   <h3 className="text-lg font-medium text-gray-900 mb-2">No coupons found</h3>
-//                   <p className="text-gray-500 mb-6">Get started by creating your first coupon</p>
-//                   <button
-//                     onClick={() => setActiveTab("create")}
-//                     className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-xl"
-//                   >
-//                     Create Coupon
-//                   </button>
-//                 </div>
-//               ) : (
-//                 <div className="space-y-4">
-//                   {coupons.map((coupon) => (
-//                     <div
-//                       key={coupon._id}
-//                       className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow"
-//                     >
-//                       <div className="flex items-center justify-between">
-//                         <div className="flex-1">
-//                           <div className="flex items-center gap-4 mb-3">
-//                             <div className="flex items-center gap-2">
-//                               <span className="text-lg font-bold text-gray-900 bg-amber-100 px-3 py-1 rounded-lg">
-//                                 {coupon.code}
-//                               </span>
-//                               <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-//                                 isCouponActive(coupon) 
-//                                   ? 'bg-green-100 text-green-800' 
-//                                   : 'bg-red-100 text-red-800'
-//                               }`}>
-//                                 {isCouponActive(coupon) ? 'Active' : 'Inactive'}
-//                               </span>
-//                             </div>
-//                             <div className="text-lg font-bold text-amber-600">
-//                               {coupon.discountText}
-//                             </div>
-//                           </div>
-
-//                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
-//                             <div>
-//                               <span className="font-medium">Validity:</span>
-//                               <div>{formatDate(coupon.startDate)} - {formatDate(coupon.endDate)}</div>
-//                             </div>
-//                             <div>
-//                               <span className="font-medium">Min Amount:</span>
-//                               <div>₹{coupon.minAmount}</div>
-//                             </div>
-//                             <div>
-//                               <span className="font-medium">Usage:</span>
-//                               <div>{coupon.usedCount}/{coupon.usageLimit || '∞'}</div>
-//                             </div>
-//                             <div>
-//                               <span className="font-medium">User Limit:</span>
-//                               <div>{coupon.userUsageLimit}</div>
-//                             </div>
-//                           </div>
-
-//                           {coupon.description && (
-//                             <p className="text-gray-600 mt-3 text-sm">{coupon.description}</p>
-//                           )}
-//                         </div>
-
-//                         <div className="flex gap-2 ml-4">
-//                           <button
-//                             onClick={() => handleEdit(coupon)}
-//                             className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-//                             title="Edit"
-//                           >
-//                             <FaEdit />
-//                           </button>
-//                           <button
-//                             onClick={() => handleToggle(coupon._id, coupon.isActive)}
-//                             className={`p-2 rounded-lg transition ${
-//                               coupon.isActive 
-//                                 ? 'text-green-600 hover:bg-green-50' 
-//                                 : 'text-gray-600 hover:bg-gray-50'
-//                             }`}
-//                             title={coupon.isActive ? "Deactivate" : "Activate"}
-//                           >
-//                             {coupon.isActive ? <FaToggleOn /> : <FaToggleOff />}
-//                           </button>
-//                           <button
-//                             onClick={() => handleDelete(coupon._id)}
-//                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-//                             title="Delete"
-//                           >
-//                             <FaTrash />
-//                           </button>
-//                         </div>
-//                       </div>
-//                     </div>
-//                   ))}
-//                 </div>
-//               )}
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CouponPage;
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Axios from "../utils/axios";
 import toast from "react-hot-toast";
@@ -787,6 +11,7 @@ import {
   FaPowerOff, FaEye, FaEyeSlash
 } from "react-icons/fa";
 import { VscGraph } from "react-icons/vsc";
+
 
 const initialFormState = {
   code: "",
@@ -830,8 +55,8 @@ const ConfirmationModal = React.memo(({
   if (!isOpen) return null;
 
   const typeConfig = {
-    warning: { icon: FaExclamationTriangle, color: "text-yellow-500", bgColor: "bg-yellow-50" },
-    danger: { icon: FaExclamationTriangle, color: "text-red-500", bgColor: "bg-red-50" },
+    warning: { icon: FaExclamationTriangle, color: "text-yellow-500", bgColor: "bg-yellow-200" },
+    danger: { icon: FaExclamationTriangle, color: "text-red-500", bgColor: "bg-red-200" },
     success: { icon: FaCheckCircle, color: "text-green-500", bgColor: "bg-green-50" },
     info: { icon: FaInfoCircle, color: "text-blue-500", bgColor: "bg-blue-50" }
   };
@@ -842,7 +67,7 @@ const ConfirmationModal = React.memo(({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20">
       <div className="bg-white rounded-2xl shadow-xl max-w-md w-full transform transition-all">
-        <div className={`p-6 ${config.bgColor} rounded-t-2xl`}>
+        <div className={`px-6 py-3 ${config.bgColor} rounded-t-2xl`}>
           <div className="flex items-center gap-3">
             <Icon className={`text-2xl ${config.color}`} />
             <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
@@ -1117,37 +342,63 @@ const CouponCard = React.memo(({ coupon, onEdit, onToggle, onDelete, onDuplicate
   const config = statusConfig[status];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 group">
       {/* First Main Div - Header Section */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
+      <div className="flex flex-col items-start justify-between gap-4 mb-4">
         {/* First Sub Div - Code and Status */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between w-full gap-4 flex-col lg:flex-row">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-4 py-3 rounded-lg font-bold text-lg shadow-md">
-              {coupon.code}
-            </div>
-            <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border ${config.color}`}>
-              {config.icon}
-              <span>{config.label}</span>
-            </div>
-          </div>
-        </div>
+            <div className="relative flex w-[300px] bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl overflow-hidden">
+              {/* Left side content */}
+              <div className="flex flex-col justify-center items-start p-5 w-[70%]">
+                <h3 className="text-lg font-semibold tracking-wide uppercase">Special Coupon</h3>
+                <p className="text-2xl font-extrabold tracking-widest mt-1">{coupon.code}</p>
+                <p className="text-sm mt-2 opacity-80">
+                  Valid until {new Date(coupon.endDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+              </div>
 
-        {/* Second Sub Div - Discount and Actions */}
-        <div className="flex items-center gap-6">
-          <div className="text-right">
-            <div className="text-2xl font-bold text-amber-600">
-              {coupon.discountType === "percent" 
-                ? `${coupon.discountValue}% OFF` 
-                : `₹${coupon.discountValue} OFF`}
+              {/* Dotted separator */}
+              <div className="relative w-[2px] bg-dotted bg-white/60">
+                <div className="absolute -left-[6px] -top-1 w-3 h-3 bg-white rounded-full"></div>
+                <div className="absolute -left-[6px] -bottom-1 w-3 h-3 bg-white rounded-full"></div>
+              </div>
+
+              {/* Right side for action */}
+              <div className="flex flex-col justify-center items-center w-[30%] bg-gray-200 text-amber-600 font-semibold tracking-wide">
+                <span className="rotate-90 text-sm">REDEEM</span>
+              </div>
+
+              {/* SVG edge notches */}
+              <svg
+                className="absolute left-0 top-0 h-full w-4 text-white"
+                viewBox="0 0 10 100"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M10,0 V10 A5,5 0 0,1 10,20 V30 A5,5 0 0,1 10,40 V50 A5,5 0 0,1 10,60 V70 A5,5 0 0,1 10,80 V90 A5,5 0 0,1 10,100"
+                  fill="currentColor"
+                />
+              </svg>
+
+              <svg
+                className="absolute right-0 top-0 h-full w-4 text-white rotate-180"
+                viewBox="0 0 10 100"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M10,0 V10 A5,5 0 0,1 10,20 V30 A5,5 0 0,1 10,40 V50 A5,5 0 0,1 10,60 V70 A5,5 0 0,1 10,80 V90 A5,5 0 0,1 10,100"
+                  fill="currentColor"
+                />
+              </svg>
             </div>
-            {coupon.description && (
-              <div className="text-sm text-gray-600 mt-1 max-w-xs line-clamp-1">{coupon.description}</div>
-            )}
           </div>
-          
           {/* Action Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full justify-between lg:justify-end">
             <button
               onClick={() => onEdit(coupon)}
               className="p-3 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all border border-blue-200 hover:border-blue-300 shadow-sm"
@@ -1188,6 +439,25 @@ const CouponCard = React.memo(({ coupon, onEdit, onToggle, onDelete, onDuplicate
               {showDetails ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
             </button>
           </div>
+        </div>
+
+        {/* Second Sub Div - Discount and Actions */}
+        <div className="flex items-center gap-6">
+          <div className="text-left">
+            <div className="flex items-center text-2xl font-bold text-amber-600 gap-2">
+              {coupon.discountType === "percent" 
+                ? `${coupon.discountValue}% OFF` 
+                : `₹${coupon.discountValue} OFF`}
+              <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium border ${config.color}`}>
+                {config.icon}
+                <span>{config.label}</span>
+              </div>
+            </div>
+            {coupon.description && (
+              <div className="text-sm text-gray-600 mt-1 max-w-xs line-clamp-1">{coupon.description}</div>
+            )}
+          </div>
+          
         </div>
       </div>
 
@@ -1309,6 +579,7 @@ const CouponPage = () => {
       }
     } catch (err) {
       console.error("Failed to fetch coupons:", err);
+      toast.dismiss()
       toast.error("Failed to load coupons. Please try again.");
     } finally {
       setTableLoading(false);
@@ -1433,6 +704,7 @@ const CouponPage = () => {
     setEditId(null);
   }, []);
 
+
   // Enhanced edit handler
   const handleEdit = useCallback((coupon) => {
     setEditId(coupon._id);
@@ -1478,6 +750,8 @@ const CouponPage = () => {
     handleEdit(duplicatedCoupon);
     toast.success("Coupon Copied!");
   }, [handleEdit]);
+
+
 
   // Enhanced delete with custom modal
   const handleDelete = useCallback((id, code) => {
@@ -1592,7 +866,7 @@ const CouponPage = () => {
     <div className="min-h-screen bg-gray-50/30">
       <div className="max-w-full mx-auto px-4 pb-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-2xl p-6 mb-4 shadow-sm">
           <div>
             <h2 className="font-bold text-2xl text-gray-900">Coupon Management</h2>
             <p className="text-gray-600 mt-2 text-sm">Create and manage discount campaigns for your store</p>
@@ -1611,14 +885,14 @@ const CouponPage = () => {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           {statsData.map((stat, index) => (
             <StatCard key={index} {...stat} />
           ))}
         </div>
 
         {/* Tabs */}
-        <div className="flex overflow-x-auto gap-2 bg-white border border-gray-200 rounded-2xl p-2 mb-6 shadow-sm">
+        <div className="flex overflow-x-auto gap-2 bg-white border border-gray-200 rounded-2xl p-2 mb-4 shadow-sm">
           <button
             onClick={() => setActiveTab("list")}
             className={`flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-semibold transition-all duration-300 min-w-[160px] ${
@@ -1645,7 +919,7 @@ const CouponPage = () => {
 
         {/* Create/Edit Form */}
         {activeTab === "create" && (
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-8">
+          <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Basic Information */}
               <div className="space-y-6">
@@ -1668,7 +942,7 @@ const CouponPage = () => {
                   helperText="3-20 characters, uppercase letters, numbers, hyphens, and underscores only"
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Discount Type *
@@ -1941,7 +1215,7 @@ const CouponPage = () => {
 
         {/* Coupons List */}
         {activeTab === "list" && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
             {/* Search and Filter */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">

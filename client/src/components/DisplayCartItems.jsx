@@ -94,13 +94,13 @@ const DisplayCartItems = ({ close }) => {
       navigate('/checkout');
       close?.();
     } else {
+      toast.dismiss()
       toast.error('Please login to continue');
     }
   }, [user?._id, navigate, close]);
 
   const handleNameClick = useCallback((item) => {
     // This could open a product quick view modal
-    console.log('Product clicked:', item);
   }, []);
 
   useEffect(() => {

@@ -90,6 +90,7 @@ const OtpVerification = () => {
                 }, 1500);
             }
         } catch (error) {
+            toast.dismiss()
             AxiosToastError(error);
         } finally {
             setIsSubmitting(false);

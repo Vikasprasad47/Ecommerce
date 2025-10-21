@@ -65,13 +65,16 @@ const useUserAccount = () => {
     try {
       const res = await Axios(SummaryApi.removeUserAvatar);
       if (res.data.success) {
+        toast.dismiss()
         toast.success("Avatar removed successfully");
         const userdata = await fetchUserDetails();
         dispatch(setUserDetails(userdata.data));
       } else {
+        toast.dismiss()
         toast.error(res.data.message || "Failed to remove avatar");
       }
     } catch (error) {
+      toast.dismiss()
       toast.error("Error removing avatar");
       console.error("Avatar removal error:", error);
     }

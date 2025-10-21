@@ -19,7 +19,7 @@ const couponRouter = Router();
 
 // ===== Admin Routes =====
 couponRouter.post("/create", auth, admin, createCoupon);
-couponRouter.get("/list", auth, admin, getCoupons);
+couponRouter.get("/list", auth, getCoupons);
 couponRouter.put("/update/:id", auth, admin, updateCoupon);
 couponRouter.delete("/delete/:id", auth, admin, deleteCoupon);
 couponRouter.patch("/toggle/:id", auth, admin, toggleCouponStatus);

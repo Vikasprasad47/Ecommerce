@@ -331,7 +331,7 @@ const Productpage = () => {
             case "basic":
                 return (
                     <>
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <label htmlFor="name" className="font-medium flex items-center gap-2">
                                     <BiDetail /> Product Name
@@ -370,9 +370,7 @@ const Productpage = () => {
                                     onChange={(e) => setValue("description", e.target.value)}
                                     placeholder="Enter product description..."
                                     rows={5}
-                                    className="w-full p-3 rounded-xl bg-gray-50 border border-gray-300
-                                                focus:outline-none focus:ring-2 focus:ring-amber-400
-                                                resize-none transition-shadow"
+                                    className="w-full p-3 rounded-xl bg-gray-50 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none transition-shadow"
                                     required
                                     />
 
@@ -390,7 +388,7 @@ const Productpage = () => {
                                 <p className="font-medium flex items-center gap-2">
                                     <RiFolderUploadLine /> Product Images
                                 </p>
-                                <label htmlFor="productImage" className="bg-gray-200 h-24 md:h-28 border border-dashed border-gray-400 rounded-md flex justify-center items-center cursor-pointer hover:bg-gray-300 transition">
+                                <label htmlFor="productImage" className="bg-gray-100 h-24 md:h-28 border border-dashed border-gray-400 rounded-md flex justify-center items-center cursor-pointer hover:bg-gray-200 transition">
                                     <div className="flex flex-col items-center">
                                         {imageLoading ? <Loading /> : (
                                             <>
@@ -434,7 +432,7 @@ const Productpage = () => {
             case "categories":
                 return (
                     <>
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             <div className='grid gap-2'>
                                 <label className="font-medium flex items-center gap-2">
                                     <BiCategory /> Categories
@@ -538,7 +536,7 @@ const Productpage = () => {
             case "pricing":
                 return (
                     <>
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <label htmlFor="unit" className="font-medium flex items-center gap-2">
                                     <FiPackage /> Unit
@@ -615,7 +613,7 @@ const Productpage = () => {
             case "specifications":
                 return (
                     <>
-                        <div className="grid gap-6">
+                        <div className="grid gap-3">
                             <div className="grid gap-2">
                                 <label className="font-medium flex items-center gap-2">
                                     <MdInfoOutline /> Specifications
@@ -654,7 +652,7 @@ const Productpage = () => {
                                 <button
                                     type="button"
                                     onClick={() => setOpenAddField(true)}
-                                    className="flex items-center gap-2 py-2 px-3 w-48 rounded cursor-pointer bg-slate-200 hover:bg-slate-300 text-center font-semibold mt-2"
+                                    className="flex items-center gap-2 py-2 px-3 w-fit rounded cursor-pointer bg-slate-200 hover:bg-slate-300 text-center font-semibold mt-2"
                                 >
                                     <IoAddCircleOutline /> Add Specification
                                 </button>
@@ -665,7 +663,7 @@ const Productpage = () => {
             case "variants":
                 return (
                     <>
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <label className="font-medium flex items-center gap-2">
                                     <FiPackage /> Product Variants
@@ -799,7 +797,7 @@ const Productpage = () => {
             case "shipping":
                 return (
                     <>
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <label className="font-medium flex items-center gap-2">
                                     <FiTruck /> Shipping Information
@@ -857,7 +855,7 @@ const Productpage = () => {
             case "seo":
                 return (
                     <>
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <label className="font-medium flex items-center gap-2">
                                     <FiTag /> SEO Settings
@@ -931,7 +929,7 @@ const Productpage = () => {
                 </button>
             </div>
 
-            <div className="mt-2 grid gap-6 bg-white p-4 sm:p-6 rounded-2xl shadow-md">
+            <div className="mt-2 grid gap-4 bg-white p-4 sm:p-6 rounded-2xl shadow-md">
                 {/* Tab Navigation */}
                 <div className="border-b border-gray-200">
                     <nav className="flex flex-wrap gap-2 sm:gap-4">
@@ -952,7 +950,7 @@ const Productpage = () => {
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
                     {renderTabContent()}
 
                     {activeTab !== "basic" && (

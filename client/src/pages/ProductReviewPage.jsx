@@ -130,10 +130,12 @@ const ProductReviewPage = ({ productId, productData, onReviewSubmitted }) => {
   // Review submission
   const handleSubmit = async () => {
     if (!rating) {
+      toast.dismiss()
       toast.error("Please select a rating");
       return;
     }
     if (!comment.trim()) {
+      toast.dismiss()
       toast.error("Please write your review");
       return;
     }
@@ -154,9 +156,11 @@ const ProductReviewPage = ({ productId, productData, onReviewSubmitted }) => {
           ...SummaryApi.updateReview(editReviewId),
           data: { rating, title: title.trim(), comment: comment.trim() },
         });
+        toast.dismiss()
         toast.success("Review updated successfully");
       } else {
         await Axios.post(`/api/review/product/${productId}`, formData);
+        toast.dismiss()
         toast.success("Thank you for your review!");
       }
 

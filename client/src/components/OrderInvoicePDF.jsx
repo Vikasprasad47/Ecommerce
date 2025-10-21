@@ -117,13 +117,26 @@ const OrderInvoicePDF = {
                 <span style="color: #718096; font-size: 13px;">Subtotal</span>
                 <span style="font-weight: 600; font-size: 13px;">${DisplayPriceInRupees(subtotal.toFixed(2))}</span>
               </div>
+              ${
+                order.couponDiscount > 0 ? `
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #718096; font-size: 13px;">Coupon Discount</span>
+                    <span style="font-weight: 600; font-size: 13px;">- ${DisplayPriceInRupees(order.couponDiscount)}</span>
+                  </div>
+                ` : `
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #718096; font-size: 13px;">Coupon Discount</span>
+                    <span style="font-weight: 600; font-size: 13px;">${DisplayPriceInRupees(order.couponDiscount)}</span>
+                  </div>
+                `
+              }
               <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                 <span style="color: #718096; font-size: 13px;">Tax</span>
                 <span style="font-weight: 600; font-size: 13px;">₹0.00</span>
               </div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                 <span style="color: #718096; font-size: 13px;">Shipping</span>
-                <span style="font-weight: 600; font-size: 13px;">${DisplayPriceInRupees(shipping.toFixed(2))}</span>
+                <span style="font-weight: 600; font-size: 13px;">FREE</span>
               </div>
               <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
                 <span style="font-weight: 700; font-size: 15px; color: #2d3748;">Total</span>
@@ -174,9 +187,11 @@ const OrderInvoicePDF = {
       pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
       pdf.save(`Invoice_${order.orderId}.pdf`);
 
+      toast.dismiss()
       toast.success('Invoice downloaded!', { id: toastId });
     } catch (error) {
       console.error('Invoice generation error:', error);
+      toast.dismiss()
       toast.error(error.message || 'Failed to generate invoice', { id: toastId });
     } finally {
       const elements = document.querySelectorAll('div[style*="left: -9999px"], canvas');

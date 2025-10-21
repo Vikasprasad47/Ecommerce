@@ -784,6 +784,7 @@ const UserAccount = () => {
       if (!user?._id) {
         const userData = await fetchUserDetails();
         if (!userData?.data?._id) {
+          toast.dismiss()
           toast.error('Session expired. Please login again.');
           dispatch(logout());
           localStorage.clear();

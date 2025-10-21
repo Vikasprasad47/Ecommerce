@@ -13,13 +13,12 @@ const STATUS_OPTIONS = [
   { value: 'confirmed', label: 'Confirmed' },
   { value: 'packed', label: 'Packed' },
   { value: 'shipped', label: 'Shipped' },
-  { value: 'delivered', label: 'Delivered' }
+  // { value: 'delivered', label: 'Delivered' }
 ];
 
 const OrderList = ({ orders, onDelete, onRefresh }) => {
   const [expandedOrderIds, setExpandedOrderIds] = useState([]);
   const [loadingOrderId, setLoadingOrderId] = useState(null);
-  console.log("items", expandedOrderIds)
 
   const handleUpdateAllStatus = useCallback(async (orderId, newStatus) => {
     if (!orderId || !newStatus) return;
@@ -113,7 +112,8 @@ const OrderList = ({ orders, onDelete, onRefresh }) => {
     return acc;
   }, {});
 
-  console.log("groupedOrders", groupedOrders);
+  console.log("groupedOrders",groupedOrders)
+
   return (
     <div className="space-y-6">
       {Object.entries(groupedOrders).map(([date, dateOrders]) => (
@@ -138,10 +138,17 @@ const OrderList = ({ orders, onDelete, onRefresh }) => {
               return (
                 <div 
                   key={order.orderId} 
-                  className={`bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden transition-all ${
+                  className={`relative bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden transition-all ${
                     isDelivered ? 'border-green-200 bg-green-50/30' : 'hover:shadow-md'
                   }`}
-                >
+                > 
+                  {/* Delivered Ribbon */}
+                  {isDelivered && (
+                    <div className="absolute top-2 right-0 -rotate-12 bg-amber-500 text-white px-4 py-1 text-lg font-bold shadow-lg z-10">
+                      DELIVERED
+                    </div>
+                  )}
+  
                   {/* Order Header */}
                   <div 
                     onClick={() => !isDelivered && toggleExpand(order.orderId)}

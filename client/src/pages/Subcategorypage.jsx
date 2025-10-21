@@ -274,6 +274,7 @@ const Subcategorypage = () => {
       const { data: responseData } = response;
 
       if (responseData.success) {
+        toast.dismiss()
         toast.success(responseData.message);
         fetchSubCategory();
         setOpenDeleteConfirmBox(false);

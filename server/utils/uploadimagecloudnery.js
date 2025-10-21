@@ -5,7 +5,8 @@ dotenv.config();
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_cloud_Name,
     api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true
 });
 
 const uploadImageCloudinary = async (image) => {

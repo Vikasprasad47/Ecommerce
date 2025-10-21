@@ -9,6 +9,7 @@ import {
   FaGooglePlay,
 } from "react-icons/fa";
 import { IoLogoInstagram } from "react-icons/io";
+import { BsTwitterX } from "react-icons/bs";
 
 const Footer = () => {
   return (
@@ -101,7 +102,7 @@ const Footer = () => {
               { icon: IoLogoInstagram, url: "#", hover: "hover:text-pink-500" },
               { icon: FaLinkedinIn, url: "https://linkedin.com", hover: "hover:text-blue-500", external: true },
               { icon: FaGithub, url: "#", hover: "hover:text-gray-700" },
-              { icon: FaTwitter, url: "#", hover: "hover:text-sky-500" },
+              { icon: BsTwitterX, url: "#", hover: "hover:text-black" },
             ].map(({ icon: Icon, url, hover, external }, i) => (
               <a
                 key={i}
