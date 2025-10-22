@@ -221,7 +221,7 @@ const AllUser = () => {
   const ExportButton = () => (
     <button className="flex items-center gap-2 px-4 py-3 bg-slate-700 text-white rounded-xl hover:bg-slate-800 transition-colors text-sm font-medium">
       <FiSend size={16} />
-      Send bulk Email
+      Send Email
     </button>
   );
 
@@ -657,7 +657,7 @@ const AllUser = () => {
                 exit="exit"
               >
                 {/* Header */}
-                <div className="flex justify-between items-center p-6 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+                <div className="flex justify-between items-center py-4 px-6 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-md">
                       <FiUser size={24} className="" />
@@ -669,7 +669,7 @@ const AllUser = () => {
                   </div>
                   <button
                     onClick={() => setShowUserModal(false)}
-                    className="text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-2 rounded-xl transition-all duration-200"
+                    className="cursor-pointer text-slate-400 hover:text-slate-700 hover:bg-slate-200 p-2 rounded-xl transition-all duration-200"
                   >
                     <FiX size={20} />
                   </button>
@@ -721,10 +721,10 @@ const AllUser = () => {
                         <div className="space-y-4 bg-slate-50 rounded-xl p-4 grid grid-cols-2">
                           <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-600 flex items-center gap-2">
-                              <FiMail size={14} className="text-slate-400" />
-                              Email Address
+                              <FiCalendar size={14} className="text-slate-400" />
+                              Date of Birth
                             </label>
-                            <p className="text-slate-900 font-medium">{selectedUser.email}</p>
+                            <p className="text-slate-900 font-medium">{formatDate(selectedUser.dob) || "Not provided"}</p>
                           </div>
 
                           <div className="space-y-2">
@@ -737,10 +737,10 @@ const AllUser = () => {
 
                           <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-600 flex items-center gap-2">
-                              <FiCalendar size={14} className="text-slate-400" />
-                              Date of Birth
+                              <FiMail size={14} className="text-slate-400" />
+                              Email Address
                             </label>
-                            <p className="text-slate-900 font-medium">{formatDate(selectedUser.dob) || "Not provided"}</p>
+                            <p className="text-slate-900 font-medium">{selectedUser.email}</p>
                           </div>
                         </div>
                       </div>
@@ -772,17 +772,17 @@ const AllUser = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex justify-end gap-3 pt-3 pb-3 border-t border-slate-200">
+                    <div className="flex justify-end gap-3 pt-3 mb-3 border-t border-slate-200">
                       <button
                         onClick={() => handleSendEmail(selectedUser)}
-                        className="px-6 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600 transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg flex items-center gap-2"
+                        className="cursor-pointer px-6 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600 transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg flex items-center gap-2"
                       >
                         <FiMail size={16} />
                         Send Email
                       </button>
                       <button
                         onClick={() => setShowUserModal(false)}
-                        className="px-6 py-3 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg"
+                        className="cursor-pointer px-6 py-3 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg"
                       >
                         Close
                       </button>

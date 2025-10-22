@@ -769,7 +769,12 @@ import isAdmin from '../utils/IsAdmin';
 import fetchUserDetails from '../utils/featchUserDetails';
 import UserFileUploadAvatar from '../components/UserFileUploadAvatar';
 import { RiSecurePaymentFill } from "react-icons/ri";
-
+import { BiDotsVerticalRounded } from "react-icons/bi";
+import { FaUser } from "react-icons/fa";
+import { FcSettings } from "react-icons/fc";
+import { RiAdminFill } from "react-icons/ri";
+import { VscGraph } from "react-icons/vsc";
+import { HiOutlineCurrencyRupee } from "react-icons/hi";
 
 const UserAccount = () => {
   const user = useSelector(state => state.user);
@@ -931,7 +936,7 @@ const UserAccount = () => {
         <QuickooPlusCard balance={userData.superCoins} />
 
         {/* Quick Actions */}
-        <SectionContainer title="Quick Actions" icon="🚀">
+        <SectionContainer title="Quick Actions" icon={<BiDotsVerticalRounded />}>
           <AccountItem to="/dashboard/myorder" icon={<LuPackageCheck className="text-blue-600" />} label="My Orders" description="Track your orders & purchases" />
           <AccountItem to="/dashboard/wishlist" icon={<FaStar className="text-amber-500" />} label="Wishlist" description="Your saved items" />
           <AccountItem to="/dashboard/coupons" icon={<TbBrandProducthunt className="text-emerald-500" />} label="Coupons & Offers" description="Available discounts & deals" />
@@ -939,7 +944,7 @@ const UserAccount = () => {
         </SectionContainer>
 
         {/* Profile Details */}
-        <SectionContainer title="Profile Details" icon="👤">
+        <SectionContainer title="Profile Details" icon={<FaUser />}>
           <div className="grid grid-cols-2 gap-3 mb-4">
             <DetailCard icon={<MdCalendarToday className="text-blue-500" />} label="Date of Birth" value={userData.dob ? new Date(userData.dob).toLocaleDateString() : 'Not set'} />
             <DetailCard icon={<MdTransgender className="text-purple-500" />} label="Gender" value={userData.gender || 'Not set'} />
@@ -963,7 +968,7 @@ const UserAccount = () => {
         </SectionContainer>
 
         {/* Account Settings */}
-        <SectionContainer title="Account Settings" icon="⚙️">
+        <SectionContainer title="Account Settings" icon={<FcSettings/>}>
           <AccountItem to="/dashboard/plus" icon={<RiCoinsLine className="text-purple-500" />} label="Quickoo Plus" description="Premium features & benefits" />
           <AccountItem to="/dashboard/profile" icon={<FaUserCircle className="text-blue-500" />} label="Edit Profile" description="Update personal information" />
           <AccountItem to="/dashboard/cards" icon={<MdCreditCard className="text-emerald-500" />} label="Saved Cards & Wallet" description="Payment methods & balance" />
@@ -974,7 +979,7 @@ const UserAccount = () => {
 
         {/* Admin Dashboard */}
         {isAdmin(userData.role) && (
-          <SectionContainer title="Admin Dashboard" icon="🛠️">
+          <SectionContainer title="Admin Dashboard" icon={<RiAdminFill />}>
             <AccountItem to="/dashboard/category" icon={<TbCategoryPlus className="text-blue-500" />} label="Category Management" description="Manage product categories" />
             <AccountItem to="/dashboard/subcategory" icon={<MdOutlineCategory className="text-emerald-500" />} label="Sub Categories" description="Organize sub-categories" />
             <AccountItem to="/dashboard/upload-product" icon={<MdOutlineCloudUpload className="text-orange-500" />} label="Upload Product" description="Add new products" />
@@ -988,13 +993,13 @@ const UserAccount = () => {
         )}
 
         {/* My Activity */}
-        <SectionContainer title="My Activity" icon="📊">
+        <SectionContainer title="My Activity" icon={<VscGraph />}>
           <AccountItem to="/dashboard/reviews" icon={<MdReviews className="text-emerald-500" />} label="My Reviews" description="Product reviews & ratings" />
           <AccountItem to="/questions" icon={<FaQuestionCircle className="text-blue-500" />} label="Q&A" description="Questions & answers" />
         </SectionContainer>
 
         {/* Earn with Quickoo */}
-        <SectionContainer title="Earn with Quickoo" icon="💼">
+        <SectionContainer title="Earn with Quickoo" icon={<HiOutlineCurrencyRupee />}>
           <AccountItem to="/sell" icon={<TbCategoryPlus className="text-emerald-500" />} label="Sell on Quickoo" description="Start your business" />
           <AccountItem to="/feedback" icon={<MdPrivacyTip className="text-blue-500" />} label="Feedback" description="Share your suggestions" />
           <AccountItem to="/terms" icon={<span className="text-slate-500 text-sm">📄</span>} label="Terms & Policies" description="Legal information" />
@@ -1159,7 +1164,7 @@ const SectionContainer = memo(({ title, children, icon = "📁" }) => (
     className="bg-gradient-to-b from-white to-slate-50 rounded-2xl shadow-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-shadow duration-300"
   >
     <div className="flex justify-between items-center p-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-blue-50">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1">
         <span className="text-lg">{icon}</span>
         <h3 className="text-base font-bold text-slate-900">{title}</h3>
       </div>
