@@ -357,7 +357,7 @@ const Categorypage = () => {
         {/* Scrollable Content */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-2 transition-all duration-300 hover:shadow-md">
           {!filteredData[0] && !loading && <Nodata />}
-          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-2 py-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-2 py-4">
             {loading
               ? Array.from({ length: itemsPerPage }).map((_, i) => (
                   <div
