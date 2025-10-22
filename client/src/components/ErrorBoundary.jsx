@@ -90,8 +90,6 @@ class ErrorBoundary extends React.Component {
         if (this.state.clickCount >= 5) {
           this.setState({ devUnlocked: true });
         }
-
-        // reset click counter after 2 seconds if not reached
         clearTimeout(this.resetTimer);
         this.resetTimer = setTimeout(() => {
           this.setState({ clickCount: 0 });
@@ -103,76 +101,66 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div
-          className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-amber-50 to-white px-6 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div
-            className="bg-white shadow-xl rounded-3xl p-10 max-w-lg w-full border border-amber-100 relative"
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 150 }}
-          >
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-amber-50 to-white px-6 py-10 text-center">
+          <div className="bg-white shadow-2xl rounded-2xl p-5 max-w-xl w-full border border-amber-100">
+            
+            {/* Error Icon */}
             <div
-              className="flex justify-center mb-6 cursor-pointer select-none"
               onClick={this.handleSecretClick}
               title="Click 5 times to unlock developer info"
+              className="flex flex-col items-center mb-6 cursor-pointer select-none group"
             >
-              <div
-                initial={{ rotate: -10, scale: 0.9 }}
-                animate={{ rotate: 0, scale: 1 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="bg-amber-100 p-5 rounded-full shadow-inner"
-              >
+              <div className="bg-amber-100 p-6 rounded-full shadow-inner group-hover:shadow-md transition-all">
                 <AlertTriangle className="w-12 h-12 text-amber-600" />
               </div>
+              <p className="text-sm text-amber-600 mt-2 font-medium tracking-wide">
+                Oops!
+              </p>
             </div>
 
+            {/* Headings */}
             <h1 className="text-3xl font-bold text-gray-800 mb-3">
-              Oops! Something went wrong
+              Something went wrong
             </h1>
-
-            <p className="text-gray-600 leading-relaxed mb-8">
-              We’re sorry, but it looks like something went off track.
-              Please try refreshing the page or return to the homepage.
+            <p className="text-gray-600 leading-relaxed mb-8 max-w-sm mx-auto">
+              We’re sorry, but it looks like something went off track.  
+              Please try refreshing the page or go back to the homepage.
             </p>
 
+            {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                whileTap={{ scale: 0.95 }}
                 onClick={this.handleReset}
-                className="bg-amber-500 hover:bg-amber-600 text-white font-medium px-6 py-3 rounded-xl shadow-md transition cursor-pointer"
+                className="bg-amber-500 hover:bg-amber-600 text-white font-medium px-6 py-3 rounded-xl shadow-md transition-transform hover:scale-[1.02]"
               >
                 Refresh Page
               </button>
-
               <button
-                whileTap={{ scale: 0.95 }}
                 onClick={() => (window.location.href = "/")}
-                className="border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-6 py-3 rounded-xl shadow-md transition cursor-pointer"
+                className="border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-6 py-3 rounded-xl shadow-md transition-transform hover:scale-[1.02]"
               >
                 Go to Home
               </button>
             </div>
 
-            <p className="text-xs text-gray-400 mt-8 flex flex-col gap-2">
-              <span>We’re working on fixing this issue. Thanks for your patience 💛</span>
-              OR
-              <a href="/contact" className="cusror-pointer underline text-blue-500">Contact us</a>
-            </p>
+            {/* Footer */}
+            <div className="mt-8 text-xs text-gray-500">
+              <p>We’re working on fixing this issue. Thanks for your patience ❤️</p>
+              <p className="mt-2">
+                Need help?{" "}
+                <a href="/contact" className="underline text-blue-500 hover:text-blue-600">
+                  Contact us
+                </a>
+              </p>
+            </div>
 
+            {/* Developer Info */}
             {this.state.devUnlocked && (
-              <details
-                className="mt-8 bg-gray-100 p-4 rounded-xl text-left text-xs text-red-700 overflow-x-auto border border-gray-200"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <summary className="cursor-pointer font-semibold mb-0">
+              <details className="mt-8 bg-gray-100 p-4 rounded-xl text-left text-xs text-red-700 overflow-x-auto border border-gray-200">
+                <summary className="cursor-pointer font-semibold mb-1">
                   Developer Debug Info
                 </summary>
-                <pre>{this.state.error?.toString()}</pre>
+                <pre className="whitespace-pre-wrap break-words">{this.state.error?.toString()}</pre>
               </details>
             )}
           </div>

@@ -649,7 +649,7 @@ const Profile = () => {
         {openAvatarEdit && <UserFileUploadAvatar close={() => setOpenAvatarEdit(false)} />}
 
         {/* Tabs */}
-        <div className="flex overflow-x-auto gap-3 bg-white border border-gray-200 rounded-2xl p-2 mb-6 shadow-sm sticky top-4 z-10">
+        <div className="flex overflow-x-auto scrollbar-hide gap-3 bg-white border border-gray-200 rounded-2xl p-2 mb-6 shadow-sm sticky top-4 z-10">
           {tabItems.map(tab => (
             <button
               key={tab.id}
@@ -672,7 +672,7 @@ const Profile = () => {
             switch (activeTab) {
               case 'profile':
                 return (
-                  <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-6">
+                  <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         label="Full Name"
@@ -796,7 +796,7 @@ const Profile = () => {
                       <p className="text-gray-600">Earn points and unlock exclusive benefits</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
                       <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 text-center">
                         <div className="text-3xl font-bold text-amber-600 mb-2">{superCoins.balance}</div>
                         <div className="text-gray-700 font-medium">Reward Points</div>
@@ -820,7 +820,7 @@ const Profile = () => {
                           {!coupon.isActive || coupon.isExpired ? (
                             <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-black/20 flex items-center justify-center rounded-xl z-10 overflow-hidden">
                               <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,red_10px,red_20px)] opacity-10"></div>
-                              <span className="text-red-600 text-xl font-black tracking-widest relative z-20 bg-white/90 px-4 py-2 rounded-lg backdrop-blur-sm">
+                              <span className="text-gray-800 text-xl font-black tracking-widest relative z-20 bg-white/90 px-4 py-2 rounded-lg backdrop-blur-sm">
                                 EXPIRED
                               </span>
                             </div>
@@ -855,7 +855,7 @@ const Profile = () => {
                                 ? 'bg-amber-500 text-white hover:bg-amber-600'
                                 : 'bg-gray-400 text-gray-200 cursor-not-allowed'}`}
                           >
-                            Copy Code
+                            Copy
                           </button>
                         </div>
                         ))}

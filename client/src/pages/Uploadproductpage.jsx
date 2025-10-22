@@ -510,7 +510,7 @@ const Productpage = () => {
                                         </span>
                                     ))}
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 flex-col">
                                     <input
                                         type="text"
                                         value={tagInput}
@@ -522,11 +522,12 @@ const Productpage = () => {
                                         type="button"
                                         onClick={handleAddTag}
                                         className="group flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
-                                    >
-                                        <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                        </svg>
-                                        Add
+                                    >   <span className="flex items-center gap-1 justify-center w-full">
+                                            <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                            </svg>
+                                            Add
+                                        </span>
                                     </button>
                                 </div>
                             </div>
@@ -779,15 +780,15 @@ const Productpage = () => {
                                     </div>
                                     <div className="flex justify-end">
                                         <button
-    type="button"
-    onClick={handleAddVariant}
-    className="group flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
->
-    <svg className="w-4 h-4 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-    </svg>
-    Add Variant
-</button>
+                                            type="button"
+                                            onClick={handleAddVariant}
+                                            className="group flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+                                        >
+                                            <svg className="w-4 h-4 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                            </svg>
+                                            Add Variant
+                                        </button>
                                     </div>
                                 </div>
                             </div>

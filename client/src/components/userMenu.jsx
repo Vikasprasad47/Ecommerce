@@ -195,9 +195,7 @@ const UserMenu = ({ close, rightContainerRef }) => {
 
       {/* Scrollable Menu Section */}
       <div
-        className={`flex flex-col gap-1 pr-2 transition-all duration-500 ${
-          isHovered ? 'overflow-y-auto max-h-[60vh] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent hover:scrollbar-thumb-slate-400' : 'overflow-hidden max-h-[60vh]'
-        }`}
+        className={`flex flex-col gap-1 pr-2 transition-all duration-500 overflow-x-hidden max-h-100 customScrollbar`}
       >
         {currentMenu.map((item) => (
           <MenuItem key={item.to} to={item.to} icon={item.icon}>

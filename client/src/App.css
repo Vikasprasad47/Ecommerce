@@ -29,14 +29,22 @@ input[type="number"]::-webkit-outer-spin-button {
   overflow-y: auto; 
 } */
 
-.customScrollbar::-webkit-scrollbar{
-  width: 5px; /* Width of the scrollbar */
-  background-color: #ddd5d5; /* Background color of the scrollbar */
+.customScrollbar::-webkit-scrollbar {
+  width: 6px;
 }
 
-.customScrollbar::-webkit-scrollbar-thumb{
-  background-color: rgb(131, 150, 235);
-  border-radius: 10px;
+.customScrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.customScrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.customScrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 @keyframes popup {

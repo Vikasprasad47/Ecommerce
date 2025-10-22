@@ -760,7 +760,7 @@ import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SiAnalogue } from "react-icons/si";
 import { debounce } from 'lodash';
-
+import { RiCoupon2Fill } from "react-icons/ri";
 import Axios from '../utils/axios';
 import SummaryApi from '../comman/summaryApi';
 import AxiosToastError from '../utils/AxiosToastErroe';
@@ -768,6 +768,8 @@ import { logout, setUserDetails } from '../Store/userSlice';
 import isAdmin from '../utils/IsAdmin';
 import fetchUserDetails from '../utils/featchUserDetails';
 import UserFileUploadAvatar from '../components/UserFileUploadAvatar';
+import { RiSecurePaymentFill } from "react-icons/ri";
+
 
 const UserAccount = () => {
   const user = useSelector(state => state.user);
@@ -943,7 +945,7 @@ const UserAccount = () => {
             <DetailCard icon={<MdTransgender className="text-purple-500" />} label="Gender" value={userData.gender || 'Not set'} />
           </div>
           <div className="flex gap-3">
-            <Link to="/dashboard/profile" className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-center py-3 rounded-xl font-semibold transition-all shadow-lg active:scale-95 transform duration-200">
+            <Link to="/dashboard/profile" className="flex-1 bg-gradient-to-r from-amber-600 to-amber-600 hover:from-amber-700 hover:to-amber-700 text-white text-center py-3 rounded-xl font-semibold transition-all shadow-lg active:scale-95 transform duration-200">
               Edit Profile
             </Link>
             {userData.avatar && (
@@ -978,7 +980,9 @@ const UserAccount = () => {
             <AccountItem to="/dashboard/upload-product" icon={<MdOutlineCloudUpload className="text-orange-500" />} label="Upload Product" description="Add new products" />
             <AccountItem to="/dashboard/product" icon={<TbBrandProducthunt className="text-purple-500" />} label="Product Management" description="Manage all products" />
             <AccountItem to="/dashboard/manage-order" icon={<LuPackageCheck className="text-amber-500" />} label="Order Management" description="Manage all orders" />
+            <AccountItem to="/dashboard/coupons" icon={<RiCoupon2Fill className="text-gray-500" />} label="coupons Management" description="Manage coupons" />
             <AccountItem to="/dashboard/alluser" icon={<LuUsers className="text-rose-500" />} label="User Management" description="Administer user accounts" />
+            <AccountItem to="/dashboard/list-online-payments" icon={<RiSecurePaymentFill  className="text-blue-500" />} label="Online Payment Management" description="Online Payment Management" />
             <AccountItem to="/dashboard/analytics" icon={<SiAnalogue className="text-slate-500" />} label="Analytics" description="SEO for products" />
           </SectionContainer>
         )}
@@ -1053,7 +1057,7 @@ const UserProfileCard = memo(({ user, setOpenAvatarEdit, handleRemoveAvatar, isL
           whileTap={{ scale: 0.95 }} 
           className="relative"
         >
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border-4 border-white shadow-xl">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center shadow-xl">
             {user.avatar ? (
               <img 
                 src={user.avatar} 
@@ -1062,7 +1066,7 @@ const UserProfileCard = memo(({ user, setOpenAvatarEdit, handleRemoveAvatar, isL
                 loading="lazy"
               />
             ) : (
-              <FaUserCircle size={48} className="text-blue-400" />
+              <FaUserCircle size={100} className="text-blue-400" />
             )}
           </div>
           <motion.button 
