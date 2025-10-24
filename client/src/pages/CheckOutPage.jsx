@@ -16,6 +16,10 @@ import { loadStripe } from '@stripe/stripe-js';
 import { FaPhoneAlt } from "react-icons/fa";
 import { IoReceiptOutline } from "react-icons/io5";
 import Divider from '../components/Divider'
+import { RiCoupon2Fill } from "react-icons/ri";
+import { BiSolidDiscount } from "react-icons/bi";
+import { BiSolidStoreAlt } from "react-icons/bi";
+
 
 
 const CheckOutPage = () => {
@@ -32,6 +36,7 @@ const CheckOutPage = () => {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [isLoadingStorePickup, setIsLoadingStorePickup] = useState(false);
   const navigate = useNavigate();
 
 
@@ -254,8 +259,6 @@ const CheckOutPage = () => {
     }
 
     try {
-      toast.dismiss();
-      toast.loading("Redirecting to payment...");
       const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLISHED_KEY;
       const stripePromise = await loadStripe(stripePublicKey);
 
@@ -292,6 +295,8 @@ const CheckOutPage = () => {
         setSelectedPayment('online');
         // Clear coupon before redirecting
         // resetCoupon();
+        toast.dismiss();
+        toast.loading("Redirecting to payment...");
         stripePromise.redirectToCheckout({ sessionId: response.data.id });
       }
       if(fetchCartItems){
@@ -299,10 +304,105 @@ const CheckOutPage = () => {
       }
       fetchOrderList?.();
     } catch (error) {
+      toast.dismiss()
       AxiosToastError(error);
     }
   }, [isValidAddress, cartItems, addressList, selectAddress, totalPrice, finalTotal, appliedCoupon, fetchOrderList, user]);
 
+  const handleStorePickup = useCallback(async () => {
+    const selectedAddress = addressList[selectAddress];
+
+    if (!selectedAddress) {
+      toast.dismiss();
+      toast.error("Please select a valid pickup location.");
+      return;
+    }
+
+    try {
+      setIsLoadingStorePickup(true);
+      setSelectedPayment("store-pickup");
+
+      const transformedItems = cartItems.map(item => ({
+        quantity: item.quantity,
+        productId: {
+          _id: item.productId._id,
+          name: item.productId.name,
+          image: item.productId.image,
+          price: item.productId.price,
+          discount: item.productId.discount || 0,
+          tax: item.productId.tax || 0,
+        }
+      }));
+
+      // Backend now expects delivery_addressId instead of full address object
+      const orderData = {
+        list_items: transformedItems,
+        delivery_addressId: selectedAddress._id,
+      };
+
+      // Include coupon info if applied
+      if (appliedCoupon) {
+        orderData.couponInfo = {
+          code: appliedCoupon.code,
+          couponId: appliedCoupon.couponId,
+          discount: appliedCoupon.calculatedDiscount,
+          discountType: appliedCoupon.discountType,
+          discountValue: appliedCoupon.discountValue,
+          maxDiscount: appliedCoupon.maxDiscount,
+          minAmount: appliedCoupon.minAmount
+        };
+      }
+
+      console.log("Store Pickup Order Data:", orderData); // ✅ Debug
+
+      const response = await Axios({
+        ...SummaryApi.StorePickupOrder,
+        data: orderData
+      });
+
+      if (response.data.success) {
+        resetCoupon();
+        toast.dismiss();
+        toast.success(response.data.message || "Store pickup order placed successfully!");
+        fetchCartItems?.();
+        fetchOrderList?.();
+
+        const firstProductId = transformedItems[0]?.productId?._id;
+
+        if (firstProductId) {
+          navigate(`/store-pickup/${firstProductId}`, {
+            state: {
+              text: "Order",
+              pickupType: "store",
+              couponApplied: !!appliedCoupon,
+              couponDiscount: appliedCoupon?.calculatedDiscount || 0,
+              orderId: response.data.data?.orderId,
+              delivery_addressId: selectedAddress._id,
+              list_items: transformedItems
+            }
+          });
+        }
+
+        // navigate("/store-pickup", {
+        //   state: {
+        //     text: "Order",
+        //     pickupType: "store",
+        //     couponApplied: !!appliedCoupon,
+        //     couponDiscount: appliedCoupon?.calculatedDiscount || 0,
+        //     orderId: response.data.data?.orderId
+        //   }
+        // });
+      }
+    } catch (error) {
+      console.error("Store Pickup Error:", error);
+      AxiosToastError(error);
+    } finally {
+      setIsLoadingStorePickup(false);
+    }
+  }, [cartItems, addressList, selectAddress, appliedCoupon, fetchCartItems, fetchOrderList, navigate]);
+
+
+  
   // Product List Component
   const ProductList = useMemo(() => (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -467,6 +567,7 @@ const CheckOutPage = () => {
           <div className="space-y-6">
             {/* Coupon Section */}
             <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm mb-4">
+              <p className="text-sm text-gray-700 font-semibold mb-2 flex items-center gap-2"><BiSolidDiscount size={23} />Have a coupon? Apply it!</p>
               <div className='flex items-center w-full gap-2 mb-0'>
                 <input
                   type="text"
@@ -481,7 +582,7 @@ const CheckOutPage = () => {
                   disabled={isApplyingCoupon}
                   className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
                     appliedCoupon 
-                      ? 'bg-red-500 hover:bg-red-600 text-white' 
+                      ? 'bg-orange-500 hover:bg-orange-600 text-white' 
                       : 'bg-amber-500 hover:bg-amber-600 text-white'
                   }`}
                 >
@@ -563,7 +664,7 @@ const CheckOutPage = () => {
               </div>
 
               {/* Payment Buttons */}
-              <div className="mt-6 space-y-3">
+              {/* <div className="mt-6 space-y-3">
                 <button
                   onClick={handleOnlinePayment}
                   disabled={!isValidAddress}
@@ -603,6 +704,100 @@ const CheckOutPage = () => {
                     </div>
                   ) : (
                     'Cash on Delivery'
+                  )}
+                </button>
+
+                <button
+                  onClick={handleCashOnDelivery}
+                  disabled={!isValidAddress || isLoadingCOD}
+                  className={`w-full py-2.5 rounded-xl font-semibold transition-all cursor-pointer ${
+                    !isValidAddress
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : selectedPayment === 'cod'
+                      ? 'bg-amber-300 text-white'
+                      : 'bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-200'
+                  }`}
+                >
+                  {isLoadingCOD ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-amber-600 border-t-transparent rounded-full animate-spin" />
+                      Placing Order...
+                    </div>
+                  ) : (
+                    'Store Pick Up'
+                  )}
+                </button>
+              </div> */}
+              {/* Payment Buttons */}
+              <div className="mt-6 space-y-4">
+                {/* Cash on Delivery Button */}
+                <button
+                  onClick={handleCashOnDelivery}
+                  disabled={!isValidAddress || isLoadingCOD}
+                  className={`cursor-pointer w-full py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 ${
+                    !isValidAddress
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-sm'
+                      : selectedPayment === 'cod'
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
+                      : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-md hover:shadow-lg'
+                  }`}
+                >
+                  {isLoadingCOD ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Placing Order...
+                    </div>
+                  ) : (
+                    'Cash on Delivery'
+                  )}
+                </button>
+
+                {/* Store Pickup Button */}
+                <button
+                  onClick={handleStorePickup}
+                  disabled={!isValidAddress || isLoadingStorePickup}
+                  className={`cursor-pointer w-full py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 ${
+                    !isValidAddress
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-sm'
+                      : selectedPayment === 'store-pickup'
+                      ? 'bg-gradient-to-r from-amber-300 to-orange-300 text-gray-800 shadow-lg'
+                      : 'bg-gradient-to-r from-amber-300 to-orange-300 text-gray-800 hover:from-amber-300 hover:to-orange-200 shadow-md hover:shadow-lg'
+                  }`}
+                >
+                  {isLoadingStorePickup ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Placing Order...
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-xl ">
+                        <BiSolidStoreAlt />
+                      </span>
+                      Store Pickup
+                    </div>
+                  )}
+                </button>
+
+                {/* Online Payment Button */}
+                <button
+                  onClick={handleOnlinePayment}
+                  disabled={!isValidAddress}
+                  className={`cursor-pointer w-full py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 ${
+                    !isValidAddress
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-sm'
+                      : selectedPayment === 'online'
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
+                      : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-md hover:shadow-lg'
+                  }`}
+                >
+                  {selectedPayment === 'online' ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Processing Payment...
+                    </div>
+                  ) : (
+                    'Pay Online'
                   )}
                 </button>
               </div>

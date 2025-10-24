@@ -269,7 +269,7 @@ const DisplayCartItems = ({ close }) => {
 
                 <button 
                   onClick={redirectToCheckout}
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold py-3 px-6 rounded-xl hover:from-amber-600 hover:to-orange-600 transition-colors shadow-md hover:shadow-lg"
+                  className="cursor-pointer bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold py-3 px-6 rounded-xl hover:from-amber-600 hover:to-orange-600 transition-colors shadow-md hover:shadow-lg"
                 >
                   Checkout
                 </button>

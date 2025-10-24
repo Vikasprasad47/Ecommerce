@@ -939,7 +939,7 @@ const UserAccount = () => {
         <SectionContainer title="Quick Actions" icon={<BiDotsVerticalRounded />}>
           <AccountItem to="/dashboard/myorder" icon={<LuPackageCheck className="text-blue-600" />} label="My Orders" description="Track your orders & purchases" />
           <AccountItem to="/dashboard/wishlist" icon={<FaStar className="text-amber-500" />} label="Wishlist" description="Your saved items" />
-          <AccountItem to="/dashboard/coupons" icon={<TbBrandProducthunt className="text-emerald-500" />} label="Coupons & Offers" description="Available discounts & deals" />
+          <AccountItem to="/dashboard/profile" icon={<TbBrandProducthunt className="text-emerald-500" />} label="Coupons & Offers" description="Available discounts & deals" />
           <AccountItem to="/dashboard/help" icon={<TbHelp className="text-orange-500" />} label="Help Center" description="Get support & answers" />
         </SectionContainer>
 
@@ -1002,7 +1002,7 @@ const UserAccount = () => {
         <SectionContainer title="Earn with Quickoo" icon={<HiOutlineCurrencyRupee />}>
           <AccountItem to="/sell" icon={<TbCategoryPlus className="text-emerald-500" />} label="Sell on Quickoo" description="Start your business" />
           <AccountItem to="/feedback" icon={<MdPrivacyTip className="text-blue-500" />} label="Feedback" description="Share your suggestions" />
-          <AccountItem to="/terms" icon={<span className="text-slate-500 text-sm">📄</span>} label="Terms & Policies" description="Legal information" />
+          <AccountItem to="/terms" icon={<span className="text-slate-500 text-sm">📄</span>} label="Terms & Conditions" description="Legal information" />
           <AccountItem to="/faq" icon={<TbHelp className="text-orange-500" />} label="FAQs" description="Frequently asked questions" />
         </SectionContainer>
 
@@ -1018,7 +1018,7 @@ const UserAccount = () => {
             whileTap={{ scale: 0.98 }} 
             onClick={handleLogout} 
             disabled={isLoggingOut}
-            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-semibold py-4 rounded-xl transition-all shadow-lg active:shadow-inner disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-orange-700 hover:to-amber-700 text-white font-semibold py-4 rounded-xl transition-all shadow-lg active:shadow-inner disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoggingOut ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>

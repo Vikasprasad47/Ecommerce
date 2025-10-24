@@ -172,7 +172,7 @@ const Login = () => {
 
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <div className="flex h-screen items-center justify-center p-4 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-100 via-white to-amber-200 p-6">
         <Toaster
           position="top-center"
           toastOptions={{

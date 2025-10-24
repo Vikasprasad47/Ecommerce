@@ -191,9 +191,9 @@ const About = () => {
         <div className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             {leadershipTeam.map((member, index) => (
-              <div key={index} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+              <div key={index} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
                 <div className="flex items-start space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-lg">
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </span>
@@ -304,7 +304,7 @@ const About = () => {
       icon: <FiGlobe />,
       content: (
         <div className="space-y-6">
-          <div className="grid md:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-4">
             <div className="text-center p-6 border border-gray-200 rounded-xl">
               <FiMapPin className="text-blue-600 text-2xl mx-auto mb-3" />
               <h4 className="font-semibold text-gray-900">Operations</h4>
@@ -363,7 +363,7 @@ const About = () => {
                 <FiTarget className="text-white text-lg" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">About Quickoo</h1>
+                <h1 className="text-xl font-bold text-gray-900">About Quickoo</h1>
                 <p className="text-sm text-gray-500">Leading E-Commerce Innovation Since 2020</p>
               </div>
             </div>
@@ -401,7 +401,7 @@ const About = () => {
             <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => toggleSection(index)}
-                className="flex items-center justify-between w-full px-6 py-4 bg-white hover:bg-gray-50 text-left border-b border-gray-200"
+                className="flex items-center justify-between w-full px-4 py-4 bg-white hover:bg-gray-50 text-left border-b border-gray-200"
               >
                 <div className="flex items-center space-x-4">
                   <div className="text-gray-600">
@@ -417,7 +417,7 @@ const About = () => {
               </button>
               
               {openSections[index] && (
-                <div className="px-6 py-4 bg-white">
+                <div className="p-4 bg-white">
                   <div className="prose prose-gray max-w-none">
                     {section.content}
                   </div>
@@ -445,15 +445,15 @@ const About = () => {
         </div>
 
         {/* Legal Footer */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <div className="bg-gray-50 rounded-lg p-6">
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <div className="bg-gray-50 rounded-lg p-3">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <h4 className="font-semibold text-gray-800 mb-3">Company Information</h4>
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex justify-between">
                     <span>Legal Name:</span>
-                    <span className="font-medium">Quickoo E-Commerce Solutions Pvt. Ltd.</span>
+                    <span className="font-medium">Quickoo Pvt. Ltd.</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Registration:</span>

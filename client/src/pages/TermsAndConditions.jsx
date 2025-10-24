@@ -571,7 +571,7 @@ const TermsAndConditions = () => {
             <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => toggleSection(index)}
-                className="flex items-center justify-between w-full px-6 py-4 bg-white hover:bg-gray-50 text-left border-b border-gray-200"
+                className="flex items-center justify-between w-full px-4 py-4 bg-white hover:bg-gray-50 text-left border-b border-gray-200"
               >
                 <div className="flex items-center space-x-4">
                   <div className="text-gray-600">
@@ -587,7 +587,7 @@ const TermsAndConditions = () => {
               </button>
               
               {openSections[index] && (
-                <div className="px-6 py-4 bg-white">
+                <div className="px-4 py-4 bg-white">
                   <div className="prose prose-gray max-w-none">
                     {section.content}
                   </div>
@@ -598,7 +598,7 @@ const TermsAndConditions = () => {
         </div>
 
         {/* Legal Footer */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
+        <div className="mt-6 pt-4 border-t border-gray-200">
           <div className="bg-gray-50 rounded-lg p-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>

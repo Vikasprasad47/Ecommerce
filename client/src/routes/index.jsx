@@ -43,6 +43,7 @@ const AnalyticsDashboard = lazy(() => import("../components/AnalyticsDashboard")
 const NotFound = lazy(() => import("../components/NotFound"));
 const About = lazy(() => import("../pages/About"))
 const OnlinePaymentList = lazy(() => import("../pages/OnlinePaymentList"));
+const StorePickupPage = lazy(() => import("../pages/StorePickupPage"))
 const router = createBrowserRouter([
     {
         path: "/", // Home page
@@ -194,6 +195,10 @@ const router = createBrowserRouter([
             {
                 path: 'comming-soon',
                 element: <CommingSoon/>
+            },
+            {
+                path: 'store-pickup/:productId',
+                element: <StorePickupPage/>
             },
             {
                 path: "*",

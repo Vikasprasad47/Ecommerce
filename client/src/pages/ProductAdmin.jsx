@@ -246,13 +246,13 @@ const ProductAdmin = () => {
           {/* Products Grid */}
           <div className="mb-6">
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 8 }).map((_, index) => (
                   <SkeletonCard key={index} />
                 ))}
               </div>
             ) : productData.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {productData.map((product, index) => (
                   <ProductCardAdmin 
                     key={product._id || index}
@@ -291,24 +291,24 @@ const ProductAdmin = () => {
                 <button
                   onClick={handlePrev}
                   disabled={page <= 1 || loading}
-                  className={`px-5 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
+                  className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
                     page <= 1 || loading
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                       : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 hover:shadow-md transform hover:scale-[1.02] shadow-sm'
                   }`}
                 >
                   <FaChevronLeft size={14} />
-                  Previous
+                  Prev
                 </button>
 
                 <div className="flex items-center gap-2">
-                  {Array.from({ length: Math.min(5, totalPage) }).map((_, index) => {
+                  {Array.from({ length: Math.min(3, totalPage) }).map((_, index) => {
                     const pageNumber = index + 1;
                     return (
                       <button
                         key={pageNumber}
                         onClick={() => setPage(pageNumber)}
-                        className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                        className={`w-8 h-8 rounded-lg font-medium transition-all ${
                           page === pageNumber
                             ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm'
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -326,7 +326,7 @@ const ProductAdmin = () => {
                 <button
                   onClick={handleNext}
                   disabled={page >= totalPage || loading}
-                  className={`px-5 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
+                  className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
                     page >= totalPage || loading
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                       : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 hover:shadow-md transform hover:scale-[1.02] shadow-sm'

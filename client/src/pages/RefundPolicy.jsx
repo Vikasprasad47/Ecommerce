@@ -332,14 +332,14 @@ const RefundPolicy = () => {
     <div className="min-h-screen bg-white py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Professional Header */}
-        <div className="border-b border-gray-200 pb-8 mb-8">
+        <div className="border-b border-gray-200 pb-4 mb-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
                 <FiRefreshCw className="text-white text-lg" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Return & Refund Policy</h1>
+                <h1 className="text-xl font-bold text-gray-900">Return & Refund Policy</h1>
                 <p className="text-sm text-gray-500">Quickoo E-Commerce Platform</p>
               </div>
             </div>
@@ -358,7 +358,7 @@ const RefundPolicy = () => {
         </div>
 
         {/* Quick Summary Cards */}
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
             <FiClock className="text-blue-600 text-xl mx-auto mb-2" />
             <h4 className="font-semibold text-blue-800 text-sm">Return Window</h4>
@@ -382,7 +382,7 @@ const RefundPolicy = () => {
             <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => toggleSection(index)}
-                className="flex items-center justify-between w-full px-6 py-4 bg-white hover:bg-gray-50 text-left border-b border-gray-200"
+                className="flex items-center justify-between w-full px-4 py-4 bg-white hover:bg-gray-50 text-left border-b border-gray-200"
               >
                 <div className="flex items-center space-x-4">
                   <div className="text-gray-600">
@@ -398,7 +398,7 @@ const RefundPolicy = () => {
               </button>
               
               {openSections[index] && (
-                <div className="px-6 py-4 bg-white">
+                <div className="p-4 bg-white">
                   <div className="prose prose-gray max-w-none">
                     {section.content}
                   </div>
@@ -409,7 +409,7 @@ const RefundPolicy = () => {
         </div>
 
         {/* Legal Footer */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
+        <div className="mt-6 pt-4 border-t border-gray-200">
           <div className="bg-gray-50 rounded-lg p-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>

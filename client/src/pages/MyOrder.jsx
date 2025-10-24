@@ -478,7 +478,7 @@ const MyOrder = () => {
     return (
       <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow mb-3">
         <div className='p-3 cursor-pointer' onClick={onToggle}>
-          <div className="flex items-start gap-4">
+          <div className="flex items-center gap-4">
             <div className="relative">
               {order.items.length > 1 && (
                 <div className="absolute -top-2 -right-2 bg-amber-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
@@ -488,42 +488,20 @@ const MyOrder = () => {
               <img
                 src={order.items[0].product_details.image[0]}
                 alt={order.items[0].product_details.name}
-                className="w-20 h-20 object-cover rounded-xl border border-gray-100"
+                className="w-20 h-20 object-cover rounded-xl border-1 border-gray-300"
               />
             </div>
             
             <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-start gap-4">
+              <div className="flex justify-between items-center gap-4">
                 <div className="min-w-0">
-                  <h2 className="text-lg font-semibold text-gray-900 line-clamp-1">
+                  <h2 className="text-md font-semibold text-gray-900 line-clamp-2">
                     {order.items[0].product_details.name}
                     {order.items.length > 1 && ` + ${order.items.length - 1} more`}
                   </h2>
-                  {
-                    order.paymentId && (
-                      <div className="mt-1 text-sm text-gray-500 flex items-center gap-1">
-                        <p>
-                          Payment ID: <span className="font-medium">{order.paymentId}</span>
-                        </p>
-                        <p className='text-green-600 font-semibold'>({order.payment_status})</p>
-                      </div>
-                    )
-                  }
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2">
-                    <p className="text-sm text-gray-500">
-                      <span className="font-medium">Order Id: #{order.orderId.slice(-8)}</span>
-                    </p>
-                    <p className="text-sm text-gray-500 flex items-center gap-1">
-                      <LuCalendar size={14} />
-                      {formatDate(order.createdAt)}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {order.items.length} item{order.items.length > 1 ? 's' : ''}
-                    </p>
-                  </div>
                 </div>
                 
-                <div className="flex flex-col items-end gap-2">
+                <div className="flex flex-col items-center justify-center gap-1">
                   <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
                     isOngoing ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-green-50 text-green-800 border border-green-200'
                   }`}>
@@ -538,7 +516,31 @@ const MyOrder = () => {
             </div>
           </div>
           
-          <StatusTimeline status={orderStatus} />
+          <div>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2">
+              <p className="text-sm text-gray-500">
+                <span className="font-medium">Order Id: #{order.orderId.slice(-8)}</span>
+              </p>
+              <p className="text-sm text-gray-500 flex items-center gap-1">
+                <LuCalendar size={14} />
+                {formatDate(order.createdAt)}
+              </p>
+              <p className="text-sm text-gray-500">
+                {order.items.length} item{order.items.length > 1 ? 's' : ''}
+              </p>
+            </div>
+            {
+              order.paymentId && (
+                <div className="mt-2 text-sm text-gray-500 flex items-center gap-1">
+                  <p>
+                    Payment ID: <span className="font-medium">{order.paymentId}</span>
+                  </p>
+                  <p className='text-green-600 font-semibold'>({order.payment_status})</p>
+                </div>
+              )
+            }
+            <StatusTimeline status={orderStatus} />
+          </div>
         </div>
 
         {isExpanded && (
@@ -650,7 +652,7 @@ const MyOrder = () => {
         </div>
 
         {/* Div 2: Status buttons */}
-        <div className="flex gap-2 overflow-x-auto w-full">
+        <div className="flex gap-2 overflow-x-auto w-full scrollbar-hide">
           {['all', 'confirmed', 'packed', 'shipped', 'delivered'].map(status => (
             <button
               key={status}

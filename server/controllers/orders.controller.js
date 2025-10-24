@@ -280,11 +280,11 @@ export async function paymentController(request, response) {
 
     
 
-    if (totalPayableAmount < 50) {
+    if (totalPayableAmount < 5000) {
       return response.status(400).json({
         success: false,
         error: true,
-        message: 'Total amount must be at least ₹50.',
+        message: 'Amount must be at least ₹50.',
       });
     }
 
@@ -309,6 +309,156 @@ export async function paymentController(request, response) {
     return response.status(500).json({ message: error.message || error, success: false, error: true });
   }
 }
+
+
+export async function StorePickupOrderController(req, res) {
+  try {
+    const userId = req.userId;
+    const { list_items, couponInfo, delivery_addressId } = req.body;
+
+    if (!list_items || !list_items.length) {
+      return res.status(400).json({ success: false, message: "No items to place order" });
+    }
+
+    if (!delivery_addressId) {
+      return res.status(400).json({ success: false, message: "Delivery address is required" });
+    }
+
+    // Fetch user and populate address_details
+    const user = await UserModel.findById(userId).populate("address_details");
+    const address = user.address_details.find(addr => addr._id.toString() === delivery_addressId);
+
+    if (!address) {
+      return res.status(400).json({ success: false, message: "Invalid delivery address" });
+    }
+
+    const items = list_items.map(el => {
+      const pricePerUnit = priceWithDiscount(el.productId.price, el.productId.discount);
+      const subtotalAmt = pricePerUnit * el.quantity;
+      const totalAmt = subtotalAmt + (el.productId.tax || 0);
+
+      return {
+        product: el.productId._id,
+        product_details: {
+          name: el.productId.name,
+          image: el.productId.image,
+        },
+        quantity: el.quantity,
+        pricePerUnit,
+        tax: el.productId.tax || 0,
+        subtotalAmt,
+        totalAmt,
+        status: "confirmed"
+      };
+    });
+
+    const totalAmount = items.reduce((sum, item) => sum + item.totalAmt, 0);
+
+    let processedCouponInfo = null;
+    let processedCouponDiscount = 0;
+    let finalOrderAmount = totalAmount;
+
+    // Handle coupon
+    if (couponInfo && couponInfo.code) {
+      const coupon = await CouponModel.findOne({ code: couponInfo.code, isActive: true });
+      if (coupon) {
+        const now = new Date();
+        if (
+          now >= coupon.startDate &&
+          now <= coupon.endDate &&
+          totalAmount >= coupon.minAmount &&
+          (coupon.usageLimit === 0 || coupon.usedCount < coupon.usageLimit)
+        ) {
+          let discount = coupon.discountType === "percent"
+            ? (totalAmount * coupon.discountValue) / 100
+            : coupon.discountValue;
+
+          if (coupon.maxDiscount && discount > coupon.maxDiscount) discount = coupon.maxDiscount;
+
+          processedCouponInfo = {
+            code: coupon.code,
+            couponId: coupon._id,
+            discount,
+            discountType: coupon.discountType,
+            discountValue: coupon.discountValue,
+            maxDiscount: coupon.maxDiscount,
+            minAmount: coupon.minAmount
+          };
+
+          processedCouponDiscount = discount;
+          finalOrderAmount = Math.max(totalAmount - discount, 0);
+
+          await CouponModel.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 }, lastUsedAt: new Date() });
+        }
+      }
+    }
+
+    const orderId = `Order-${new mongoose.Types.ObjectId()}`;
+
+    const newOrder = await OrderModel.create({
+      userId,
+      orderId,
+      payment_status: "STORE PICK UP",
+      items,
+      delivery_address: delivery_addressId,
+      subtotalAmt: totalAmount,
+      totalAmt: finalOrderAmount,
+      originalTotal: totalAmount,
+      couponInfo: processedCouponInfo,
+      couponDiscount: processedCouponDiscount,
+      finalAmount: finalOrderAmount
+    });
+
+    // Send order email
+    try {
+      if (user && user.email) {
+        const emailData = {
+          orderId,
+          items,
+          subtotalAmt: totalAmount,
+          totalAmt: finalOrderAmount,
+          payment_status: "STORE PICK UP",
+          delivery_address: address
+        };
+
+        if (processedCouponInfo) {
+          emailData.couponInfo = {
+            code: processedCouponInfo.code,
+            discount: processedCouponDiscount
+          };
+          emailData.couponDiscount = processedCouponDiscount;
+        }
+
+        sendEmailByNodeMailer({
+          sendTo: user.email,
+          subject: `Store Pickup Order Confirmed - ${orderId}`,
+          html: orderEmailTemplate(user.name, emailData)
+        }).then(() => console.log("✅ Pickup order email sent")).catch(console.error);
+      }
+    } catch (err) {
+      console.error("Email error:", err);
+    }
+
+    // Clear cart and update user
+    await CartproductModel.deleteMany({ userId });
+    await UserModel.updateOne(
+      { _id: userId },
+      { $push: { orderHistory: newOrder._id }, $set: { shopping_cart: [] } }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: processedCouponInfo ? "Store Pickup Order placed with coupon" : "Store Pickup Order placed successfully",
+      data: { orderId: newOrder.orderId, couponApplied: !!processedCouponInfo, couponDiscount: processedCouponDiscount }
+    });
+
+  } catch (error) {
+    console.error("StorePickupOrderController error:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+
 
 // ✅ Enhanced Convert Stripe items → Order Items with Coupon Support
 export const getOrderProductItems = async ({ lineItems, userId, addressId, paymentId, payment_status, metadata }) => {

@@ -185,6 +185,10 @@ const SummaryApi = {
         url: '/api/order/checkout',
         method: 'POST'
     },
+    StorePickupOrder: {
+        url: '/api/order/store-pickup',
+        method: 'POST'
+    },
     getOrderItemList:{
         url: '/api/order/get-order-list',
         method: 'GET'

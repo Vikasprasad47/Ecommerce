@@ -99,7 +99,7 @@ const Contact = () => {
                 <FiMail className="text-white text-lg" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Contact Us</h1>
+                <h1 className="text-xl font-bold text-gray-900">Contact Us</h1>
                 <p className="text-sm text-gray-500">Quickoo E-Commerce Platform</p>
               </div>
             </div>
@@ -400,7 +400,7 @@ const Contact = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
+        <div className="mt-6 pt-4 border-t border-gray-200">
           <div className="bg-gray-50 rounded-lg p-6">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Quickoo Support Center</h3>
