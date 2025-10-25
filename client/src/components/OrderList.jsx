@@ -242,11 +242,7 @@ const OrderList = ({ orders, onDelete, onRefresh }) => {
                                 ? isDelivered ? 'text-blue-400' : 'text-blue-600'
                                 : isDelivered ? 'text-red-400' : 'text-red-600'
                           }`}>
-                            {order.payment_status === 'CASH ON DELIVERY' 
-                              ? 'Cash on Delivery' 
-                              : order.payment_status === 'paid' 
-                                ? 'Paid' 
-                                : 'Pending'}
+                            {order.payment_status}
                           </p>
                         </div>
                       </div>

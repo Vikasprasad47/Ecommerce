@@ -243,6 +243,10 @@ const orderSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    orderAccessKey: {
+      type: String,
+      default: null,
+    },
     items: {
       type: [itemSchema],
       required: true,

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import crypto from "crypto";
 import Stripe from '../config/stripe.js';
 import CartproductModel from '../models/cartproduct.model.js';
 import OrderModel from '../models/order.model.js';
@@ -130,6 +131,9 @@ export async function CashOnDeliveryOrderController(request, response) {
       payload.finalAmount = finalOrderAmount;
     }
 
+    const orderAccessKey = crypto.randomBytes(24).toString("hex");
+    payload.orderAccessKey = orderAccessKey;
+
     const newOrder = await OrderModel.create(payload);
 
     // Send order confirmation email (non-blocking)
@@ -199,7 +203,8 @@ export async function CashOnDeliveryOrderController(request, response) {
       data: {
         orderId: newOrder.orderId,
         couponApplied: !!processedCouponInfo,
-        couponDiscount: processedCouponDiscount
+        couponDiscount: processedCouponDiscount,
+        orderAccessKey
       }
     });
   } catch (error) {

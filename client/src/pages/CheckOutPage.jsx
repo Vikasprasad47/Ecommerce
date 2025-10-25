@@ -225,6 +225,8 @@ const CheckOutPage = () => {
         ...SummaryApi.CashOnDeliveryOrder,
         data: orderData
       });
+      
+      console.log("resposne data", response)
 
       if (response.data.success) {
         // Clear coupon after successful order
@@ -237,7 +239,8 @@ const CheckOutPage = () => {
             text: 'Order',
             couponApplied: !!appliedCoupon,
             couponDiscount: appliedCoupon?.calculatedDiscount || 0,
-            orderId: response.data.data?.orderId
+            orderId: response.data.data?.orderId,
+            orderAccessKey: response.data.data?.orderAccessKey
           } 
         });
       }
@@ -752,33 +755,6 @@ const CheckOutPage = () => {
                   )}
                 </button>
 
-                {/* Store Pickup Button */}
-                <button
-                  onClick={handleStorePickup}
-                  disabled={!isValidAddress || isLoadingStorePickup}
-                  className={`cursor-pointer w-full py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 ${
-                    !isValidAddress
-                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-sm'
-                      : selectedPayment === 'store-pickup'
-                      ? 'bg-gradient-to-r from-amber-300 to-orange-300 text-gray-800 shadow-lg'
-                      : 'bg-gradient-to-r from-amber-300 to-orange-300 text-gray-800 hover:from-amber-300 hover:to-orange-200 shadow-md hover:shadow-lg'
-                  }`}
-                >
-                  {isLoadingStorePickup ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Placing Order...
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="text-xl ">
-                        <BiSolidStoreAlt />
-                      </span>
-                      Store Pickup
-                    </div>
-                  )}
-                </button>
-
                 {/* Online Payment Button */}
                 <button
                   onClick={handleOnlinePayment}
@@ -798,6 +774,40 @@ const CheckOutPage = () => {
                     </div>
                   ) : (
                     'Pay Online'
+                  )}
+                </button>
+
+                {/* Store Pickup Button */}
+                <button
+                  onClick={handleStorePickup}
+                  disabled={!isValidAddress || isLoadingStorePickup}
+                  className={`cursor-pointer w-full py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 ${
+                    !isValidAddress
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-sm'
+                      : selectedPayment === 'store-pickup'
+                      ? 'bg-gradient-to-r from-amber-300 to-orange-300 text-gray-800 shadow-lg'
+                      : 'bg-gradient-to-r from-amber-300 to-orange-300 text-gray-800 hover:from-amber-300 hover:to-orange-200 shadow-md hover:shadow-lg'
+                  }`}
+                >
+                  {isLoadingStorePickup ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Placing Order...
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-0.5">
+                      <span className="flex items-center gap-1">
+                        <BiSolidStoreAlt className="text-xl" />
+                        <p>
+                          Store Pickup
+                        </p>
+                      </span>
+                      <div>
+                        <p className='text-xs'>
+                          Pick up your order in-store.
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </button>
               </div>
