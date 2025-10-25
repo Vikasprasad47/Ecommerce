@@ -46,26 +46,38 @@ ecommerce
 │       │   ├── footer.jsx
 │       │   ├── Header.jsx
 │       │   ├── HeaderCategory.jsx
+│       │   ├── HeaderSkeleton.jsx
 │       │   ├── ImageGalleryModal.jsx
 │       │   ├── Loading.jsx
 │       │   ├── Nodata.jsx
+│       │   ├── NotFound.jsx
+│       │   ├── OrderInvoicePDF.jsx
+│       │   ├── OrderList.jsx
+│       │   ├── OrderQRScanner.jsx
+│       │   ├── OutOfStockOverlay.jsx
+│       │   ├── PageLoader.jsx
+│       │   ├── Portal.jsx
 │       │   ├── ProductCardAdmin.jsx
-│       │   ├── ScrollToTopButton.jsx
 │       │   ├── search.jsx
+│       │   ├── SearchSuggestions.jsx
+│       │   ├── ScrollToTopButton.jsx
 │       │   ├── SuperCoins.jsx
 │       │   ├── TopDisplayHeaderProduct.jsx
 │       │   ├── UploadCategoryModels.jsx
 │       │   ├── UploadSubCategoryModel.jsx
 │       │   ├── UserAccount.jsx
+│       │   ├── UserDropDownMenu.jsx
 │       │   ├── UserFileUploadAvatar.jsx
 │       │   ├── userMenu.jsx
 │       │   └── ViewImage.jsx
 │       ├── Hooks
-│       │   └── useMobile.jsx
+│       │   ├── useMobile.jsx
+│       │   └── useUserAccount.jsx
 │       ├── layout
 │       │   ├── AdminPermission.jsx
 │       │   └── Dashboard.jsx
 │       ├── pages
+│       │   ├── About.jsx
 │       │   ├── Address.jsx
 │       │   ├── AllUser.jsx
 │       │   ├── Cancel.jsx
@@ -74,11 +86,13 @@ ecommerce
 │       │   ├── CheckOutPage.jsx
 │       │   ├── CommingSoon.jsx
 │       │   ├── Contact.jsx
+│       │   ├── Couponpage.jsx
 │       │   ├── forgotPassword.jsx
 │       │   ├── home.jsx
 │       │   ├── login.jsx
 │       │   ├── ManageOrder.jsx
 │       │   ├── MyOrder.jsx
+│       │   ├── OnlinePaymentList.jsx
 │       │   ├── OtpVerification.jsx
 │       │   ├── PrivacyPolicy.jsx
 │       │   ├── ProductAdmin.jsx
@@ -91,11 +105,13 @@ ecommerce
 │       │   ├── ResetPassword.jsx
 │       │   ├── SearchPage.jsx
 │       │   ├── SingleProductDisplayPage.jsx
+│       │   ├── StorePickupPage.jsx
 │       │   ├── Subcategorypage.jsx
 │       │   ├── Success.jsx
 │       │   ├── TermsAndConditions.jsx
 │       │   ├── Uploadproductpage.jsx
 │       │   ├── UserMenuMobile.jsx
+│       │   ├── UserReview.jsx
 │       │   └── UserWishList.jsx
 │       ├── provider
 │       │   └── globalProvider.jsx
@@ -136,6 +152,7 @@ ecommerce
     │   ├── analytics.controller.js
     │   ├── cart.controller.js
     │   ├── category.controller.js
+    │   ├── coupon.controller.js
     │   ├── orders.controller.js
     │   ├── product.controller.js
     │   ├── reviewController.js
@@ -145,11 +162,14 @@ ecommerce
     ├── middleware
     │   ├── Amin.js
     │   ├── auth.js
-    │   └── multer.js
+    │   ├── multer.js
+    │   └── verifyOrderAccess.js
     ├── models
     │   ├── address.model.js
+    │   ├── Analytics.model.js
     │   ├── cartproduct.model.js
     │   ├── category.model.js
+    │   ├── coupon.model.js
     │   ├── order.model.js
     │   ├── product.model.js
     │   ├── ProductReview.model.js
@@ -160,6 +180,7 @@ ecommerce
     │   ├── analytics.route.js
     │   ├── cart.route.js
     │   ├── category.route.js
+    │   ├── coupon.route.js
     │   ├── order.route.js
     │   ├── product.route.js
     │   ├── review.route.js
@@ -171,6 +192,7 @@ ecommerce
         ├── generateAccessToken.js
         ├── generateOtp.js
         ├── generateRefreshToken.js
+        ├── orderEmailTemplate.js
         ├── uploadimagecloudnery.js
         ├── uploadUserImageDatatocloudinary.js
         ├── uploadUserReviewedImage.js
