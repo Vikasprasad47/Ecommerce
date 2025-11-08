@@ -1,0 +1,53 @@
+.shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: #e0e0e0;
+  }
+  
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150px;
+    height: 100%;
+    width: 150px;
+    background: linear-gradient(to right, transparent 0%, #ffffff50 50%, transparent 100%);
+    animation: shimmer 1.2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      left: -150px;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  
+
+  /* New Shimmer for Detailed Skeleton */
+.shimmer-detail {
+  position: relative;
+  overflow: hidden;
+  background-color: #f0f0f0; /* Lighter background */
+}
+
+.shimmer-detail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150px;
+  height: 100%;
+  width: 150px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: shimmer-detail 1.2s infinite;
+}
+
+@keyframes shimmer-detail {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

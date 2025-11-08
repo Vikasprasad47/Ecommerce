@@ -1,0 +1,1249 @@
+import sendEmail from "../config/sendEmail.js";
+import UserModel from "../models/user.model.js";
+import bcryptjs from "bcryptjs";
+import verifyEmailTemplate from "../utils/verifyEmailTemplate.js"
+import generateAccessToken from "../utils/generateAccessToken.js";
+import generateRefreshToken from "../utils/generateRefreshToken.js";
+import uploadUserImageDatatocloudinary from "../utils/uploadUserImageDatatocloudinary.js"; // ✅ this should point to the right file
+import generateOtp from "../utils/generateOtp.js";
+import forgotPasswordTemplate from "../utils/forgotPasswordtemplets.js";
+import jwt from "jsonwebtoken";
+import sendEmailByNodeMailer from "../config/sendEmailByNodeMailer.js";
+import dotenv from 'dotenv';
+import generalEmailTemplate from "../utils/generalEmailTemplate.js";
+import axios from 'axios'
+dotenv.config();
+
+
+export async function registerUserController(req, res) {
+    try {
+        const { name, email, password, mobile  } = req.body;
+
+        // Step 1: Validate input
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                message: "Please provide name, email, and password.",
+                error: true,
+                success: false,
+            });
+        }
+
+        // Step 1.1: Validate mobile number format (Indian 10-digit starting with 6-9)
+        if (!/^[6-9]\d{9}$/.test(mobile)) {
+            return res.status(400).json({
+                message: "Invalid phone number. Please enter a 10-digit Indian number starting with 6-9.",
+                error: true,
+                success: false,
+            });
+        }
+
+        // Step 2: Check if user already exists 
+        const existingUser = await UserModel.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({
+                message: "User with this email already exists.",
+                error: true,
+                success: false,
+            });
+        }
+
+        // Step 3: Hash password
+        const salt = await bcryptjs.genSalt(10);
+        const hashedPassword = await bcryptjs.hash(password, salt);
+
+        // Step 4: Create and save user
+        const newUser = new UserModel({
+            name,
+            email,
+            password: hashedPassword,
+            mobile
+        });
+
+        const savedUser = await newUser.save();
+
+        // Step 5: Success response
+        return res.status(201).json({
+            message: "User registered successfully!",
+            error: false,
+            success: true,
+            data: {
+                _id: savedUser._id,
+                name: savedUser.name,
+                email: savedUser.email,
+            },
+        });
+
+    } catch (error) {
+        console.error("❌ Register Error:", error);
+        return res.status(500).json({
+            message: error?.message || "Internal Server Error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+export async function verifyEmailController(req, res) {
+    try {
+        const { code } = req.body;
+
+        if (!code) {
+            return res.status(400).json({
+                message: "Verification code is required.",
+                error: true,
+                success: false
+            });
+        }
+
+        const user = await UserModel.findById(code);
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Invalid or expired verification code.",
+                error: true,
+                success: false
+            });
+        }
+
+        if (user.verify_email) {
+            return res.status(200).json({
+                message: "Email is already verified.",
+                error: false,
+                success: true
+            });
+        }
+
+        user.verify_email = true;
+        await user.save();
+
+        return res.status(200).json({
+            message: "Email verification successful!",
+            success: true,
+            error: false
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal Server Error",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function loginController(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    // 1️⃣ Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Please provide both email and password.",
+        error: true,
+        success: false
+      });
+    }
+
+    const sanitizedEmail = email.toLowerCase().trim();
+
+    // 2️⃣ Find user
+    const user = await UserModel.findOne({ email: sanitizedEmail });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found. Please register first.",
+        error: true,
+        success: false
+      });
+    }
+
+    // 3️⃣ Check account status
+    if (user.status !== "Active") {
+      return res.status(403).json({
+        message: "Account is not active. Please contact support.",
+        error: true,
+        success: false
+      });
+    }
+
+    // 4️⃣ Verify password
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: "Invalid password.",
+        error: true,
+        success: false
+      });
+    }
+
+    // 5️⃣ Generate tokens
+    const accessToken = await generateAccessToken(user._id);
+    const refreshToken = await generateRefreshToken(user._id);
+    
+    await UserModel.findByIdAndUpdate(
+        user._id,
+        {
+            refresh_token: refreshToken,
+            last_login_date: new Date()
+        },
+        { new: true }
+    );
+
+    // 6️⃣ (Optional) Set cookies (can remove if only using localStorage)
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,     // true if HTTPS
+      sameSite: "None", // Needed for cross-site cookies
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    };
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
+    // 7️⃣ Update last login
+    user.last_login_date = new Date();
+    await user.save();
+
+    // 8️⃣ Return response
+    return res.status(200).json({
+      message: "Logged in successfully!",
+      error: false,
+      success: true,
+      data: {
+        accessToken,        // for localStorage
+        refreshToken,       // for localStorage
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+      error: true,
+      success: false
+    });
+  } 
+}
+
+export async function googleLoginController(req, res) {
+  try {
+    const { code, accessToken: googleAccessToken } = req.body;
+    let userInfo;
+
+    // ✅ Step 1: Verify Google token or code
+    if (googleAccessToken) {
+      // Direct Access Token flow (simpler)
+      const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${googleAccessToken}` },
+      });
+
+      if (!userInfoResponse.ok) {
+        const errorData = await userInfoResponse.json();
+        console.error('❌ Google API error:', errorData);
+        return res.status(400).json({
+          message: "Invalid Google access token",
+          error: true,
+          success: false,
+        });
+      }
+
+      userInfo = await userInfoResponse.json();
+    } else if (code) {
+      // Authorization Code flow (for safety if using redirect)
+      const params = new URLSearchParams();
+      params.append("code", code);
+      params.append("client_id", process.env.GOOGLE_CLIENT_ID);
+      params.append("client_secret", process.env.GOOGLE_CLIENT_SECRET);
+      params.append("redirect_uri", "postmessage");
+      params.append("grant_type", "authorization_code");
+
+      const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params.toString(),
+      });
+
+      const tokenData = await tokenRes.json();
+
+      if (tokenData.error) {
+        console.error('❌ Token exchange error:', tokenData);
+        return res.status(400).json({
+          message: tokenData.error_description || "Failed to exchange code for token",
+          error: true,
+          success: false,
+        });
+      }
+
+      const { id_token } = tokenData;
+      if (!id_token) {
+        return res.status(400).json({
+          message: "Missing ID token from Google",
+          error: true,
+          success: false,
+        });
+      }
+
+      const userInfoRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${id_token}`);
+      userInfo = await userInfoRes.json();
+    } else {
+      return res.status(400).json({
+        message: "Missing Google authentication parameters",
+        error: true,
+        success: false,
+      });
+    }
+
+    // ✅ Step 2: Extract and validate user info
+    const { email, name, picture, email_verified } = userInfo;
+
+    if (!email_verified) {
+      return res.status(403).json({
+        message: "Google account not verified",
+        error: true,
+        success: false,
+      });
+    }
+
+    // ✅ Step 3: Find or create user in DB
+    let user = await UserModel.findOne({ email });
+
+    if (!user) {
+      user = new UserModel({
+        name,
+        email,
+        password: await bcryptjs.hash("google-auth-user", 10),
+        avatar: picture || "",
+        verify_email: true,
+        status: "Active",
+      });
+      await user.save();
+    }
+
+    // ✅ Step 4: Check user status
+    if (user.status !== "Active") {
+      return res.status(403).json({
+        message: "Account is not active. Please contact support.",
+        error: true,
+        success: false,
+      });
+    }
+
+    // ✅ Step 5: Generate Access and Refresh Tokens
+    const accessToken = await generateAccessToken(user._id);
+    const refreshToken = await generateRefreshToken(user._id);
+
+    await UserModel.findByIdAndUpdate(
+      user._id,
+      {
+        refresh_token: refreshToken,
+        last_login_date: new Date(),
+      },
+      { new: true }
+    );
+
+    // ✅ Step 6: (Optional) Set Cookies for cross-site sessions
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
+
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
+    // ✅ Step 7: Send success response (identical to custom login)
+    return res.status(200).json({
+      message: "Google login successful!",
+      error: false,
+      success: true,
+      data: {
+        accessToken,
+        refreshToken,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          avatar: user.avatar,
+        },
+      },
+    });
+
+  } catch (error) {
+    console.error("❌ Google login error:", error);
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+      error: true,
+      success: false,
+    });
+  }
+}
+
+export async function logoutController(req, res) {
+    try {
+        const userId = req.userId;
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "Unauthorized request. No user ID found.",
+                error: true,
+                success: false
+            });
+        }
+
+        // Clear refresh token from database
+        await UserModel.findByIdAndUpdate(userId, {
+            refresh_token: ""
+        });
+
+        // Clear cookies
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None'
+        };
+
+        res.clearCookie("accessToken", cookieOptions);
+        res.clearCookie("refreshToken", cookieOptions);
+
+        return res.status(200).json({
+            message: "Logged out successfully!",
+            error: false,
+            success: true
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Something went wrong during logout.",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function uploadAvatar(req, res) {
+    try {
+        const userId = req.userId; // comes from auth middleware
+        const image = req.file;    // comes from multer middleware
+
+        if (!image) {
+            return res.status(400).json({
+                message: "No image provided",
+                error: true,
+                success: false
+            });
+        }
+
+        // Upload image to Cloudinary
+        const uploaded = await uploadUserImageDatatocloudinary(image);
+
+        if (!uploaded?.url) {
+            return res.status(500).json({
+                message: "Image upload failed",
+                error: true,
+                success: false
+            });
+        }
+
+        // Update user avatar
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            { avatar: uploaded.url },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                message: "User not found",
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "Profile image uploaded successfully",
+            success: true,
+            error: false,
+            data: {
+                _id: userId,
+                avatar: uploaded.url
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Something went wrong while uploading avatar.",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function removeAvatar(req, res) {
+    try {
+        const userId = req.userId; // from auth middleware
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            { avatar: "" },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                message: "User not found",
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "Avatar removed successfully",
+            success: true,
+            error: false,
+            data: {
+                _id: userId,
+                avatar: ""
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Failed to remove avatar",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function updateUserDetails(req, res) {
+    try {
+        const userId = req.userId; // From auth middleware
+        const { name, email, mobile, password, dob, gender } = req.body;
+
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+                error: true,
+                success: false
+            });
+        }
+
+        if (email && email !== user.email) {
+            const emailExists = await UserModel.findOne({ email });
+            if (emailExists) {
+                return res.status(409).json({
+                    message: "Email already in use",
+                    error: true,
+                    success: false
+                });
+            }
+        }
+
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (email) updateData.email = email;
+        if (mobile) updateData.mobile = mobile;
+        if (dob) updateData.dob = dob;
+        if (gender) updateData.gender = gender;
+
+        if (password) {
+            const salt = await bcryptjs.genSalt(10);
+            updateData.password = await bcryptjs.hash(password, salt);
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            { $set: updateData },
+            { new: true }
+        );
+
+        return res.status(200).json({
+            message: "User updated successfully",
+            error: false,
+            success: true,
+            data: {
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                mobile: updatedUser.mobile,
+                dob: updatedUser.dob,
+                gender: updatedUser.gender,
+                avatar: updatedUser.avatar
+            }
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Error updating user",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function forgotPasswordController(req, res) {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                message: "Email is required",
+                error: true,
+                success: false
+            });
+        }
+
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Email not registered",
+                error: true,
+                success: false
+            });
+        }
+
+        // Generate OTP and expiry
+        const otp = generateOtp(); // e.g., a 6-digit code
+        const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+        // Save OTP and expiry to DB
+        await UserModel.findByIdAndUpdate(user._id, {
+            forgot_password_otp: otp,
+            forgot_password_expiry: expiry.toISOString()
+        });
+
+        // Send OTP via email
+        await sendEmailByNodeMailer({
+            sendTo: email,
+            subject: "Quickoo Forgot Password - OTP Code",
+            html: forgotPasswordTemplate(user.name, otp)
+        });
+
+        return res.status(200).json({
+            message: "OTP sent to your registered email.",
+            error: false,
+            success: true
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Something went wrong while processing forgot password.",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function verifyForgotPasswordOtp(req, res) {
+    try {
+        const { email, otp } = req.body;
+
+        // Check if both fields are present
+        if (!email || !otp) {
+            return res.status(400).json({
+                message: "Email and OTP are required",
+                error: true,
+                success: false
+            });
+        }
+
+        // Check if user exists
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            return res.status(404).json({
+                message: "Email not registered",
+                error: true,
+                success: false
+            });
+        }
+
+        // Check OTP expiry
+        const currentTime = new Date();
+        const otpExpiry = new Date(user.forgot_password_expiry);
+
+        if (!user.forgot_password_expiry || otpExpiry < currentTime) {
+            return res.status(400).json({
+                message: "OTP has expired",
+                error: true,
+                success: false
+            });
+        }
+
+        // Check OTP match
+        if (otp !== user.forgot_password_otp) {
+            return res.status(400).json({
+                message: "Invalid OTP",
+                error: true,
+                success: false
+            });
+        }
+
+        // Clear OTP fields
+        await UserModel.findByIdAndUpdate(user._id, {
+            forgot_password_otp: "",
+            forgot_password_expiry: ""
+        });
+
+        return res.status(200).json({
+            message: "OTP verified successfully",
+            success: true,
+            error: false
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Something went wrong during OTP verification.",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function resetPasswordController(req, res) {
+    try {
+        const { email, newPassword, confirmPassword } = req.body;
+
+        // Validate inputs
+        if (!email || !newPassword || !confirmPassword) {
+            return res.status(400).json({
+                message: "Email, New Password and Confirm Password are required",
+                error: true,
+                success: false
+            });
+        }
+
+        // Check if user exists
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            return res.status(404).json({
+                message: "Email not registered",
+                error: true,
+                success: false
+            });
+        }
+
+        // Check if passwords match
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                message: "Passwords do not match",
+                error: true,
+                success: false
+            });
+        }
+
+        // Hash new password
+        const salt = await bcryptjs.genSalt(10);
+        const hashedPassword = await bcryptjs.hash(newPassword, salt);
+
+        // Update password and clear OTP data (if you want to be safe)
+        await UserModel.findByIdAndUpdate(user._id, {
+            password: hashedPassword,
+            forgot_password_otp: "",
+            forgot_password_expiry: ""
+        });
+
+        return res.status(200).json({
+            message: "Password reset successfully",
+            error: false,
+            success: true
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Something went wrong during password reset.",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function refreshToken(req, res) {
+  try {
+    const refreshToken =
+      req.cookies?.refreshToken ||
+      req.body?.refreshToken ||
+      (req.headers?.authorization?.startsWith("Bearer ")
+        ? req.headers.authorization.split(" ")[1]
+        : null);
+
+    if (!refreshToken) {
+      return res.status(401).json({ 
+        message: "Refresh token not provided.", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH_TOKEN);
+    const userId = decoded?.id;
+
+    const user = await UserModel.findById(userId);
+
+    if (!user || user.refresh_token !== refreshToken) {
+      return res.status(403).json({ 
+        message: "Invalid refresh token.", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    const newAccessToken = await generateAccessToken(userId);
+
+    // ✅ ADD THIS: Update access token in cookies too
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
+
+    return res.status(200).json({
+      message: "New access token generated.",
+      error: false,
+      success: true,
+      data: { accessToken: newAccessToken }
+    });
+  } catch (error) {
+    console.error("Refresh token error:", error);
+    return res.status(401).json({ 
+      message: "Invalid or expired refresh token.", 
+      error: true, 
+      success: false 
+    });
+  }
+}
+
+export async function userDetails(req, res) {
+    try {
+        const userId = req.userId; // comes from auth middleware
+
+        const user = await UserModel.findById(userId).select('-password -refresh_token');
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(200).json({
+            message: "User details fetched successfully",
+            data: user,
+            error: false,
+            success: true
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Something went wrong while fetching user details",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export const getAllUsersController = async (req, res) => {
+    try {
+        const users = await UserModel.find().select("-password -otp -__v -refresh_token -forgot_password_otp -forgot_password_expiry");
+
+        res.status(200).json({
+            success: true,
+            message: "All users fetched successfully",
+            data: users
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch users",
+            error: error.message
+        });
+    }
+};
+
+export const addToWishlistController = async (req, res) => {
+  try {
+    const userId = req.userId; // ✅ coming from auth middleware
+    const { productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ success: false, message: "Product ID is required" });
+    }
+
+    await UserModel.findByIdAndUpdate(userId, {
+      $addToSet: { wishlist: productId }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Product added to wishlist"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to add to wishlist",
+      error: error.message
+    });
+  }
+};
+
+export const removeFromWishlistController = async (req, res) => {
+  try {
+    const userId = req.userId; // ✅ from auth middleware
+    const { productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ success: false, message: "Product ID is required" });
+    }
+
+    await UserModel.findByIdAndUpdate(userId, {
+      $pull: { wishlist: productId }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Product removed from wishlist"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to remove from wishlist",
+      error: error.message
+    });
+  }
+};
+
+export const getUserWishlistProducts = async (req, res) => {
+  try {
+    const userId = req.userId; // ✅ From auth middleware
+
+    const user = await UserModel.findById(userId).populate("wishlist");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user.wishlist
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch wishlist products",
+      error: error.message
+    });
+  }
+};
+
+export const getUserReviews = async (req, res) => {
+  try {
+    const userId = req.userId; // ✅ From auth middleware
+
+    // 🔍 Find user and populate their reviews
+    const user = await UserModel.findById(userId)
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "product",
+          select: "name image price ratings slug"
+        }
+      })
+      .select("name email avatar reviews");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    if (!user.reviews || user.reviews.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No reviews found for this user",
+        data: []
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: user.reviews.length,
+      data: user.reviews
+    });
+  } catch (error) {
+    console.error("❌ Error fetching user reviews:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user reviews",
+      error: error.message
+    });
+  }
+};
+
+export const updateUserRoleController = async (req, res) => {
+  try {
+    const { userId, role } = req.body;
+
+    // 🧩 Validate input
+    if (!userId || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID and role are required.",
+      });
+    }
+
+    // 🧩 Validate role
+    const validRoles = ["ADMIN", "USER", "DELIVERY-AGENT", "SELLER"];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role. Valid roles: ADMIN, USER, DELIVERY-AGENT.",
+      });
+    }
+
+    // 🧩 Update the user
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { role },
+      { new: true, select: "-password -refresh_token" }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `User role updated to ${role}`,
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong while updating role.",
+      error: error.message,
+    });
+  }
+};
+
+export const updateUserStatusController = async (req, res) => {
+  try {
+    const { userId, status } = req.body;
+
+    if (!userId || !status) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID and status are required."
+      });
+    }
+
+    if (!["Active", "Inactive", "Suspended"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status value."
+      });
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { status },
+      { new: true, select: "-password -refresh_token" }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found."
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `User ${updatedUser.name} has been ${status === "Active" ? "activated" : "deactivated"}.`,
+      data: updatedUser
+    });
+  } catch (error) {
+    console.error("Error updating user status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error while updating user status.",
+      error: error.message
+    });
+  }
+};
+
+export const sendEmailToUserController = async (req, res) => {
+  try {
+    const { userId, message, subject } = req.body;
+
+    // Basic validation
+    if (!userId || !message) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID and message are required",
+      });
+    }
+
+    // Fetch user
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Use frontend subject or fallback
+    const emailSubject = subject?.trim() || "Message from Quickoo Admin";
+
+    // Generate HTML template
+    const html = generalEmailTemplate(user.name, emailSubject, message);
+
+    // Send email via NodeMailer utility
+    const response = await sendEmailByNodeMailer({
+      sendTo: user.email,
+      subject: emailSubject,
+      html,
+    });
+
+    if (!response.success) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send email",
+        error: response.error,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Email successfully sent to ${user.email}`,
+    });
+  } catch (error) {
+    console.error("Send Email Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while sending the email.",
+      error: error.message,
+    });
+  }
+};
+
+export const getEmailsByRole = async (req, res) => {
+  try {
+    const { role } = req.query;
+    let query = {};
+
+    if (role && role !== "ALL") query.role = role;
+
+    const users = await UserModel.find(query).select("email").lean();
+    const emails = users.map((u) => u.email);
+
+    return res.status(200).json({ success: true, emails });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch emails", error });
+  }
+};
+
+export const sendBulkEmailController = async (req, res) => {
+  try {
+    const { subject, message, role } = req.body;
+
+    if (!subject || !message)
+      return res.status(400).json({ success: false, message: "Subject and message required" });
+
+    let query = {};
+    if (role && role !== "ALL") query.role = role;
+
+    const users = await UserModel.find(query).select("email name");
+
+    if (!users.length)
+      return res.status(404).json({ success: false, message: "No users found" });
+
+    const sendOps = users.map((user) =>
+      sendEmailByNodeMailer({
+        sendTo: user.email,
+        subject,
+        html: generalEmailTemplate(user.name, subject, message),
+      })
+    );
+
+    await Promise.allSettled(sendOps);
+
+    res.status(200).json({
+      success: true,
+      message: `Sent to ${users.length} ${role || "users"}`,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to send emails" });
+  }
+};
+
+export async function loginOrCreateUserControllerbyPhoneNumber(req, res) {
+  try {
+    const { mobile, location } = req.body;
+    const mobileNumber = Number(mobile);
+
+    if (!/^[6-9]\d{9}$/.test(mobile.toString())) {
+      return res.status(400).json({ message: "Invalid mobile number", success: false });
+    }
+
+    let user = await UserModel.findOne({ mobile: mobileNumber });
+
+    if (!user) {
+      user = new UserModel({
+        mobile: mobileNumber,
+        name: `User${mobileNumber}`,
+        mobile_verified: true,
+        status: "Active"
+      });
+      await user.save();
+    }
+
+    // Update login info
+    user.last_login_date = new Date();
+    if (location?.lat && location?.lng) {
+      user.location = {
+        type: "Point",
+        coordinates: [location.lng, location.lat],
+        address: location.address || ""
+      };
+    }
+    await user.save();
+
+    // Generate tokens
+    const accessToken = await generateAccessToken(user._id);
+    const refreshToken = await generateRefreshToken(user._id);
+
+    await UserModel.findByIdAndUpdate(user._id, { refresh_token: refreshToken });
+
+    return res.status(200).json({
+      message: "Logged in successfully",
+      success: true,
+      data: {
+        accessToken,
+        refreshToken,
+        user: {
+          id: user._id,
+          name: user.name,
+          mobile: user.mobile,
+          role: user.role,
+          mobile_verified: true
+        }
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Login failed", success: false });
+  }
+}
