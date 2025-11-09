@@ -77,8 +77,8 @@
 }
 
 .avatar-preview {
-    width: 160px; /* Larger preview on big screens */
-    height: 160px;
+    width: 100px; /* Larger preview on big screens */
+    height: 100px;
     border-radius: 50%;
     overflow: hidden;
     position: relative;

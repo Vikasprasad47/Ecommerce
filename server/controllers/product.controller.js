@@ -289,29 +289,129 @@ export const deleteProductDetails = async (request, response) => {
 }
 
 
+// export const searchProducts = async (request, response) => {
+//   try {
+//     let { search, page, limit } = request.body;
+
+//     if (!page) page = 1;
+//     if (!limit) limit = 10;
+
+//     let query = {};
+//     if (search && search.trim() !== "") {
+//       query = {
+//         name: { $regex: new RegExp(search, "i") }  // search only in product name
+//       };
+//     }
+
+//     const skip = (page - 1) * limit;
+
+//     const [data, dataCount] = await Promise.all([
+//       ProductModel.find(query)
+//         .sort({ createdAt: -1 })
+//         .skip(skip)
+//         .limit(limit)
+//         .populate("category subCategory brand"),
+//       ProductModel.countDocuments(query)
+//     ]);
+
+//     return response.json({
+//       message: "Searched Product Data",
+//       error: false,
+//       success: true,
+//       data,
+//       totalCount: dataCount,
+//       totalPage: Math.ceil(dataCount / limit),
+//       page,
+//       limit
+//     });
+//   } catch (error) {
+//     return response.status(500).json({
+//       message: error.message || error,
+//       success: false,
+//       error: true
+//     });
+//   }
+// };
+// controllers/product.controller.js
 export const searchProducts = async (request, response) => {
   try {
-    let { search, page, limit } = request.body;
+    let { search, page, limit, filters, sortBy } = request.body;
 
     if (!page) page = 1;
     if (!limit) limit = 10;
 
-    let query = {};
+    // Build query
+    const queryClauses = [];
+
+    // search on name (existing behavior) - keep case-insensitive partial match
     if (search && search.trim() !== "") {
-      query = {
-        name: { $regex: new RegExp(search, "i") }  // search only in product name
-      };
+      queryClauses.push({
+        name: { $regex: new RegExp(search.trim(), "i") },
+      });
+    }
+
+    // filters expected shape (frontend sends):
+    // filters = { categories: [id,...], subCategories: [id,...], brands: [id,...], price: { $gte, $lte } }
+    if (filters && typeof filters === "object") {
+      if (Array.isArray(filters.categories) && filters.categories.length) {
+        queryClauses.push({ category: { $in: filters.categories } });
+      }
+      if (Array.isArray(filters.subCategories) && filters.subCategories.length) {
+        queryClauses.push({ subCategory: { $in: filters.subCategories } });
+      }
+      if (Array.isArray(filters.brands) && filters.brands.length) {
+        queryClauses.push({ brand: { $in: filters.brands } });
+      }
+      if (filters.price && typeof filters.price === "object") {
+        const priceObj = {};
+        if (filters.price.$gte !== undefined) priceObj.$gte = Number(filters.price.$gte);
+        if (filters.price.$lte !== undefined) priceObj.$lte = Number(filters.price.$lte);
+        if (Object.keys(priceObj).length) queryClauses.push({ price: priceObj });
+      }
+      // you can add more filters here (stock, featured, rating etc.)
+    }
+
+    const query = queryClauses.length ? { $and: queryClauses } : {};
+
+    // sort mapping: adapt to your needs
+    let sort = { createdAt: -1 }; // default newest first
+    switch (sortBy) {
+      case "priceAsc":
+        sort = { price: 1 };
+        break;
+      case "priceDesc":
+        sort = { price: -1 };
+        break;
+      case "newest":
+        sort = { createdAt: -1 };
+        break;
+      case "rating":
+        sort = { "ratings.average": -1 };
+        break;
+      case "relevance":
+      default:
+        // keep text score if text index exists and search present
+        if (search && search.trim() !== "") {
+          // If you want relevance scoring using text index:
+          // ProductModel.find({ $text: { $search: search } }, { score: { $meta: "textScore" } })
+          //   .sort({ score: { $meta: "textScore" } })
+          // But to keep consistent with previous behavior we use name regex + createdAt fallback
+          sort = { createdAt: -1 };
+        } else {
+          sort = { createdAt: -1 };
+        }
     }
 
     const skip = (page - 1) * limit;
 
+    // If you want to include text score when using text search uncomment the block below and adjust the query.
     const [data, dataCount] = await Promise.all([
       ProductModel.find(query)
-        .sort({ createdAt: -1 })
+        .sort(sort)
         .skip(skip)
         .limit(limit)
         .populate("category subCategory brand"),
-      ProductModel.countDocuments(query)
+      ProductModel.countDocuments(query),
     ]);
 
     return response.json({
@@ -322,16 +422,17 @@ export const searchProducts = async (request, response) => {
       totalCount: dataCount,
       totalPage: Math.ceil(dataCount / limit),
       page,
-      limit
+      limit,
     });
   } catch (error) {
     return response.status(500).json({
       message: error.message || error,
       success: false,
-      error: true
+      error: true,
     });
   }
 };
+
 
 
 
