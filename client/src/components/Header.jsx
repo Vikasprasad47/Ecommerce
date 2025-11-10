@@ -12,14 +12,28 @@ import { useSelector, shallowEqual } from "react-redux";
 import useMobile from "../Hooks/useMobile";
 import { useGlobalContext } from "../provider/globalProvider";
 import UserDropDownMenu from './UserDropDownMenu'
-
+import { motion } from "framer-motion";
 // Lazy load UserDropDownMenu
 // const UserDropDownMenu = lazy(() => import("./UserDropDownMenu"));
 
 const Header = () => {
   const isMobile = useMobile();
   const navigate = useNavigate();
+  const [shake, setShake] = useState(false);
   const { totalQty } = useGlobalContext();
+
+  const shakeVariant = {
+    idle: { x: 0 },
+    shake: { x: [-6,6,-6,6,0], transition:{ duration:0.4 } }
+  }
+
+  useEffect(() => {
+    const i = setInterval(() => {
+      setShake(true);
+    }, 2000);
+
+    return () => clearInterval(i);
+  }, []);
 
   // Select only needed user fields for faster re-render
   const user = useSelector(
@@ -112,13 +126,31 @@ const Header = () => {
                 </div>
               </>
             ) : (
-              <button
-                onClick={redirectToLoginPage}
-                className="flex items-center gap-1 text-sm font-medium hover:text-purple-700 transition cursor-pointer"
-              >
-                <FaUserCircle size={20} />
-                Login
-              </button>
+              <div className="relative">
+                <button
+                  onClick={redirectToLoginPage}
+                  className="flex items-center gap-1 text-sm font-medium hover:text-purple-700 transition cursor-pointer"
+                >
+                  <FaUserCircle size={20} />
+                  Login
+                </button>
+                <motion.div
+                  animate={shake ? "shake" : "idle"}
+                  variants={shakeVariant}
+                  onAnimationComplete={() => setShake(false)}
+                  className="bg-blue-300 absolute -bottom-14 -left-2 py-3 px-5 rounded-md z-10"
+                >
+                  <span className="text-md font-medium text-gray-800">
+                    Login
+                  </span>
+
+                  {/* triangle pointer */}
+                  <div className="absolute -top-2 left-3 w-0 h-0 
+                    border-l-8 border-r-8 border-b-8 
+                    border-l-transparent border-r-transparent border-b-blue-300" />
+
+                </motion.div>
+              </div>
             )}
 
             {/* Cart */}
