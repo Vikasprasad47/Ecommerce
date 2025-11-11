@@ -21,6 +21,7 @@ import reviewRouter from './route/review.route.js';
 import analyticsRouter from './route/analytics.route.js';
 import couponRouter from './route/coupon.route.js'
 import subscribeNewsletterRouter from './route/newsletter.routes.js';
+import Contactrouter from './route/contact.routes.js';
 
 const app = express();
 app.use(cors({
@@ -56,6 +57,7 @@ app.use('/api/order', OrderRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/newsletter', subscribeNewsletterRouter)
+app.use('/api/contact', Contactrouter) 
 
 // 404 handler
 app.use((req, res, next) => {

@@ -20,6 +20,7 @@ const Header = () => {
   const isMobile = useMobile();
   const navigate = useNavigate();
   const [shake, setShake] = useState(false);
+  const [showHint, setShowHint] = useState(true)
   const { totalQty } = useGlobalContext();
 
   const shakeVariant = {
@@ -28,11 +29,13 @@ const Header = () => {
   }
 
   useEffect(() => {
-    const i = setInterval(() => {
-      setShake(true);
-    }, 2000);
+    const shakeInterval = setInterval(() => setShake(true), 3000);
+    const hideTimeout = setTimeout(() => setShowHint(false), 10000);
 
-    return () => clearInterval(i);
+    return () => {
+      clearInterval(shakeInterval);
+      clearTimeout(hideTimeout);
+    };
   }, []);
 
   // Select only needed user fields for faster re-render
@@ -134,22 +137,23 @@ const Header = () => {
                   <FaUserCircle size={20} />
                   Login
                 </button>
-                <motion.div
-                  animate={shake ? "shake" : "idle"}
-                  variants={shakeVariant}
-                  onAnimationComplete={() => setShake(false)}
-                  className="bg-blue-300 absolute -bottom-14 -left-2 py-3 px-5 rounded-md z-10"
-                >
-                  <span className="text-md font-medium text-gray-800">
-                    Login
-                  </span>
+                {showHint && (
+                  <motion.div
+                    animate={shake ? "shake" : "idle"}
+                    variants={shakeVariant}
+                    onAnimationComplete={() => setShake(false)}
+                    className="bg-blue-700 absolute -bottom-14 -left-2 py-3 px-5 rounded-md z-10 border-t-1 border-black"
+                  >
+                    <span className="text-md font-medium text-white">Login</span>
 
-                  {/* triangle pointer */}
-                  <div className="absolute -top-2 left-3 w-0 h-0 
-                    border-l-8 border-r-8 border-b-8 
-                    border-l-transparent border-r-transparent border-b-blue-300" />
-
-                </motion.div>
+                    {/* triangle pointer */}
+                    <div
+                      className="absolute -top-2 left-3 w-0 h-0 
+                        border-l-8 border-r-8 border-b-8 
+                        border-l-transparent border-r-transparent border-b-blue-700"
+                    />
+                  </motion.div>
+                )}
               </div>
             )}
 

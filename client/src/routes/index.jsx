@@ -45,6 +45,7 @@ const About = lazy(() => import("../pages/About"))
 const OnlinePaymentList = lazy(() => import("../pages/OnlinePaymentList"));
 const StorePickupPage = lazy(() => import("../pages/StorePickupPage"))
 const PhoneLogin = lazy(() => import("../components/PhoneLogin"));
+const CustomerSupportMessages = lazy(() => import("../pages/CustomerSupportMessages"))
 
 const router = createBrowserRouter([
     {
@@ -104,7 +105,7 @@ const router = createBrowserRouter([
                 element: <RefundPolicy />
             },
             {
-                path: "contact",
+                path: "contact-us",
                 element: <Contact />
             },
             {
@@ -172,6 +173,10 @@ const router = createBrowserRouter([
             {
                 path: "list-online-payments",
                 element: <AdminPermission><OnlinePaymentList/></AdminPermission>
+            },
+            {
+                path: "customer-support-messages",
+                element: <AdminPermission><CustomerSupportMessages/></AdminPermission>
             },
             {
                 path: "products",

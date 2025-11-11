@@ -291,7 +291,27 @@ const SummaryApi = {
     loginWithMobile: {
         url: "/api/user/login-mobile",
         method: "POST"
-    }
+    },
+    submitContactForm: {
+        url: "/api/contact/submit-form",
+        method: "POST",
+    },
+    getAllContactsMessage: {
+        url: "/api/contact/get-all-contact-msg",
+        method: "GET",
+    },
+    getSingleContactMessage: {
+        url: "/api/contact/get-single-contact-msg",
+        method: "POST",
+    },
+    updateContactMessageStatus: {
+        url: "/api/contact/update-contact-msg-status",
+        method: "PATCH",
+    },
+    deleteContactMessage: {
+        url: "/api/contact/delete-contact-msg",
+        method: "DELETE",
+    },
 
 }
 

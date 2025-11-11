@@ -508,7 +508,7 @@ const Register = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full min-w-xl lg:max-w-lg bg-white rounded-3xl shadow-2xl p-5 space-y-6 relative"
+          className="w-full lg:max-w-xl bg-white rounded-3xl shadow-2xl p-5 space-y-6 relative"
         >
           <h2 className="text-2xl font-bold text-amber-700 text-center mt-3 mb-3">
             Create Account
@@ -639,7 +639,7 @@ const Register = () => {
           </form>
 
           <div className="my-4 text-center text-gray-500">OR SIGN UP WITH</div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
             <GoogleSignupBtn />
             <button
               disabled={isPhoneLoading}

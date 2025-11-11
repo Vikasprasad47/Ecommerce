@@ -6,3 +6,46 @@ body{
     font-weight: 300;
     font-style: normal;
 }
+
+/* contact page styling  */
+/* --- Add to your global CSS (index.css) --- */
+
+/* Remove browser default outline but keep an accessible focus-visible ring using Tailwind helper classes (we already used focus-visible:ring-2). */
+input,
+textarea,
+select,
+button {
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* For browsers that still show dotted outline, ensure none show: */
+:focus {
+  outline: none !important;
+}
+
+/* Hide native select arrow for modern browsers (we used an SVG arrow in the component) */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: none !important;
+}
+
+/* Make sure spinner svg doesn't get tinted by container with color: */
+svg {
+  vector-effect: non-scaling-stroke;
+}
+
+/* Small animation when modal appears (optional) */
+@keyframes modalAppear {
+  from {
+    transform: translateY(8px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

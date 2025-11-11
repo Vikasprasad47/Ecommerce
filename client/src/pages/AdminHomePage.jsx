@@ -24,6 +24,7 @@ import {
   FaRegClock,
   FaCreditCard
 } from "react-icons/fa";
+import { MdOutlineReportProblem } from "react-icons/md";
 import { IoLinkSharp } from "react-icons/io5";
 import { RiCoupon2Fill, RiSecurePaymentFill } from "react-icons/ri";
 import { 
@@ -632,6 +633,28 @@ const AdminHomePage = () => {
                     Inventory
                   </h4>
                   <p className="text-xs text-gray-500 mt-1">Stock & inventory tracking</p>
+                </div>
+              </div>
+              <BsArrowUpRight 
+                size={16} 
+                className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" 
+              />
+            </Link>
+
+            {/* Customer support message page  */}
+            <Link 
+              to="/customer-support-messages" 
+              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-300 transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors duration-300">
+                  <MdOutlineReportProblem size={20} className="text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors duration-300">
+                    Customer Issues
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-1">Manage Customer/user Queries</p>
                 </div>
               </div>
               <BsArrowUpRight 
