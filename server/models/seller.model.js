@@ -47,7 +47,17 @@ const sellerSchema = new mongoose.Schema({
     totalProducts:{
         type:Number,
         default:0
+    },
+    subscription: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "sellerSubscription",
+        default: null
+    },
+    subscription_expiry: {
+        type: Date,
+        default: null
     }
+
 },{
     timestamps:true
 })

@@ -18,6 +18,8 @@ import {
   BsExclamationTriangle
 } from "react-icons/bs";
 import { AiFillThunderbolt } from "react-icons/ai";
+import { HiOutlineDocumentText } from "react-icons/hi2";
+import { LuBadgeCheck } from "react-icons/lu";
 import { 
   FaTruckMoving, 
   FaShoppingBag,
@@ -538,7 +540,7 @@ const AdminHomePage = () => {
             <h2 className="text-md lg:text-4xl font-bold text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text">
               Welcome back, {user.name}!
             </h2>
-            <p className="text-gray-600 text-xs lg:text-md mt-0.5 flex items-center gap-2">
+              <p className="text-gray-600 text-xs lg:text-md mt-0.5 flex items-center gap-2">
               <IoStatsChart className="text-amber-600 hidden lg:flex" />
               Here's what's happening with your store today.
             </p>
@@ -578,7 +580,7 @@ const AdminHomePage = () => {
             {/* Coupon Management */}
             <Link 
               to="/coupons" 
-              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-amber-300 hover:bg-amber-50/30 transition-all duration-300 transform hover:-translate-y-0.5"
+              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-purple-300 hover:bg-purple-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors duration-300">
@@ -600,7 +602,7 @@ const AdminHomePage = () => {
             {/* Payment Management */}
             <Link 
               to="/list-online-payments" 
-              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-green-300 hover:bg-green-50/30 transition-all duration-300 transform hover:-translate-y-0.5"
+              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-green-300 hover:bg-green-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors duration-300">
@@ -619,10 +621,10 @@ const AdminHomePage = () => {
               />
             </Link>
 
-            {/* All Products */}
+            {/* Inventory */}
             <Link 
               to="/product" 
-              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-300 transform hover:-translate-y-0.5"
+              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors duration-300">
@@ -641,17 +643,17 @@ const AdminHomePage = () => {
               />
             </Link>
 
-            {/* Customer support message page  */}
+            {/* Customer Issues */}
             <Link 
               to="/customer-support-messages" 
-              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-300 transform hover:-translate-y-0.5"
+              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-orange-300 hover:bg-orange-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors duration-300">
-                  <MdOutlineReportProblem size={20} className="text-blue-600" />
+                <div className="p-2 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors duration-300">
+                  <MdOutlineReportProblem size={20} className="text-orange-600" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors duration-300">
+                  <h4 className="font-semibold text-gray-900 group-hover:text-orange-700 transition-colors duration-300">
                     Customer Issues
                   </h4>
                   <p className="text-xs text-gray-500 mt-1">Manage Customer/user Queries</p>
@@ -659,9 +661,54 @@ const AdminHomePage = () => {
               </div>
               <BsArrowUpRight 
                 size={16} 
-                className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" 
+                className="text-gray-400 group-hover:text-orange-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" 
               />
             </Link>
+
+            {/* Seller Applications */}
+            <Link 
+              to="/manage-seller-application" 
+              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-rose-300 hover:bg-rose-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-100 rounded-lg group-hover:bg-rose-200 transition-colors duration-300">
+                  <HiOutlineDocumentText size={20} className="text-rose-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 group-hover:text-rose-700 transition-colors duration-300">
+                    Seller's Application
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-1">Manage/Review Seller Applications</p>
+                </div>
+              </div>
+              <BsArrowUpRight 
+                size={16} 
+                className="text-gray-400 group-hover:text-rose-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" 
+              />
+            </Link>
+
+            {/* Seller Subscription Plan */}
+            <Link 
+              to="/seller-subscription-plan-management" 
+              className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors duration-300">
+                  <LuBadgeCheck size={20} className="text-indigo-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 group-hover:text-indigo-700 transition-colors duration-300">
+                    Subscription Plans
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-1">Manage seller subscription plans</p>
+                </div>
+              </div>
+              <BsArrowUpRight 
+                size={16} 
+                className="text-gray-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300" 
+              />
+            </Link>
+
           </div>
 
           {/* Quick Stats Footer */}

@@ -1,8 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import PageLoader from "../components/PageLoader"; // Use your loader component
-import UserReview from "../pages/UserReview";
-import Couponpage from "../pages/Couponpage";
+import SellerOnboarding from "../pages/SellerOnboarding";
+import AdminSellerApplicationsPage from "../pages/AdminSellerApplicationsPage";
+
 
 // Lazy imports
 const App = lazy(() => import("../App"));
@@ -40,12 +41,16 @@ const TermsAndConditions = lazy(() => import("../pages/TermsAndConditions"));
 const RefundPolicy = lazy(() => import("../pages/RefundPolicy"));
 const Contact = lazy(() => import("../pages/Contact"));
 const AnalyticsDashboard = lazy(() => import("../components/AnalyticsDashboard"));
+const UserReview = lazy(() => import("../pages/UserReview"));
+const Couponpage = lazy(() => import("../pages/Couponpage"));
 const NotFound = lazy(() => import("../components/NotFound"));
 const About = lazy(() => import("../pages/About"))
 const OnlinePaymentList = lazy(() => import("../pages/OnlinePaymentList"));
 const StorePickupPage = lazy(() => import("../pages/StorePickupPage"))
 const PhoneLogin = lazy(() => import("../components/PhoneLogin"));
 const CustomerSupportMessages = lazy(() => import("../pages/CustomerSupportMessages"))
+const AdminSellerSubscriptionPage = lazy(() => import("../pages/AdminSellerSubscriptionPage"));
+
 
 const router = createBrowserRouter([
     {
@@ -177,6 +182,18 @@ const router = createBrowserRouter([
             {
                 path: "customer-support-messages",
                 element: <AdminPermission><CustomerSupportMessages/></AdminPermission>
+            },
+            {
+                path: "seller-subscription-plan-management",
+                element: <AdminPermission><AdminSellerSubscriptionPage/></AdminPermission>
+            },
+            {
+                path: "manage-seller-application",
+                element: <AdminPermission><AdminSellerApplicationsPage/></AdminPermission>
+            },
+            {
+                path: "apply-for-seller",
+                element: <SellerOnboarding/>
             },
             {
                 path: "products",

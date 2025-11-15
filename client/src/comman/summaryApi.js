@@ -312,7 +312,71 @@ const SummaryApi = {
         url: "/api/contact/delete-contact-msg",
         method: "DELETE",
     },
+    createSubscriptionPlan: {
+        url: "/api/seller/subscription/create-subscription-plan",
+        method: "POST",
+    },
+    getOneSubscriptionPlan: {
+        url: "/api/seller/subscription/get-one-subscription-plan",
+        method: "POST",
+    },
+    updateSubscriptionPlan: {
+        url: "/api/seller/subscription/update-subscription-plan",
+        method: "POST",
+    },
+    deleteSubscriptionPlan: {
+        url: "/api/seller/subscription/delete-subscription-plan",
+        method: "POST",
+    },
+    getAllSubscriptionPlans: {
+        url: "/api/seller/subscription/get-subscription-plan",
+        method: "GET",
+    },
+    //Seller Application (User Flow)
+    registerSeller: {
+        url: "/api/seller/register",
+        method: "POST",
+    },
 
+    uploadSellerKycDocuments: {
+        url: "/api/seller/upload-documents",
+        method: "POST",
+    },
+
+    getMySellerApplication: {
+        url: "/api/seller/application/me",
+        method: "GET",
+    },
+
+    //Admin – Seller Application Management
+    adminListSellerApplications: {
+        url: "/api/seller/admin/applications",
+        method: "GET",
+    },
+    adminGetSellerApplication: (id) => ({
+        url: `/api/seller/admin/application/${id}`,
+        method: "GET",
+    }),
+    adminApproveSellerApplication: {
+        url: "/api/seller/admin/application/approve",
+        method: "POST",
+    },
+    adminRejectSellerApplication: {
+        url: "/api/seller/admin/application/reject",
+        method: "POST",
+    },
+
+    //Seller Subscription After Approval
+    subscribeToPlan: {
+        url: "/api/seller/subscription/subscribe",
+        method: "POST",
+    },
+
+    //Optional — If you want seller details
+    getSellerProfile: {
+        url: "/api/seller/profile",
+        method: "GET",
+    },
 }
 
 export default SummaryApi

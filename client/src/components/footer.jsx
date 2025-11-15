@@ -71,6 +71,7 @@ const Footer = () => {
     { name: "Contact Us", path: "/contact-us" },
     { name: "Refund Policy", path: "/refund-policy" },
     { name: "Privacy Policy", path: "/privacy-policy" },
+    { name: "Become a seller", path: "/apply-for-seller" },
   ];
 
   const socialLinks = [
