@@ -579,7 +579,7 @@ const AdminHomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Coupon Management */}
             <Link 
-              to="/coupons" 
+              to="/admin/coupons-management" 
               className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-purple-300 hover:bg-purple-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-3">
@@ -645,7 +645,7 @@ const AdminHomePage = () => {
 
             {/* Customer Issues */}
             <Link 
-              to="/customer-support-messages" 
+              to="/admin/customer-support-messages" 
               className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-orange-300 hover:bg-orange-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-3">

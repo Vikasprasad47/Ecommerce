@@ -2324,7 +2324,7 @@ export default function SellerOnboarding() {
     } catch (err) {
       console.error("Load application error:", err);
       if (err.code !== "ECONNABORTED") {
-        toast.error("Failed to load application data");
+        toast.error("Login to start seller onboarding.");
       }
       setApplication(null);
     }

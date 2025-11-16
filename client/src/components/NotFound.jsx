@@ -1,89 +1,3 @@
-// // src/pages/NotFound.jsx
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import { FaExclamationTriangle, FaLock, FaTruck, FaHeadset } from "react-icons/fa";
-
-// const NotFound = () => {
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-16">
-//       <div className="max-w-lg w-full text-center">
-//         {/* Main Card */}
-//         <div className="bg-white rounded-2xl shadow-xl p-10">
-//           {/* 404 Icon */}
-//           <div className="flex items-center justify-center mb-4">
-//             <span className="text-7xl font-extrabold text-gray-900">4</span>
-//             <FaExclamationTriangle className="text-6xl text-red-500 mx-2 animate-pulse" />
-//             <span className="text-7xl font-extrabold text-gray-900">4</span>
-//           </div>
-
-//           {/* Heading */}
-//           <h1 className="text-3xl font-bold text-gray-800 mb-4">
-//             Oops! Page Not Found
-//           </h1>
-//           <p className="text-gray-600 mb-6">
-//             The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
-//           </p>
-
-//           {/* CTA Buttons */}
-//           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
-//             <Link
-//               to="/"
-//               className="bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
-//             >
-//               Go to Homepage
-//             </Link>
-//             <Link
-//               to="/contact"
-//               className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
-//             >
-//               Contact Support
-//             </Link>
-//           </div>
-
-//           {/* Suggestion Links */}
-//           <div className="text-gray-500 text-sm mb-6">
-//             Here are some helpful links instead:
-//             <ul className="mt-2 flex items-center justify-center gap-2 underline">
-//               <li>
-//                 <Link to="/" className="text-blue-600 hover:text-blue-700 font-medium">
-//                   Home
-//                 </Link>
-//               </li>
-//               <li>
-//                 <Link to="/shop" className="text-blue-600 hover:text-blue-700 font-medium">
-//                   Shop
-//                 </Link>
-//               </li>
-//               <li>
-//                 <Link to="/about" className="text-blue-600 hover:text-blue-700 font-medium">
-//                   About Us
-//                 </Link>
-//               </li>
-//             </ul>
-//           </div>
-//         </div>
-
-//         {/* Trust Indicators */}
-//         <div className="mt-12 flex justify-center space-x-10 text-gray-500">
-//           <div className="flex flex-col items-center">
-//             <FaLock className="text-2xl mb-1" />
-//             <span className="text-xs">Secure</span>
-//           </div>
-//           <div className="flex flex-col items-center">
-//             <FaTruck className="text-2xl mb-1" />
-//             <span className="text-xs">Fast Delivery</span>
-//           </div>
-//           <div className="flex flex-col items-center">
-//             <FaHeadset className="text-2xl mb-1" />
-//             <span className="text-xs">24/7 Support</span>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default NotFound;
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaExclamationTriangle, FaHome, FaShoppingBag, FaInfoCircle, FaHeadset } from "react-icons/fa";
@@ -260,4 +174,174 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+// export default NotFound;
+
+// import React from "react";
+// import { Link } from "react-router-dom";
+// import { FaExclamationTriangle, FaHome, FaShoppingBag, FaInfoCircle, FaHeadset, FaArrowRight, FaSearch } from "react-icons/fa";
+// import { motion } from "framer-motion";
+
+// const NotFound = () => {
+//   return (
+//     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 px-4 sm:px-6 lg:px-8 py-8">
+//       {/* Subtle Background Elements */}
+//       <div className="absolute inset-0 pointer-events-none overflow-hidden">
+//         <div className="absolute top-20 left-10 w-32 h-32 bg-amber-200 rounded-full opacity-20 blur-xl"></div>
+//         <div className="absolute bottom-20 right-10 w-40 h-40 bg-green-200 rounded-full opacity-20 blur-xl"></div>
+//         <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-orange-200 rounded-full opacity-15 blur-lg"></div>
+//       </div>
+
+//       <div className="max-w-lg w-full space-y-12 text-center">
+        
+//         {/* 404 Number - Optimized Animation */}
+//         <motion.div 
+//           initial={{ scale: 0.9, opacity: 0 }}
+//           animate={{ scale: 1, opacity: 1 }}
+//           transition={{ duration: 0.6 }}
+//           className="relative"
+//         >
+//           <div className="flex items-center justify-center mb-6">
+//             <motion.span 
+//               initial={{ scale: 0 }}
+//               animate={{ scale: 1 }}
+//               transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+//               className="text-7xl sm:text-8xl font-black text-gray-900"
+//             >
+//               4
+//             </motion.span>
+            
+//             <motion.div
+//               initial={{ scale: 0, rotate: -180 }}
+//               animate={{ scale: 1, rotate: 0 }}
+//               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+//               className="mx-3 sm:mx-4"
+//             >
+//               <FaExclamationTriangle className="text-6xl sm:text-7xl text-amber-600" />
+//             </motion.div>
+            
+//             <motion.span 
+//               initial={{ scale: 0 }}
+//               animate={{ scale: 1 }}
+//               transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+//               className="text-7xl sm:text-8xl font-black text-gray-900"
+//             >
+//               4
+//             </motion.span>
+//           </div>
+//         </motion.div>
+
+//         {/* Text Content */}
+//         <motion.div
+//           initial={{ y: 20, opacity: 0 }}
+//           animate={{ y: 0, opacity: 1 }}
+//           transition={{ delay: 0.3 }}
+//           className="space-y-4"
+//         >
+//           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+//             Page Not Found
+//           </h1>
+//           <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
+//             Sorry, we couldn't find the page you're looking for. It might have been moved or doesn't exist.
+//           </p>
+//         </motion.div>
+
+//         {/* Search Suggestion */}
+//         <motion.div
+//           initial={{ opacity: 0 }}
+//           animate={{ opacity: 1 }}
+//           transition={{ delay: 0.4 }}
+//           className="inline-flex items-center gap-2 bg-white rounded-lg px-4 py-3 shadow-sm border border-amber-100"
+//         >
+//           <FaSearch className="text-amber-500" />
+//           <span className="text-sm text-gray-600">Try using search or check the URL</span>
+//         </motion.div>
+
+//         {/* Primary Actions */}
+//         <motion.div
+//           initial={{ y: 20, opacity: 0 }}
+//           animate={{ y: 0, opacity: 1 }}
+//           transition={{ delay: 0.5 }}
+//           className="flex flex-col sm:flex-row gap-4 justify-center"
+//         >
+//           <Link
+//             to="/"
+//             className="group inline-flex items-center justify-center gap-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:shadow-lg min-w-[140px]"
+//           >
+//             <FaHome className="text-lg" />
+//             <span>Back to Home</span>
+//             <FaArrowRight className="text-sm opacity-0 transform -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+//           </Link>
+          
+//           <Link
+//             to="/contact"
+//             className="inline-flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-900 font-semibold py-3 px-6 rounded-lg border border-gray-300 transition-all duration-200 hover:shadow-lg min-w-[140px]"
+//           >
+//             <FaHeadset className="text-lg" />
+//             <span>Support</span>
+//           </Link>
+//         </motion.div>
+
+//         {/* Quick Links */}
+//         <motion.div
+//           initial={{ y: 20, opacity: 0 }}
+//           animate={{ y: 0, opacity: 1 }}
+//           transition={{ delay: 0.6 }}
+//           className="space-y-4"
+//         >
+//           <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+//             Quick Links
+//           </p>
+          
+//           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-sm mx-auto">
+//             {[
+//               { to: "/", icon: FaHome, label: "Home", color: "text-amber-600", bg: "bg-amber-50" },
+//               { to: "/shop", icon: FaShoppingBag, label: "Shop", color: "text-green-600", bg: "bg-green-50" },
+//               { to: "/about", icon: FaInfoCircle, label: "About", color: "text-orange-600", bg: "bg-orange-50" },
+//               { to: "/contact", icon: FaHeadset, label: "Help", color: "text-yellow-600", bg: "bg-yellow-50" }
+//             ].map((item, index) => (
+//               <motion.div
+//                 key={item.to}
+//                 initial={{ scale: 0 }}
+//                 animate={{ scale: 1 }}
+//                 transition={{ delay: 0.7 + index * 0.1 }}
+//               >
+//                 <Link
+//                   to={item.to}
+//                   className={`flex flex-col items-center gap-2 p-3 rounded-lg ${item.bg} hover:bg-white transition-all duration-200 hover:shadow-md group`}
+//                 >
+//                   <div className={`p-2 rounded-lg ${item.color} bg-white group-hover:scale-110 transition-transform duration-200`}>
+//                     <item.icon className="text-lg" />
+//                   </div>
+//                   <span className="text-sm font-medium text-gray-700">
+//                     {item.label}
+//                   </span>
+//                 </Link>
+//               </motion.div>
+//             ))}
+//           </div>
+//         </motion.div>
+
+//         {/* Status Indicator */}
+//         <motion.div
+//           initial={{ opacity: 0 }}
+//           animate={{ opacity: 1 }}
+//           transition={{ delay: 0.9 }}
+//           className="space-y-3"
+//         >
+//           <div className="flex items-center justify-center gap-3 text-sm">
+//             <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
+//               <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+//               <span className="text-gray-600">All Systems Operational</span>
+//             </div>
+//           </div>
+          
+//           <p className="text-xs text-gray-500 max-w-xs mx-auto">
+//             Need help? Our support team is here for you.
+//           </p>
+//         </motion.div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default NotFound;

@@ -172,7 +172,7 @@ const router = createBrowserRouter([
                 element: <AdminPermission><AnalyticsDashboard/></AdminPermission>
             },
             {
-                path: "coupons",
+                path: "/admin/coupons-management",
                 element: <AdminPermission><Couponpage/></AdminPermission>
             },
             {
@@ -180,7 +180,7 @@ const router = createBrowserRouter([
                 element: <AdminPermission><OnlinePaymentList/></AdminPermission>
             },
             {
-                path: "customer-support-messages",
+                path: "/admin/customer-support-messages",
                 element: <AdminPermission><CustomerSupportMessages/></AdminPermission>
             },
             {
@@ -192,7 +192,7 @@ const router = createBrowserRouter([
                 element: <AdminPermission><AdminSellerApplicationsPage/></AdminPermission>
             },
             {
-                path: "apply-for-seller",
+                path: "/seller-onboarding",
                 element: <SellerOnboarding/>
             },
             {

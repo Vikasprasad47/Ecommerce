@@ -71,7 +71,7 @@ const Footer = () => {
     { name: "Contact Us", path: "/contact-us" },
     { name: "Refund Policy", path: "/refund-policy" },
     { name: "Privacy Policy", path: "/privacy-policy" },
-    { name: "Become a seller", path: "/apply-for-seller" },
+    { name: "Become a seller", path: "/seller-onboarding" },
   ];
 
   const socialLinks = [
@@ -104,7 +104,6 @@ const Footer = () => {
     { icon: FaCcApplePay, name: "Apple Pay" },
     { icon: FaGoogle, name: "Google Pay" },
     { icon: FaAmazon, name: "Amazon Pay" },
-    { icon: SiPayoneer, name: "Payoneer" },
   ];
 
   return (

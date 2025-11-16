@@ -99,7 +99,7 @@ export default function SellerOnboardingLoader() {
         </div>
 
         <p className="text-center text-gray-700 text-sm font-medium mt-2">
-          Loading your seller dashboard…
+          Welcome to Seller's Onboarding
         </p>
 
         <div className="space-y-4 mt-4">
