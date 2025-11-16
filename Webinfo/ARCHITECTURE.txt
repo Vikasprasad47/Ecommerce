@@ -1,0 +1,64 @@
+                                 ┌───────────────────────────────┐
+                                 │            CLIENT              │
+                                 │  React + Vite + Redux + RTK    │
+                                 │  Routes (User/Admin/Seller)    │
+                                 └───────────────┬───────────────┘
+                                                 │ HTTPS
+                                                 ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│                           API GATEWAY / EXPRESS                          │
+│      (Handles Routing, Security, Parsing, Cookies, Rate Limits)          │
+│                                                                          │
+│  Middlewares:                                                            │
+│  - auth (JWT)                                                            │
+│  - admin check                                                           │
+│  - rateLimiters (OTP, Login)                                             │
+│  - multer (uploads)                                                      │
+│  - helmet(), cors(), morgan(), cookieParser()                            │
+└──────────────┬───────────────────────┬───────────────────────┬──────────┘
+               │                       │                       │
+               │                       │                       │
+               ▼                       ▼                       ▼
+
+  ┌──────────────────┐    ┌──────────────────┐    ┌────────────────────────┐
+  │  USER SERVICE     │    │ PRODUCT SERVICE  │    │   SELLER SERVICE       │
+  │  - Auth           │    │ - Product CRUD   │    │ - Seller register      │
+  │  - Login/Google   │    │ - Category        │    │ - KYC uploads         │
+  │  - Wishlist       │    │ - Subcategory     │    │ - Application status  │
+  │  - User profile   │    │ - Search/Suggest  │    │ - Admin approval      │
+  └──────────────────┘    └──────────────────┘    └────────────────────────┘
+
+               │                       │                       │
+               ▼                       ▼                       ▼
+
+  ┌──────────────────┐    ┌──────────────────┐    ┌────────────────────────┐
+  │ ORDER SERVICE     │    │  PAYMENT SERVICE │    │ ANALYTICS SERVICE      │
+  │ - COD orders      │    │ - Stripe         │    │ - KPIs                │
+  │ - Pickup orders   │    │ - Webhooks       │    │ - Sales trend         │
+  │ - Updates/status  │    │ - Verify payment │    │ - Top products        │
+  │ - Order list      │    │                  │    │ - User growth         │
+  └──────────────────┘    └──────────────────┘    └────────────────────────┘
+
+               │                       │                       │
+               ▼                       ▼                       ▼
+
+ ┌──────────────────┐    ┌─────────────────────┐   ┌─────────────────────┐
+ │ REVIEW SERVICE    │    │ COUPON SERVICE      │   │ SUPPORT SERVICE     │
+ │ - Add review      │    │ - Create coupon     │   │ - Contact messages  │
+ │ - Images upload   │    │ - Validate coupon   │   │ - Admin management  │
+ │ - Helpful count   │    │ - Apply to order    │   │                     │
+ └──────────────────┘    └─────────────────────┘   └─────────────────────┘
+
+               │
+               ▼
+
+                     ┌────────────────────────────────────────────┐
+                     │                 DATABASE                   │
+                     │            MongoDB + Cloudinary            │
+                     │ Models:                                    │
+                     │ - User, Product, Order, Review             │
+                     │ - Seller, SellerApplication                │
+                     │ - Coupon, Category, Subcategory            │
+                     │ - Newsletter, Contact, Analytics           │
+                     └────────────────────────────────────────────┘
+
