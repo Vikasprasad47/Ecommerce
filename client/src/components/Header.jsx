@@ -142,15 +142,15 @@ const Header = () => {
                     animate={shake ? "shake" : "idle"}
                     variants={shakeVariant}
                     onAnimationComplete={() => setShake(false)}
-                    className="bg-blue-700 absolute -bottom-14 -left-2 py-3 px-5 rounded-md z-10 border-t-1 border-black"
+                    className="bg-amber-500 absolute -bottom-14 -left-2 py-3 px-5 rounded-md z-10"
                   >
-                    <span className="text-md font-medium text-white">Login</span>
+                    <span className="text-md font-medium text-black">Login</span>
 
                     {/* triangle pointer */}
                     <div
                       className="absolute -top-2 left-3 w-0 h-0 
                         border-l-8 border-r-8 border-b-8 
-                        border-l-transparent border-r-transparent border-b-blue-700"
+                        border-l-transparent border-r-transparent border-b-amber-500"
                     />
                   </motion.div>
                 )}
