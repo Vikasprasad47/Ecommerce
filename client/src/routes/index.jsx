@@ -184,11 +184,11 @@ const router = createBrowserRouter([
                 element: <AdminPermission><CustomerSupportMessages/></AdminPermission>
             },
             {
-                path: "seller-subscription-plan-management",
+                path: "/admin/seller-subscription-plan-management",
                 element: <AdminPermission><AdminSellerSubscriptionPage/></AdminPermission>
             },
             {
-                path: "manage-seller-application",
+                path: "/admin/manage-seller-application",
                 element: <AdminPermission><AdminSellerApplicationsPage/></AdminPermission>
             },
             {

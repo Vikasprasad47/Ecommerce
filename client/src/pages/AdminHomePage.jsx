@@ -667,7 +667,7 @@ const AdminHomePage = () => {
 
             {/* Seller Applications */}
             <Link 
-              to="/manage-seller-application" 
+              to="/admin/manage-seller-application" 
               className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-rose-300 hover:bg-rose-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-3">
@@ -689,7 +689,7 @@ const AdminHomePage = () => {
 
             {/* Seller Subscription Plan */}
             <Link 
-              to="/seller-subscription-plan-management" 
+              to="/admin/seller-subscription-plan-management" 
               className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/40 transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <div className="flex items-center gap-3">
