@@ -139,7 +139,7 @@ const SimpleConfirmModal = ({
   return (
     <div className="fixed inset-0 bg-black/40 z-[300] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-sm w-full shadow-xl border border-slate-200">
-        <div className="px-4 py-3 border-b bg-rose-50 border-rose-100 flex items-center gap-2 text-rose-700">
+        <div className="px-4 py-4 border-b bg-rose-50 border-rose-100 flex items-center gap-2 text-rose-700 rounded-t-2xl">
           <FaExclamationTriangle className="text-sm" />
           <p className="text-sm font-semibold">{title}</p>
         </div>

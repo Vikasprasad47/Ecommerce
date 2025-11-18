@@ -364,6 +364,7 @@ import { PiPackageFill } from "react-icons/pi";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { RiAlertLine } from "react-icons/ri";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const ProductAdmin = () => {
   const [productData, setProductData] = useState([]);
@@ -495,14 +496,15 @@ const ProductAdmin = () => {
                 />
               </div>
 
-              <button
+              <Link
+                to={"/upload-product"}
                 type="button"
                 className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
                            bg-amber-500 text-white shadow-sm hover:bg-amber-600 hover:shadow-md
                            transition-all duration-150"
               >
                 + Add Product
-              </button>
+              </Link>
             </div>
           </div>
         </div>

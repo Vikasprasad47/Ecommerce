@@ -2354,7 +2354,7 @@ const CouponWizardModal = ({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
+        <div className="px-5 py-3 border-t border-slate-100 bg-slate-100 flex items-center justify-between gap-3 rounded-2xl">
           <button
             type="button"
             onClick={onClose}
