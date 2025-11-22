@@ -398,13 +398,31 @@ const ProductCardSkeleton = () => (
 // ===========================
 // Optimized Product Card
 // ===========================
+
+const saveSeenProduct = async (productId) => {
+  try {
+    await Axios({
+      method: SummaryApi.SeenProduct.method,
+      url: SummaryApi.SeenProduct.url + "/" + productId,
+    });
+  } catch (err) {
+    console.error("Failed to save seen product:", err);
+  }
+};
+
+
 const ProductCard = memo(({ item }) => {
   const url = `/product/${validURLConvert(item.name)}-${item._id}`;
   const discountedPrice = priceWithDiscount(item.price, item.discount);
+  
 
   return (
     <div className="flex-shrink-0 w-44 sm:w-48 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer group relative">
-      <Link to={url} className="block">
+      <Link 
+        to={url} 
+        onClick={() => saveSeenProduct(item._id)}
+        className="block"
+      >
         <div className="relative h-32 bg-white flex items-center justify-center p-2">
           {item.discount > 0 && (
             <span className="absolute top-1 left-1 bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded">

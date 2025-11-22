@@ -13,6 +13,9 @@ import useMobile from "../Hooks/useMobile";
 import { useGlobalContext } from "../provider/globalProvider";
 import UserDropDownMenu from './UserDropDownMenu'
 import { motion } from "framer-motion";
+import NumberBadgeIcon from "./ui/icons/NumberBadgeIcon";
+import { FaPlus } from "react-icons/fa";
+
 // Lazy load UserDropDownMenu
 // const UserDropDownMenu = lazy(() => import("./UserDropDownMenu"));
 
@@ -165,10 +168,10 @@ const Header = () => {
               <FaCartShopping size={24} />
               <span className="hidden sm:inline">Cart</span>
               {totalQty > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[11px] rounded-full h-4 w-4 flex items-center justify-center">
-                  {totalQty}
+                <span className="absolute -top-4 right-4 flex">
+                  <NumberBadgeIcon mode="multi" value={totalQty} size={26} className="text-red-600" />
                 </span>
-              )}
+              )}  
             </button>
 
             {/* Seller */}

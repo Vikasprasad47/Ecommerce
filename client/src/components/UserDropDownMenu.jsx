@@ -8,23 +8,19 @@ import Axios from "../utils/network/axios";
 import SummaryApi from "../comman/summaryApi";
 import AxiosToastError from "../utils/network/AxiosToastError";
 import isAdmin from "../utils/auth/IsAdmin";
-
 import {
   IoPersonOutline,
   IoLogOutOutline,
   IoHeartOutline,
   IoLocationOutline,
   IoBagHandleOutline,
-  IoAnalyticsOutline,
-  IoPeopleOutline,
-  IoCloudUploadOutline,
-  IoCubeOutline,
   IoStorefrontOutline,
   IoChevronForward,
   IoNotificationsOutline,
   IoStarOutline,
   IoGridOutline,
 } from "react-icons/io5";
+import NumberBadgeIcon from "./ui/icons/NumberBadgeIcon";
 
 const UserDropDownMenu = ({ close }) => {
   const user = useSelector((state) => state.user);
@@ -142,11 +138,7 @@ const UserDropDownMenu = ({ close }) => {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {item.badge > 0 && (
-                    <span className="text-xs bg-orange-500 text-white px-2 py-1 rounded-full min-w-[20px] text-center">
-                      {item.badge}
-                    </span>
-                  )}
+                  {item.badge > 0 && <NumberBadgeIcon value={item.badge} size={25} className="text-amber-500"/>}
                   <IoChevronForward size={16} className="text-orange-300 group-hover:text-orange-400 transition-colors" />
                 </div>
               </Link>

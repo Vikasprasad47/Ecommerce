@@ -1247,3 +1247,76 @@ export async function loginOrCreateUserControllerbyPhoneNumber(req, res) {
     res.status(500).json({ message: "Login failed", success: false });
   }
 }
+
+export const addSeenProductController = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { productId } = req.params;
+
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required",
+      });
+    }
+
+    // Remove existing entry if duplicate
+    await UserModel.findByIdAndUpdate(userId, {
+      $pull: { seenProducts: productId }
+    });
+
+    // Push new entry and keep only last 20 items
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          seenProducts: { $each: [productId], $slice: -20 }
+        }
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Added to recently viewed",
+      data: updatedUser.seenProducts
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to save recent product"
+    });
+  }
+};
+
+export const getRecentSeenProductsController = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await UserModel.findById(userId)
+      .populate({
+        path: "seenProducts",
+        select: "name image price discount ratings stock slug"
+      });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user.seenProducts.reverse() // newest first
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch recently viewed products",
+      error: error.message
+    });
+  }
+};

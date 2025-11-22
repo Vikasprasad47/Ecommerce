@@ -36,7 +36,8 @@ import {
   deleteProductDetails, 
   searchProducts, 
   latestProducts,
-  getSearchSuggestions
+  getSearchSuggestions,
+  shareProductController
 } from '../controllers/product.controller.js';
 import { admin } from '../middleware/admin.js';
 
@@ -61,5 +62,9 @@ productRouter.get('/productsearchsuggestions', getSearchSuggestions);
 
 // ✅ Latest Products
 productRouter.get('/latest-products', latestProducts); // optional: ?limit=10
+
+//share product link can be handled on client side by copying the URL
+productRouter.get("/share/product/:slug", shareProductController);
+
 
 export default productRouter;

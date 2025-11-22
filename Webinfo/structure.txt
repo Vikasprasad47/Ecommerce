@@ -9,7 +9,7 @@ ecommerce/
 │   ├── README.md
 │   ├── tailwind.config.js
 │   ├── vercel.json
-│   ├── vite.config.js
+│   ├── vite.config.js 
 │   │
 │   ├── public/
 │   │   ├── ads.txt
@@ -65,19 +65,24 @@ ecommerce/
 │       │   ├── PhoneLogin.jsx
 │       │   ├── Portal.jsx
 │       │   ├── ProductCardAdmin.jsx
+│       │   ├── RecentlyViewedProduct.jsx
 │       │   ├── search.jsx
 │       │   ├── SearchSuggestions.jsx
 │       │   ├── SellerOnboardingSkeleton.jsx
 │       │   ├── SellerSubscriptionPlans.jsx
 │       │   ├── SuperCoins.jsx
 │       │   ├── TopDisplayHeaderProduct.jsx
+│       │   ├── ui
+│       │   │    └── icons
+│       │   │            └── NumberBadgeIcon.jsx
 │       │   ├── UploadCategoryModels.jsx
 │       │   ├── UploadSubCategoryModel.jsx
 │       │   ├── UserAccount.jsx
 │       │   ├── UserDropDownMenu.jsx
 │       │   ├── UserFileUploadAvatar.jsx
 │       │   ├── userMenu.jsx
-│       │   └── ViewImage.jsx
+│       │   ├── ViewImage.jsx
+│       │   └──WriteReview.jsx
 │       │
 │       ├── Hooks/
 │       │   ├── useMobile.jsx

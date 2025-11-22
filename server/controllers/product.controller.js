@@ -517,3 +517,55 @@ export const getSearchSuggestions = async (req, res) => {
 };
 
 
+//SSR (Server-Side Rendering) for product sharing
+export const shareProductController = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const productId = slug.split("-").slice(-1)[0];
+
+    const product = await ProductModel.findById(productId).lean();
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    const productUrl = `${process.env.FRONTED_URL}/product/${slug}`;
+
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+
+      <head>
+        <meta charset="UTF-8">
+
+        <title>${product.name}</title>
+
+        <meta property="og:title" content="${product.name}" />
+        <meta property="og:description" content="${(product.description || '').slice(0, 150)}" />
+        <meta property="og:image" content="${product.image?.[0] || ''}" />
+        <meta property="og:url" content="${productUrl}" />
+        <meta property="og:type" content="product" />
+
+        <meta property="product:price:amount" content="${product.price}" />
+        <meta property="product:price:currency" content="INR" />
+
+        <!-- Twitter Cards -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="${product.name}">
+        <meta name="twitter:image" content="${product.image?.[0] || ''}">
+
+        <!-- Redirect user to the actual React frontend -->
+        <meta http-equiv="refresh" content="0; url=${productUrl}" />
+      </head>
+
+      <body></body>
+      </html>
+    `;
+
+    res.send(html);
+
+  } catch (err) {
+    console.error("OG ERROR:", err);
+    res.status(500).send("Server Error");
+  }
+}; 

@@ -34,7 +34,7 @@ const auth = async (req, res, next) => {
         const user = await UserModel.findById(decoded.id);
         if (!user || user.status !== "Active") {
             return res.status(403).json({
-                message: "Access denied. Account Deactivated.",
+                message: "Access denied. Account InActive.",
                 error: true,
                 success: false
             });

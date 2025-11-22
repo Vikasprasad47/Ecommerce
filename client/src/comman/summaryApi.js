@@ -65,6 +65,14 @@ const SummaryApi = {
         url: "/api/user/update-user",
         method: "PUT"
     },
+    SeenProduct: {
+        method: "POST",
+        url: "/api/user/seen-product"
+    },
+    GetRecentProducts: {
+        method: "GET",
+        url: "/api/user/recent-products"
+    },
     getUserReviews: {
         url: "/api/user/user-reviews",
         method: "GET"
@@ -144,6 +152,10 @@ const SummaryApi = {
     latestProducts: {
         url: "/api/product/latest-products", // GET endpoint
         method: "GET"
+    },
+    ShareProduct: {
+        method: "GET",
+        url: "/api/share/product/"
     },
     addToCart: {
         url: '/api/cart/create',

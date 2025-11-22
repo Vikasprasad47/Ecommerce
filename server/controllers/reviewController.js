@@ -30,7 +30,7 @@ export const createReview = async (req, res) => {
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     const existing = await ReviewModel.findOne({ product: productId, user: userId });
-    if (existing) return res.status(400).json({ message: "You have already reviewed this product" });
+    if (existing) return res.status(400).json({ message: "You've already reviewed." });
 
     let uploadedImages = [];
 

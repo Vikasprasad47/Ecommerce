@@ -17,6 +17,11 @@ import { FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { IoMdShareAlt } from "react-icons/io";
 import { IoMdHeartEmpty } from "react-icons/io";
+import RecentlyViewedProducts from '../components/RecentlyViewedProducts'
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { useGlobalContext } from "../provider/globalProvider";
+
 
 
 const SingleProductDisplayPage = () => {
@@ -32,6 +37,49 @@ const SingleProductDisplayPage = () => {
   const [timeLeft, setTimeLeft] = useState(null)
   const [selectedTab, setSelectedTab] = useState('details') // For mobile tabs
   const [selectedVariant, setSelectedVariant] = useState(null)
+  const user = useSelector((state) => state.user);
+  const { fetchUserDetails } = useGlobalContext();
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+
+  useEffect(() => {
+    setIsWishlisted(user?.wishlist?.includes(productId));
+  }, [user?.wishlist, productId]);
+
+
+  const toggleWishlist = async () => {
+    if (!user || !user._id) {
+      toast.dismiss();
+      toast.error("Please login to use wishlist.");
+      return;
+    }
+
+    const newStatus = !isWishlisted;
+    setIsWishlisted(newStatus);
+
+    try {
+      const apiCall = newStatus
+        ? SummaryApi.AddToWishList
+        : SummaryApi.DeleteFromWishList;
+
+      await Axios({
+        ...apiCall,
+        data: { productId },
+        withCredentials: true
+      });
+
+      toast.dismiss();
+      toast.success(newStatus ? "Added to wishlist" : "Removed from wishlist");
+
+      await fetchUserDetails();
+    } catch (err) {
+      setIsWishlisted(!newStatus);
+      toast.dismiss();
+      toast.error("Something went wrong. Try again.");
+      console.error(err);
+    }
+  };
+
 
   // Countdown timer setup
   useEffect(() => {
@@ -109,6 +157,28 @@ const SingleProductDisplayPage = () => {
     trackMouse: true,
   })
 
+  const handleShareProduct = async () => {
+    const slug = params.product; // already available
+    const shareUrl = `${import.meta.env.VITE_API_URL}/share/product/${slug}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: data.name,
+          text: data.name,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Product link copied to clipboard");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+
   // Loading skeleton component
   const LoadingSkeleton = () => (
     <div className="space-y-6">
@@ -171,8 +241,19 @@ const SingleProductDisplayPage = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   className="absolute top-4 right-4 z-10 flex items-center justify-between gap-3"
                 >
-                  <button><IoMdHeartEmpty size={24}/></button>
-                  <button><IoMdShareAlt size={24}/></button>
+                  <button
+                    onClick={toggleWishlist}
+                    className="cursor-pointer hover:text-red-500 transition"
+                  >
+                    {isWishlisted ? (
+                      <FaHeart size={24} className="text-red-500" />
+                    ) : (
+                      <FaRegHeart size={24} />
+                    )}
+                  </button>
+                  <button onClick={handleShareProduct} className="cursor-pointer hover:text-blue-600 transition">
+                    <IoMdShareAlt size={24} />
+                  </button>
                 </motion.div>
 
                 {/* Swipeable Image Container */}
@@ -213,7 +294,7 @@ const SingleProductDisplayPage = () => {
               <div className="relative">
                 <div
                   ref={imageContainerRef}
-                  className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide py-2 px-1"
+                  className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide py-2 px-3"
                 >
                   {(selectedVariant !== null && data.variants[selectedVariant]?.images?.length > 0 
                     ? data.variants[selectedVariant].images 
@@ -784,10 +865,13 @@ const SingleProductDisplayPage = () => {
 
       {/* Reviews Section */}
       <section className="py-3">
-        <div className="container mx-auto max-w-7xl">
+        <div className="">
           <ProductReviewPage productId={productId} productData={data}  onReviewSubmitted={fetchProductDetails} />
         </div>
       </section>
+
+      <RecentlyViewedProducts currentProductId={productId} title="Recently Viewed" />
+
     </div>
   )
 }

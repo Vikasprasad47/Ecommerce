@@ -115,6 +115,12 @@ const userSchema = new mongoose.Schema({
             ref: "product"
         }
     ],
+    seenProducts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "product"
+        }
+    ],
     notifications: {
         email: { type: Boolean, default: true },
         sms: { type: Boolean, default: false },

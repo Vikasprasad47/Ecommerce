@@ -9,6 +9,7 @@ import SummaryApi from "../comman/summaryApi";
 import toast from "react-hot-toast";
 import { LuInfo } from "react-icons/lu";
 import ImageGalleryModal from "../components/ImageGalleryModal";
+import WriteReview from "../components/WriteReview";
 
 // Constants
 const ICON_SIZES = {
@@ -18,7 +19,7 @@ const ICON_SIZES = {
 };
 
 // Star Rating Component
-const StarRating = React.memo(({ rating, setRating, readOnly = false, size = "md" }) => {
+export const StarRating = React.memo(({ rating, setRating, readOnly = false, size = "md" }) => {
   const renderStar = (star) => {
     if (star <= rating) {
       return <FaStar className={`${ICON_SIZES[size]} text-amber-500 cursor-pointer ${readOnly ? "pointer-events-none" : ""}`} />;
@@ -68,6 +69,7 @@ const ProductReviewPage = ({ productId, productData, onReviewSubmitted }) => {
   const [activeIndex, setActiveIndex] = useState(null);
   const allReviewImages = reviews.flatMap((review) => review.images || []).filter(Boolean);
   const [isOpen, setIsOpen] = useState(false);
+  const [openReviewModal, setOpenReviewModal] = useState(false);
 
   const handleImageClick = (images, index) => {
     setGalleryImages(images);
@@ -289,7 +291,7 @@ const ProductReviewPage = ({ productId, productData, onReviewSubmitted }) => {
 
 
   return (
-    <div className="max-w-full mx-auto px-4 pt-0 sm:px-6 py-3">
+    <div className="max-w-full px-4 pt-0 sm:px-6 py-3">
 
       <div>
         {/* Rating Summary */}
@@ -390,89 +392,71 @@ const ProductReviewPage = ({ productId, productData, onReviewSubmitted }) => {
             {/* Interactive controls */}
               <div className="lg:flex lg:justify-end md:flex md:justify-end xl:flex xl:justify-end flex items-center justify-between">
               <div className="flex justify-end mt-3 md:w-fit lg:w-fit xl:w-fit w-full flex-row-reverse gap-4">
-                {/* Enhanced select with floating label effect */}
-                {/* <div className="relative flex-1 min-w-[180px]">
+                <div className="relative flex-1 min-w-[180px]">
+                  {/* Hidden select for form submission */}
                   <select
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400 shadow-sm transition-all cursor-pointer"
+                    className="hidden"
                   >
                     <option value="recent">Most Recent</option>
                     <option value="highest">Highest Rated</option>
                     <option value="lowest">Lowest Rated</option>
                     <option value="helpful">Most Helpful</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  
+                  {/* Custom select UI */}
+                  <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-7 py-3  text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400 shadow-sm transition-all cursor-pointer hover:bg-gray-50"
+                  >
+                    <span>
+                      {sortOption === 'recent' && 'Most Recent'}
+                      {sortOption === 'highest' && 'Highest Rated'}
+                      {sortOption === 'lowest' && 'Lowest Rated'}
+                      {sortOption === 'helpful' && 'Most Helpful'}
+                    </span>
+                    <svg
+                      className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
-                  </div>
-                </div> */}
-                <div className="relative flex-1 min-w-[180px]">
-  {/* Hidden select for form submission */}
-  <select
-    value={sortOption}
-    onChange={(e) => setSortOption(e.target.value)}
-    className="hidden"
-  >
-    <option value="recent">Most Recent</option>
-    <option value="highest">Highest Rated</option>
-    <option value="lowest">Lowest Rated</option>
-    <option value="helpful">Most Helpful</option>
-  </select>
-  
-  {/* Custom select UI */}
-  <button
-    onClick={() => setIsOpen(!isOpen)}
-    className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-7 py-3  text-sm focus:ring-2 focus:ring-amber-400 focus:border-amber-400 shadow-sm transition-all cursor-pointer hover:bg-gray-50"
-  >
-    <span>
-      {sortOption === 'recent' && 'Most Recent'}
-      {sortOption === 'highest' && 'Highest Rated'}
-      {sortOption === 'lowest' && 'Lowest Rated'}
-      {sortOption === 'helpful' && 'Most Helpful'}
-    </span>
-    <svg
-      className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-    >
-      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-    </svg>
-  </button>
+                  </button>
 
-  {/* Dropdown options */}
-  {isOpen && (
-    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl py-1 shadow-lg">
-      {[
-        { value: 'recent', label: 'Most Recent' },
-        { value: 'highest', label: 'Highest Rated' },
-        { value: 'lowest', label: 'Lowest Rated' },
-        { value: 'helpful', label: 'Most Helpful' },
-      ].map((option) => (
-        <div
-          key={option.value}
-          onClick={() => {
-            setSortOption(option.value);
-            setIsOpen(false);
-          }}
-          className={`px-4 py-2 text-sm cursor-pointer transition-colors ${
-            sortOption === option.value
-              ? 'bg-amber-50 text-amber-700'
-              : 'hover:bg-gray-50'
-          }`}
-        >
-          {option.label}
-        </div>
-      ))}
-    </div>
-  )}
-</div>
+                  {/* Dropdown options */}
+                  {isOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl py-1 shadow-lg">
+                      {[
+                        { value: 'recent', label: 'Most Recent' },
+                        { value: 'highest', label: 'Highest Rated' },
+                        { value: 'lowest', label: 'Lowest Rated' },
+                        { value: 'helpful', label: 'Most Helpful' },
+                      ].map((option) => (
+                        <div
+                          key={option.value}
+                          onClick={() => {
+                            setSortOption(option.value);
+                            setIsOpen(false);
+                          }}
+                          className={`px-4 py-2 text-sm cursor-pointer transition-colors ${
+                            sortOption === option.value
+                              ? 'bg-amber-50 text-amber-700'
+                              : 'hover:bg-gray-50'
+                          }`}
+                        >
+                          {option.label}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Animated review button with icon */}
                 <button
-                  onClick={() => setShowForm(!showForm)}
+                  onClick={() => setOpenReviewModal(true)}
                   className={`flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 ${
                     showForm
                       ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -512,136 +496,12 @@ const ProductReviewPage = ({ productId, productData, onReviewSubmitted }) => {
           </div>
         )}
       
-
-        {/* Review Form (Inline) */}
-        {showForm && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              {editReviewId ? "Edit Your Review" : "Share Your Experience"}
-            </h3>
-            
-            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-5">
-              <div className="flex flex-col items-start">
-                <label className="text-sm font-medium text-gray-700 mb-2">Your Rating*</label>
-                <StarRating rating={rating} setRating={setRating} size="md" />
-              </div>
-
-              <div>
-                <label htmlFor="review-title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Review Title
-                </label>
-                <input
-                  id="review-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Summarize your experience"
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-sm"
-                  maxLength="100"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="review-comment" className="block text-sm font-medium text-gray-700 mb-1">
-                  Detailed Review*
-                </label>
-                <textarea
-                  id="review-comment"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Tell us about your experience..."
-                  rows={5}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition text-sm"
-                  required
-                  maxLength="1000"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Add Photos (Optional)
-                </label>
-                <div
-                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setIsDragging(false);
-                    if (e.dataTransfer.files.length) {
-                      handleFileSelection(Array.from(e.dataTransfer.files));
-                    }
-                  }}
-                  onClick={() => fileInputRef.current.click()}
-                  className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
-                    isDragging ? "border-amber-500 bg-amber-50" : "border-gray-200 hover:border-amber-400 bg-gray-50"
-                  }`}
-                >
-                  <HiOutlinePhotograph className="w-8 h-8 mb-2 text-gray-300" />
-                  <p className="text-sm text-gray-500 text-center">
-                    <span className="font-medium">Drag & drop photos</span> or click to browse
-                  </p>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleFileSelection(Array.from(e.target.files))}
-                    className="hidden"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">JPEG, PNG up to 5MB (max 5 images)</p>
-              </div>
-
-              {images.length > 0 && (
-                <div className="mb-3">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Preview ({images.length}/5)</p>
-                  <div className="flex gap-2 overflow-x-auto pb-1">
-                    {images.map((img, idx) => {
-                      const url = typeof img === 'string' ? img : URL.createObjectURL(img);
-                      return (
-                        <div key={idx} className="relative group flex-shrink-0">
-                          <img
-                            src={url}
-                            alt={`Preview ${idx + 1}`}
-                            className="h-20 w-20 object-cover rounded-lg border border-gray-200"
-                            onLoad={() => typeof img !== 'string' && URL.revokeObjectURL(url)}
-                          />
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setImages(images.filter((_, i) => i !== idx));
-                            }}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity shadow"
-                          >
-                            <FaTimes className="w-3 h-3" />
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow-sm transition-all text-sm font-medium flex items-center gap-2"
-                >
-                  {loading && <FaSpinner className="animate-spin" />}
-                  {editReviewId ? "Update Review" : "Submit Review"}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
+        <WriteReview
+          isOpen={openReviewModal}
+          productId={productId}
+          onSuccess={fetchReviews}
+          onClose={() => setOpenReviewModal(false)}
+        />
       </div>
 
       {/* Reviews List */}
@@ -671,7 +531,7 @@ const ProductReviewPage = ({ productId, productData, onReviewSubmitted }) => {
           </div>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => setOpenReviewModal(true)}
               className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow-sm transition-all text-sm font-medium"
             >
               Write a Review

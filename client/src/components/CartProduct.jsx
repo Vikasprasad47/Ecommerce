@@ -89,10 +89,23 @@ const CartProduct = ({ data, searchText }) => {
     }
   };
 
+  const saveSeenProduct = async (productId) => {
+    try {
+      await Axios({
+        method: SummaryApi.SeenProduct.method,
+        url: SummaryApi.SeenProduct.url + "/" + productId,
+      });
+    } catch (err) {
+      console.error("Failed to save seen product:", err);
+    }
+  };
+
+
   return (
     <Link
       to={url}
       key={data._id}
+      onClick={() => saveSeenProduct(data._id)}
       className="flex-shrink-0 w-[11.5rem] lg:w-[14rem] h-[18rem] flex flex-col bg-white rounded-xl border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative"
     >
       {/* Discount Badge */}

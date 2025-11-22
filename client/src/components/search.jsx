@@ -6,6 +6,7 @@ import { FaArrowLeft, FaMicrophone, FaTimes } from "react-icons/fa";
 import useMobile from "../Hooks/useMobile";
 import SearchSuggestions from "./SearchSuggestions";
 import toast from "react-hot-toast";
+import { LuScanSearch } from "react-icons/lu";
 
 /**
  * Placeholder - replace with your real API call if needed.
@@ -52,6 +53,7 @@ const Search = () => {
   const [isSearchPage, setIsSearchPage] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [highlightIndex, setHighlightIndex] = useState(-1);
+  const [showLiveCamera, setShowLiveCamera] = useState(false);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -173,6 +175,21 @@ const Search = () => {
     },
     [inputValue, navigate, updateHistory]
   );
+
+  const handleAIImageSearch = async (base64) => {
+    const result = await analyzeImageWithAI(base64);
+
+    toast.dismiss();
+
+    if (!result) {
+      toast.error("Could not detect product");
+      return;
+    }
+
+    updateHistory(result);
+    navigate(`/search?q=${encodeURIComponent(result)}`);
+  };
+
 
   // -----------------------
   // Navigation resolver
@@ -526,6 +543,15 @@ const Search = () => {
           </button>
         )}
 
+        <button
+          onClick={() => setShowLiveCamera((prev) => !prev)}
+          className="p-2 rounded-full text-gray-500 hover:bg-gray-100"
+          title="Live Image Search"
+        >
+          <LuScanSearch size={20} strokeWidth={2.5}/>
+        </button>
+
+
         {/* MIC BUTTON */}
         <button
           onClick={() => {
@@ -541,7 +567,7 @@ const Search = () => {
           aria-pressed={isListening}
           aria-label="Search by voice"
         >
-          <FaMicrophone size={15} />
+          <FaMicrophone size={18} />
         </button>
       </div>
 
