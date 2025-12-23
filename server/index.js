@@ -7,6 +7,9 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import connectDB from './config/connectDB.js';
+import { runtimeStats } from './utils/runtimeStats.js';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './docs/swagger.js';
 
 // routes
 import userRouter from './route/user.route.js'; 
@@ -23,13 +26,18 @@ import couponRouter from './route/coupon.route.js'
 import subscribeNewsletterRouter from './route/newsletter.routes.js';
 import Contactrouter from './route/contact.routes.js';
 import sellerRouter from './route/seller.routes.js';
+import dashboardRouter from './route/dashboard.route.js';
 
 const app = express();
 app.use(cors({
     credentials: true,
     origin: process.env.FRONTED_URL,
 }));
-
+app.use((req, res, next) => {
+  runtimeStats.totalRequests++;
+  runtimeStats.lastRequestAt = new Date();
+  next();
+});
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('common'));
@@ -39,13 +47,10 @@ app.use(helmet({
 
 const PORT = process.env.PORT || 8080;
 
-app.get('/', (req, res) => {
-    res.json({
-        message: 'The server is running on port ' + PORT
-    });
-});
 
 // all routes
+app.use('/', dashboardRouter);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/upload-file', uploadRouter);
