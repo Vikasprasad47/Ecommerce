@@ -295,7 +295,7 @@ const Home = () => {
         ) : (
           <div>
             <section className="pl-3 pr-3 pb-3">
-              <HeaderCategory />
+              {/* <HeaderCategory /> */}
 
               {/* Desktop Banner */}
               <div className="mt-3 rounded relative hidden sm:block">

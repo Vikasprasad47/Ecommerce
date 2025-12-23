@@ -485,7 +485,7 @@ const Register = () => {
       <button
         disabled={isGoogleLoading}
         onClick={login}
-        className="flex items-center justify-center w-full py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition font-medium shadow-sm"
+        className="flex items-center justify-center w-full py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition font-medium shadow-sm cursor-pointer"
       >
         {isGoogleLoading ? (
           <div className="flex items-center text-sm">
@@ -604,15 +604,44 @@ const Register = () => {
               )}
             </div>
 
-            <div className="flex items-center">
+            <label
+              htmlFor="accept-terms"
+              className="flex items-center gap-3 cursor-pointer select-none"
+            >
               <input
+                id="accept-terms"
                 type="checkbox"
                 checked={acceptedTerms}
-                onChange={() => setAcceptedTerms(!acceptedTerms)}
+                onChange={() => setAcceptedTerms((prev) => !prev)}
                 required
-                className="h-4 w-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
+                className="sr-only"
               />
-              <label className="ml-2 text-sm text-gray-600">
+
+              <div
+                className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${
+                  acceptedTerms
+                    ? "bg-amber-500 border-amber-500"
+                    : "bg-white border-gray-300"
+                }`}
+              >
+                {acceptedTerms && (
+                  <svg
+                    className="w-3 h-3 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </div>
+
+              <span className="text-sm text-gray-600">
                 I agree to the{" "}
                 <a
                   href="/terms"
@@ -620,15 +649,16 @@ const Register = () => {
                 >
                   Terms and Conditions
                 </a>
-              </label>
-            </div>
+              </span>
+            </label>
+
 
             <motion.button
               type="submit"
               disabled={!isFormValid || isLoading}
               whileHover={isFormValid ? { scale: 1.02 } : {}}
               whileTap={isFormValid ? { scale: 0.98 } : {}}
-              className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${
+              className={`w-full py-3 rounded-xl font-semibold text-white transition-all cursor-pointer ${
                 isFormValid && !isLoading
                   ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-lg"
                   : "bg-gray-300 cursor-not-allowed"
@@ -640,14 +670,14 @@ const Register = () => {
 
           <div className="my-4 text-center text-gray-500">OR SIGN UP WITH</div>
           <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
-            <GoogleSignupBtn />
+            <GoogleSignupBtn/>
             <button
               disabled={isPhoneLoading}
               onClick={() => {
                 setIsPhoneLoading(true);
                 setTimeout(() => navigate("/register/phone"), 400);
               }}
-              className="flex items-center justify-center w-full py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition font-medium shadow-sm"
+              className="flex items-center justify-center w-full py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 transition font-medium shadow-sm cursor-pointer"
             >
               {isPhoneLoading ? (
                 <div className="flex items-center text-sm">
