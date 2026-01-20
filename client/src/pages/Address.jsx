@@ -256,16 +256,16 @@ const AddressRow = memo(({ address, onEdit, onDelete }) => (
       </div>
     </td>
     <td className="px-6 py-4 text-sm text-gray-700">{address.mobile}</td>
-    <td className="px-6 py-4 text-right text-sm font-medium flex justify-end gap-2">
+    <td className="px-6 py-4 text-sm font-medium flex justify-end gap-2">
       <button
         onClick={onEdit}
-        className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-xl hover:bg-green-200 transition text-sm font-medium"
+        className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-xl hover:bg-green-200 transition text-sm font-medium cursor-pointer"
       >
         <MdEditDocument size={18} /> Edit
       </button>
       <button
         onClick={onDelete}
-        className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition text-sm font-medium"
+        className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition text-sm font-medium cursor-pointer"
       >
         <MdDelete size={18} /> Delete
       </button>

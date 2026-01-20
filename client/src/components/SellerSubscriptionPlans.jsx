@@ -38,7 +38,7 @@ export default function SellerSubscriptionPlans({ plans = [] }) {
   }, [plans]);
 
   return (
-    <div className="w-full py-6 font-inter bg-gradient-to-b from-amber-50 via-white to-emerald-50 rounded-3xl">
+    <div className="w-full py-6 font-inter bg-linear-to-b from-amber-50 via-white to-emerald-50 rounded-3xl">
       {/* HEADER */}
       <div className="text-center mb-6 px-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold mb-3">
@@ -109,7 +109,7 @@ export default function SellerSubscriptionPlans({ plans = [] }) {
                     className="
                       flex items-center justify-center gap-2 
                       px-5 py-2 rounded-full
-                      bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500
+                      bg-linear-to-r from-amber-400 via-yellow-300 to-amber-500
                       text-black text-[12px] sm:text-[13px] font-bold tracking-wide uppercase
                       shadow-[0_4px_12px_rgba(255,180,0,0.45)]
                       border border-amber-600/40
@@ -174,7 +174,7 @@ export default function SellerSubscriptionPlans({ plans = [] }) {
                     key={i}
                     className="flex items-start gap-2 text-xs sm:text-sm"
                   >
-                    <Check className="mt-0.5 w-4 h-4 flex-shrink-0 text-emerald-600" />
+                    <Check className="mt-0.5 w-4 h-4 shrink-0 text-emerald-600" />
                     <span>{f}</span>
                   </li>
                 ))}

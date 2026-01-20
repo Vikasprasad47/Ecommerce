@@ -300,6 +300,10 @@ const SummaryApi = {
         url:'/api/newsletter/subscribe',
         method:'POST'
     },
+    deleteUser: {
+        url: "/api/user/delete", // userId will be appended
+        method: "DELETE"
+    },
     loginWithMobile: {
         url: "/api/user/login-mobile",
         method: "POST"

@@ -28,8 +28,10 @@ import {
   FiUser,
   FiCreditCard,
   FiShield,
-  FiActivity
+  FiActivity,
+  FiTrash2
 } from 'react-icons/fi';
+
 import toast from 'react-hot-toast';
 
 const AllUser = () => {
@@ -68,6 +70,10 @@ const AllUser = () => {
   const [searchField, setSearchField] = useState(filterType);
   const [currentPage, setCurrentPage] = useState(pageQuery);
   const usersPerPage = 12;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
 
   const [showDropdown, setShowDropdown] = useState(false);
   const filterOptions = [
@@ -223,17 +229,17 @@ const AllUser = () => {
   };
 
   const handleRoleFilterChange = async (role) => {
-  setSelectedRoleFilter(role);
-  try {
-    const res = await axios.get(SummaryApi.getEmailsByRole.url, {
-      params: { role },
-      withCredentials: true,
-    });
-    setPreviewEmails(res.data.emails || []);
-  } catch (error) {
-    console.error("Failed to fetch emails", error);
-    setPreviewEmails([]);
-  }
+    setSelectedRoleFilter(role);
+    try {
+      const res = await axios.get(SummaryApi.getEmailsByRole.url, {
+        params: { role },
+        withCredentials: true,
+      });
+      setPreviewEmails(res.data.emails || []);
+    } catch (error) {
+      console.error("Failed to fetch emails", error);
+      setPreviewEmails([]);
+    }
   };
 
   const handleBulkEmailClick = () => {
@@ -341,6 +347,37 @@ const AllUser = () => {
     }
   };
 
+  const handleDeleteClick = (user) => {
+  setUserToDelete(user);
+  setShowDeleteModal(true);
+};
+
+const handleConfirmDelete = async () => {
+  if (!userToDelete) return;
+
+  try {
+    setIsDeleting(true);
+    const res = await axios.delete(
+      `${SummaryApi.deleteUser.url}/${userToDelete._id}`,
+      { withCredentials: true }
+    );
+
+    if (res.data.success) {
+      toast.success(res.data.message || "User deleted");
+      setShowDeleteModal(false);
+      setUserToDelete(null);
+      fetchAllUsers();
+    } else {
+      toast.error(res.data.message || "Failed to delete user");
+    }
+  } catch (err) {
+    AxiosToastError(err);
+  } finally {
+    setIsDeleting(false);
+  }
+};
+
+
 
 
   const getStatusColor = (status) => {
@@ -408,7 +445,7 @@ const AllUser = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleBulkEmailClick}
-                className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200"
+                className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
               >
                 <FiSend size={15} />
                 Send Bulk Email
@@ -642,6 +679,15 @@ const AllUser = () => {
                               >
                                 <LiaUserEditSolid  size={20} />
                               </button>
+
+                              <button
+                                onClick={() => handleDeleteClick(user)}
+                                className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                title="Delete User"
+                              >
+                                <FiTrash2 size={18} />
+                              </button>
+
                             </div>
                           </td>
                         </tr>
@@ -700,7 +746,7 @@ const AllUser = () => {
                           className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md" 
                         />
                         <div>
-                          <h3 className="font-semibold text-slate-900 truncate max-w-[120px]">{user.name}</h3>
+                          <h3 className="font-semibold text-slate-900 truncate max-w-30">{user.name}</h3>
                           <div className="flex items-center gap-1 mt-0">
                             <span className="text-xs text-slate-500 flex items-center gap-1">
                               {user.role}
@@ -715,15 +761,15 @@ const AllUser = () => {
                     
                     <div className="space-y-3 mb-4">
                       <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <FiMail size={14} className="text-slate-400 flex-shrink-0" />
+                        <FiMail size={14} className="text-slate-400 shrink-0" />
                         <span className="truncate">{user.email}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <FiPhone size={14} className="text-slate-400 flex-shrink-0" />
+                        <FiPhone size={14} className="text-slate-400 shrink-0" />
                         <span>{user.mobile || "N/A"}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <FiStar size={14} className="text-slate-400 flex-shrink-0" />
+                        <FiStar size={14} className="text-slate-400 shrink-0" />
                         <span>Coins: {user.superCoins?.balance || 0}</span>
                       </div>
                     </div>
@@ -838,7 +884,7 @@ const AllUser = () => {
                   </div>
                   <button
                     onClick={() => setShowUserModal(false)}
-                    className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-md transition"
+                    className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-md transition cursor-pointer"
                   >
                     <FiX size={16} />
                   </button>
@@ -914,7 +960,7 @@ const AllUser = () => {
                           <label className="text-[11px] text-slate-500 block mb-0.5">
                             Email
                           </label>
-                          <p className="font-medium text-slate-800 text-sm">
+                          <p className="font-medium text-slate-800 text-md overflow-y-auto">
                             {selectedUser.email}
                           </p>
                         </div>
@@ -960,14 +1006,14 @@ const AllUser = () => {
                 <div className="flex justify-end gap-2 px-5 py-3 border-t border-slate-200 bg-slate-50">
                   <button
                     onClick={() => handleSendEmail(selectedUser)}
-                    className="flex items-center gap-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-md transition"
+                    className="flex items-center gap-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-md transition cursor-pointer"
                   >
                     <FiMail size={14} />
                     Email
                   </button>
                   <button
                     onClick={() => setShowUserModal(false)}
-                    className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm font-medium rounded-md transition"
+                    className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm font-medium rounded-md transition cursor-pointer"
                   >
                     Close
                   </button>
@@ -1067,7 +1113,7 @@ const AllUser = () => {
                 <div className="flex justify-end gap-2 px-5 py-3 border-t border-slate-200 bg-slate-50">
                   <button
                     onClick={() => setShowSendEmailModal(false)}
-                    className="px-4 py-2 rounded-md text-sm text-slate-600 border border-slate-200 hover:bg-slate-100 transition"
+                    className="px-4 py-2 rounded-md text-sm text-slate-600 border border-slate-200 hover:bg-slate-100 transition cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1155,7 +1201,7 @@ const AllUser = () => {
                   <button
                     onClick={() => setShowRoleModal(false)}
                     aria-label="Close role editor"
-                    className="p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition"
+                    className="p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition cursor-pointer "
                     title="Close"
                   >
                     <FiX size={16} />
@@ -1228,7 +1274,7 @@ const AllUser = () => {
                             type="button"
                             onClick={() => setSelectedRole(r.key)}
                             aria-pressed={active}
-                            className={`w-full text-left rounded-xl border px-4 py-3 transition flex items-start gap-3 focus:outline-none ${
+                            className={`w-full text-left rounded-xl border px-4 py-3 transition flex items-start gap-3 focus:outline-none cursor-pointer ${
                               active
                                 ? 'border-amber-400 bg-amber-50 shadow-sm'
                                 : 'border-slate-100 bg-white hover:bg-slate-50'
@@ -1261,7 +1307,7 @@ const AllUser = () => {
                 <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
                   <button
                     onClick={() => setShowRoleModal(false)}
-                    className="px-4 py-2 text-sm font-medium bg-white border border-slate-200 rounded-md text-slate-700 hover:bg-slate-50 transition"
+                    className="px-4 py-2 text-sm font-medium bg-white border border-slate-200 rounded-md text-slate-700 hover:bg-slate-50 transition cursor-pointer"
                     disabled={isRoleUpdating}
                   >
                     Cancel
@@ -1283,7 +1329,7 @@ const AllUser = () => {
                       }
                     }}
                     disabled={isRoleUpdating}
-                    className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md transition ${
+                    className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md transition cursor-pointer ${
                       isRoleUpdating ? 'bg-amber-300 text-white cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-700 text-white'
                     }`}
                     aria-busy={isRoleUpdating}
@@ -1461,7 +1507,7 @@ const AllUser = () => {
                   </div>
                   <button
                     onClick={() => setShowBulkEmailModal(false)}
-                    className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-md transition"
+                    className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-md transition cursor-pointer"
                   >
                     <FiX size={16} />
                   </button>
@@ -1533,7 +1579,7 @@ const AllUser = () => {
                 <div className="flex justify-end gap-2 px-5 py-3 border-t border-slate-200 bg-slate-50">
                   <button
                     onClick={() => setShowBulkEmailModal(false)}
-                    className="px-4 py-2 rounded-md text-sm text-slate-600 border border-slate-200 hover:bg-slate-100 transition"
+                    className="px-4 py-2 rounded-md text-sm text-slate-600 border border-slate-200 hover:bg-slate-100 transition cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1541,7 +1587,7 @@ const AllUser = () => {
                   <button
                     onClick={handleSendBulkEmailConfirm}
                     disabled={!bulkEmailSubject.trim() || !bulkEmailMessage.trim() || isSendingBulkEmail}
-                    className={`px-5 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 shadow-sm transition ${
+                    className={`px-5 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 shadow-sm transition cursor-pointer ${
                       !bulkEmailSubject.trim() || !bulkEmailMessage.trim() || isSendingBulkEmail
                         ? "bg-slate-300 text-white cursor-not-allowed"
                         : "bg-amber-500 hover:bg-amber-600 text-white"
@@ -1580,6 +1626,77 @@ const AllUser = () => {
                   </button>
                 </div>
               </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showDeleteModal && userToDelete && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: 12 }}
+                transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-red-200 overflow-hidden"
+              >
+                {/* Header */}
+                <div className="flex items-start gap-4 px-6 py-5 border-b border-red-100 bg-gradient-to-r from-red-50 to-white">
+                  <div className="w-11 h-11 bg-red-100 text-red-600 rounded-xl flex items-center justify-center shrink-0">
+                    <FiTrash2 size={20} />
+                  </div>
+
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg text-slate-900 leading-tight">
+                      Permanently delete user
+                    </h3>
+                    <p className="text-sm text-slate-600 mt-1">
+                      This action is{" "}
+                      <span className="font-semibold text-red-600">irreversible</span>.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div className="px-6 py-5">
+                  <p className="text-sm text-slate-700 leading-relaxed">
+                    You are about to permanently remove{" "}
+                    <span className="font-semibold text-red-700">
+                      {userToDelete.name}
+                    </span>
+                    . All associated data will be deleted and cannot be recovered.
+                  </p>
+                </div>
+
+                {/* Footer */}
+                <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50">
+                  <button
+                    onClick={() => setShowDeleteModal(false)}
+                    disabled={isDeleting}
+                    className="px-4 py-2.5 text-sm font-medium rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 transition disabled:opacity-60 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={handleConfirmDelete}
+                    disabled={isDeleting}
+                    className={`px-5 py-2.5 text-sm font-semibold text-white rounded-lg transition-all shadow-sm cursor-pointer ${
+                      isDeleting
+                        ? "bg-red-300 cursor-not-allowed"
+                        : "bg-red-600 hover:bg-red-700 hover:shadow-md"
+                    }`}
+                  >
+                    {isDeleting ? "Deleting…" : "Delete User"}
+                  </button>
+                </div>
+              </motion.div>
+
             </motion.div>
           )}
         </AnimatePresence>

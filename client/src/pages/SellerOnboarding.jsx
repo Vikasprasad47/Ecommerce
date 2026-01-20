@@ -1220,7 +1220,7 @@ const StepHeader = ({ currentStep, application }) => {
 
       <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
         <div
-          className="h-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-green-500 rounded-full transition-all duration-300"
+          className="h-1.5 bg-linear-to-r from-amber-500 via-orange-500 to-green-500 rounded-full transition-all duration-300"
           style={{ width: `${progress}%` }}
         ></div>
       </div>
@@ -1313,7 +1313,7 @@ const FileField = ({
 
 /* ------------------ IMAGE / DOC PREVIEW MODAL ------------------ */
 
-const ImagePreviewModal = ({ url, onClose }) => {
+const ImagePreviewModal = ({ url, onClose }) => { 
   if (!url) return null;
 
   const isPdf = url.toLowerCase().endsWith(".pdf");
@@ -1364,141 +1364,139 @@ const IntroStep = ({ plans, plansLoading, plansError, onStart, reloadPlans }) =>
   return (
     <div className="mb-8 space-y-6">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50 via-orange-50 to-green-50 p-5 sm:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+      <div className="relative overflow-hidden rounded-3xl border border-amber-200 bg-linear-to-br from-amber-50 via-orange-50 to-green-50 p-5 sm:p-10 shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+        {/* Ambient glows */}
+        <div className="absolute -right-16 -top-20 w-56 h-56 bg-amber-200/50 rounded-full blur-3xl" />
+        <div className="absolute -left-20 bottom-0 w-56 h-56 bg-green-200/50 rounded-full blur-3xl" />
 
-  {/* Ambient glows */}
-  <div className="absolute -right-16 -top-20 w-56 h-56 bg-amber-200/50 rounded-full blur-3xl" />
-  <div className="absolute -left-20 bottom-0 w-56 h-56 bg-green-200/50 rounded-full blur-3xl" />
+        <div className="relative flex flex-col md:flex-row md:items-center gap-10">
 
-  <div className="relative flex flex-col md:flex-row md:items-center gap-10">
+          {/* LEFT SECTION */}
+          <div className="flex-1 space-y-5">
 
-    {/* LEFT SECTION */}
-    <div className="flex-1 space-y-5">
+            {/* Mini Tag */}
+            <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-1.5 rounded-full border border-amber-200 shadow-sm">
+              <FiZap className="text-amber-500 text-base" />
+              <span className="text-xs uppercase tracking-[0.20em] text-amber-700 font-semibold">
+                Start selling in days, not weeks
+              </span>
+            </div>
 
-      {/* Mini Tag */}
-      <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-1.5 rounded-full border border-amber-200 shadow-sm">
-        <FiZap className="text-amber-500 text-base" />
-        <span className="text-xs uppercase tracking-[0.20em] text-amber-700 font-semibold">
-          Start selling in days, not weeks
-        </span>
-      </div>
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug">
+              Become a <span className="text-amber-600">Verified Seller</span> &
+              scale faster with{" "}
+              <span className="bg-amber-100 px-2 py-1 rounded-lg font-semibold">
+                seamless onboarding
+              </span>.
+            </h1>
 
-      {/* Heading */}
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-snug">
-        Become a <span className="text-amber-600">Verified Seller</span> &
-        scale faster with{" "}
-        <span className="bg-amber-100 px-2 py-1 rounded-lg font-semibold">
-          seamless onboarding
-        </span>.
-      </h1>
-
-      {/* Description */}
-      <p className="text-base sm:text-lg text-gray-700 max-w-xl leading-relaxed">
-        Complete your business profile, upload KYC documents and activate
-        a subscription to receive orders with enhanced visibility and faster payouts.
-      </p>
-
-      {/* Feature Highlights */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm sm:text-base mt-4">
-
-        {/* Card 1 */}
-        <div className="flex items-start gap-3 bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl px-4 py-3 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
-          <FiClock className="text-amber-500 text-xl" />
-          <div>
-            <p className="font-semibold text-gray-900">10–15 min onboarding</p>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Guided 4-step flow with smart autosave.
+            {/* Description */}
+            <p className="text-base sm:text-lg text-gray-700 max-w-xl leading-relaxed">
+              Complete your business profile, upload KYC documents and activate
+              a subscription to receive orders with enhanced visibility and faster payouts.
             </p>
+
+            {/* Feature Highlights */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm sm:text-base mt-4">
+
+              {/* Card 1 */}
+              <div className="flex items-start gap-3 bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl px-4 py-3 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
+                <FiClock className="text-amber-500 text-xl" />
+                <div>
+                  <p className="font-semibold text-gray-900">10–15 min onboarding</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Guided 4-step flow with smart autosave.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2 */}
+              <div className="flex items-start gap-3 bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl px-4 py-3 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
+                <FiTrendingUp className="text-green-600 text-xl" />
+                <div>
+                  <p className="font-semibold text-gray-900">Priority discovery</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Boosted ranking based on plan tier.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 3 */}
+              <div className="flex items-start gap-3 bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl px-4 py-3 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
+                <FiUsers className="text-emerald-600 text-xl" />
+                <div>
+                  <p className="font-semibold text-gray-900">Dedicated support</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Success team, payouts help & more.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-5">
+              <button
+                onClick={onStart}
+                className="inline-flex cursor-pointer items-center justify-center px-6 py-3 rounded-full text-sm sm:text-base font-semibold text-white
+                bg-linear-to-r from-amber-600 via-orange-500 to-green-600
+                hover:from-amber-700 hover:via-orange-600 hover:to-green-700
+                shadow-[0_10px_30px_rgba(248,180,0,0.35)] transition-transform duration-200 hover:-translate-y-1"
+              >
+                Start Seller Onboarding
+                <FiArrowRight className="ml-2 text-lg" />
+              </button>
+
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                No charges to create a profile. Subscription applies only after approval.
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Card 2 */}
-        <div className="flex items-start gap-3 bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl px-4 py-3 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
-          <FiTrendingUp className="text-green-600 text-xl" />
-          <div>
-            <p className="font-semibold text-gray-900">Priority discovery</p>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Boosted ranking based on plan tier.
-            </p>
+          {/* RIGHT STATS CARD */}
+          <div className="w-full md:w-64 lg:w-72">
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 px-5 py-5 shadow-[0_15px_45px_rgba(0,0,0,0.06)]">
+
+              <p className="text-[12px] font-semibold text-gray-600 uppercase tracking-[0.14em] mb-3 flex items-center gap-2">
+                <FiShield className="text-emerald-600 text-base" />
+                Protected & compliant
+              </p>
+
+              <div className="space-y-3 text-sm text-gray-600">
+                <p className="flex justify-between">
+                  <span>Secure KYC verification</span>
+                  <span className="font-semibold text-gray-900">Yes</span>
+                </p>
+                <p className="flex justify-between">
+                  <span>GST & PAN support</span>
+                  <span className="font-semibold text-gray-900">Included</span>
+                </p>
+                <p className="flex justify-between">
+                  <span>24/7 dashboard access</span>
+                  <span className="font-semibold text-gray-900">Unlimited</span>
+                </p>
+              </div>
+
+              <div className="mt-4 border-t border-dashed border-gray-200 pt-4">
+                <p className="text-xs text-gray-500 mb-1">Verification TAT</p>
+                <p className="text-base font-semibold text-gray-900">
+                  24–48 hours{" "}
+                  <span className="text-xs text-gray-500">(typical)</span>
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Card 3 */}
-        <div className="flex items-start gap-3 bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl px-4 py-3 shadow-[0_8px_18px_rgba(0,0,0,0.04)]">
-          <FiUsers className="text-emerald-600 text-xl" />
-          <div>
-            <p className="font-semibold text-gray-900">Dedicated support</p>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Success team, payouts help & more.
-            </p>
-          </div>
         </div>
       </div>
-
-      {/* Buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-5">
-        <button
-          onClick={onStart}
-          className="inline-flex cursor-pointer items-center justify-center px-6 py-3 rounded-full text-sm sm:text-base font-semibold text-white
-          bg-gradient-to-r from-amber-600 via-orange-500 to-green-600
-          hover:from-amber-700 hover:via-orange-600 hover:to-green-700
-          shadow-[0_10px_30px_rgba(248,180,0,0.35)] transition-transform duration-200 hover:-translate-y-1"
-        >
-          Start Seller Onboarding
-          <FiArrowRight className="ml-2 text-lg" />
-        </button>
-
-        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-          No charges to create a profile. Subscription applies only after approval.
-        </p>
-      </div>
-    </div>
-
-    {/* RIGHT STATS CARD */}
-    <div className="w-full md:w-64 lg:w-72">
-      <div className="bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 px-5 py-5 shadow-[0_15px_45px_rgba(0,0,0,0.06)]">
-
-        <p className="text-[12px] font-semibold text-gray-600 uppercase tracking-[0.14em] mb-3 flex items-center gap-2">
-          <FiShield className="text-emerald-600 text-base" />
-          Protected & compliant
-        </p>
-
-        <div className="space-y-3 text-sm text-gray-600">
-          <p className="flex justify-between">
-            <span>Secure KYC verification</span>
-            <span className="font-semibold text-gray-900">Yes</span>
-          </p>
-          <p className="flex justify-between">
-            <span>GST & PAN support</span>
-            <span className="font-semibold text-gray-900">Included</span>
-          </p>
-          <p className="flex justify-between">
-            <span>24/7 dashboard access</span>
-            <span className="font-semibold text-gray-900">Unlimited</span>
-          </p>
-        </div>
-
-        <div className="mt-4 border-t border-dashed border-gray-200 pt-4">
-          <p className="text-xs text-gray-500 mb-1">Verification TAT</p>
-          <p className="text-base font-semibold text-gray-900">
-            24–48 hours{" "}
-            <span className="text-xs text-gray-500">(typical)</span>
-          </p>
-        </div>
-      </div>
-    </div>
-
-  </div>
-      </div>
-
 
       {/* Plans Preview Section */}
-     <SellerSubscriptionPlans
+      <SellerSubscriptionPlans
         plans={plans}
         onSelect={(planId, duration) => {
           console.log("User selected:", planId, duration);
         }}
-     />
+      />
     </div>
   );
 };
@@ -2298,6 +2296,7 @@ export default function SellerOnboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [application, setApplication] = useState(null);
   const [loadingApp, setLoadingApp] = useState(true);
+  
 
   // Intro state (for new sellers with no application yet)
   const [hasStartedOnboarding, setHasStartedOnboarding] = useState(false);

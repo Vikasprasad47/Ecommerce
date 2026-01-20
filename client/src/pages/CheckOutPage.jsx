@@ -744,8 +744,8 @@ const CheckOutPage = () => {
                     !isValidAddress
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-sm'
                       : selectedPayment === 'cod'
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
-                      : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-md hover:shadow-lg'
+                      ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-lg'
+                      : 'bg-linear-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-md hover:shadow-lg'
                   }`}
                 >
                   {isLoadingCOD ? (
@@ -759,7 +759,7 @@ const CheckOutPage = () => {
                 </button>
 
                 {/* Online Payment Button */}
-                <button
+                {/* <button
                   onClick={handleOnlinePayment}
                   disabled={!isValidAddress}
                   className={`cursor-pointer w-full py-2.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 ${
@@ -778,7 +778,7 @@ const CheckOutPage = () => {
                   ) : (
                     'Pay Online'
                   )}
-                </button>
+                </button> */}
 
                 {/* Store Pickup Button */}
                 <button
@@ -788,8 +788,8 @@ const CheckOutPage = () => {
                     !isValidAddress
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-sm'
                       : selectedPayment === 'store-pickup'
-                      ? 'bg-gradient-to-r from-amber-300 to-orange-300 text-gray-800 shadow-lg'
-                      : 'bg-gradient-to-r from-amber-300 to-orange-300 text-gray-800 hover:from-amber-300 hover:to-orange-200 shadow-md hover:shadow-lg'
+                      ? 'bg-linear-to-r from-amber-300 to-orange-300 text-gray-800 shadow-lg'
+                      : 'bg-linear-to-r from-amber-300 to-orange-300 text-gray-800 hover:from-amber-300 hover:to-orange-200 shadow-md hover:shadow-lg'
                   }`}
                 >
                   {isLoadingStorePickup ? (
