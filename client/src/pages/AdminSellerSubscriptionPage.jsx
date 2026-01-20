@@ -1455,7 +1455,7 @@ const AdminSellerSubscriptionPage = () => {
                 {stats.popular}
               </p>
             </div>
-            <p className="text-[11px] text-slate-500 max-w-[140px] text-right">
+            <p className="text-[11px] text-slate-500 max-w-35 text-right">
               Highlight these on the seller pricing screen.
             </p>
           </div>
@@ -1611,7 +1611,7 @@ const AdminSellerSubscriptionPage = () => {
                           key={idx}
                           className="flex items-center gap-2 text-[11px] sm:text-xs text-slate-700"
                         >
-                          <span className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                          <span className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                             <BsCheck2 className="text-emerald-600 text-[10px]" />
                           </span>
                           <span>{f}</span>
@@ -1767,7 +1767,7 @@ const AdminSellerSubscriptionPage = () => {
         <AnimatePresence>
           {showEditor && (
             <motion.div
-              className="fixed inset-0 z-[105] flex items-center justify-center p-4 bg-black/55"
+              className="fixed inset-0 z-105 flex items-center justify-center p-4 bg-black/55"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1977,7 +1977,7 @@ const AdminSellerSubscriptionPage = () => {
                 </form>
 
                 {/* Footer */}
-                <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+                <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex justify-end gap-2 rounded-b-lg">
                   <button
                     type="button"
                     onClick={() => setShowEditor(false)}

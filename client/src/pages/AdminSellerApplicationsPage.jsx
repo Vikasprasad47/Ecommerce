@@ -1093,7 +1093,7 @@ const AdminDocPreviewModal = ({ url, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-[110] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/60 z-110 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg w-full max-w-4xl shadow-xl relative flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100">
@@ -1201,7 +1201,7 @@ const ConfirmationModal = ({
   const variant = variantClasses[confirmVariant] || variantClasses.danger;
 
   return (
-    <div className="fixed inset-0 bg-black/55 z-[110] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/55 z-110 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg max-w-xl w-full shadow-xl border border-slate-100">
         <div className="p-5 border-b border-slate-100 flex items-start gap-3">
           <div
@@ -1297,7 +1297,7 @@ const InfoModal = ({ isOpen, onClose }) => {
           </div>
         </div>
         <div className="mt-1 rounded-lg bg-amber-50 border border-amber-100 px-3 py-2 flex items-start gap-2">
-          <FiAlertCircle className="text-amber-600 mt-[2px] text-sm" />
+          <FiAlertCircle className="text-amber-600 mt-0.5 text-sm" />
           <p className="text-[11px] sm:text-xs text-amber-900 leading-relaxed">
             Avoid approving applications without checking GST, PAN and address
             proof. When rejecting, add a specific reason so support can assist
@@ -1337,12 +1337,12 @@ const SellerDetailModal = ({
   const tabActive = "border-amber-600 text-amber-700";
 
   return (
-    <div className="fixed inset-0 z-[105] bg-black/55 flex items-center justify-center px-3 sm:px-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl shadow-2xl border border-slate-200 flex flex-col h-[490px]">
+    <div className="fixed inset-0 z-105 bg-black/55 flex items-center justify-center px-3 sm:px-4">
+      <div className="bg-white rounded-lg w-full max-w-2xl shadow-2xl border border-slate-200 flex flex-col h-122.5">
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
               <FiBriefcase className="text-amber-700 text-base" />
             </div>
             <div className="space-y-0.5 min-w-0">
@@ -1470,7 +1470,7 @@ const SellerDetailModal = ({
                       </div>
                       <div className="flex justify-between gap-3">
                         <span className="text-slate-500">Email</span>
-                        <span className="font-medium text-slate-900 text-right truncate max-w-[220px] sm:max-w-[260px]">
+                        <span className="font-medium text-slate-900 text-right truncate max-w-55 sm:max-w-65">
                           {app.user?.email || "-"}
                         </span>
                       </div>
@@ -2158,7 +2158,7 @@ export default function AdminSellerApplicationsPage() {
                               </p>
                               <p className="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1">
                                 <FiMail className="text-[10px]" />
-                                <span className="truncate max-w-[140px] sm:max-w-[220px]">
+                                <span className="truncate max-w-35 sm:max-w-55">
                                   {app.user?.email}
                                 </span>
                               </p>

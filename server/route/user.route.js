@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerUserController, verifyEmailController, loginController, logoutController, uploadAvatar, removeAvatar, updateUserDetails, forgotPasswordController, verifyForgotPasswordOtp, resetPasswordController, refreshToken ,userDetails, getAllUsersController, addToWishlistController, removeFromWishlistController, getUserWishlistProducts, getUserReviews, googleLoginController, updateUserRoleController, updateUserStatusController, sendEmailToUserController, getEmailsByRole, sendBulkEmailController, loginOrCreateUserControllerbyPhoneNumber, addSeenProductController, getRecentSeenProductsController } from "../controllers/user.controller.js";
+import { registerUserController, verifyEmailController, loginController, logoutController, uploadAvatar, removeAvatar, updateUserDetails, forgotPasswordController, verifyForgotPasswordOtp, resetPasswordController, refreshToken ,userDetails, getAllUsersController, addToWishlistController, removeFromWishlistController, getUserWishlistProducts, getUserReviews, googleLoginController, updateUserRoleController, updateUserStatusController, sendEmailToUserController, getEmailsByRole, sendBulkEmailController, loginOrCreateUserControllerbyPhoneNumber, addSeenProductController, getRecentSeenProductsController, deleteUserController } from "../controllers/user.controller.js";
 import auth from "../middleware/auth.js"
 import upload from "../middleware/multer.js"
 import {authLimiter, otpLimiter} from '../middleware/rateLimiters.js'
@@ -31,6 +31,7 @@ userRouter.post("/send-bulk-email", auth, sendBulkEmailController);
 userRouter.post("/login-mobile", loginOrCreateUserControllerbyPhoneNumber);
 userRouter.post("/seen-product/:productId", auth, addSeenProductController);
 userRouter.get("/recent-products", auth, getRecentSeenProductsController);
+userRouter.delete("/delete/:userId", auth,deleteUserController);
 
 
 export default userRouter;

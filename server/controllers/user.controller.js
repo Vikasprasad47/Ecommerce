@@ -172,7 +172,6 @@ export async function registerUserController(req, res) {
   }
 }
 
-
 export async function verifyEmailController(req, res) {
     try {
         const { code } = req.body;
@@ -1407,6 +1406,51 @@ export const getRecentSeenProductsController = async (req, res) => {
       success: false,
       message: "Failed to fetch recently viewed products",
       error: error.message
+    });
+  }
+};
+
+// 🔴 DELETE USER (ADMIN ONLY)
+export const deleteUserController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Optional safety: prevent self-delete
+    if (req.userId === userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You cannot delete your own account",
+      });
+    }
+
+    await UserModel.findByIdAndDelete(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: `User ${user.name} deleted successfully`,
+    });
+  } catch (error) {
+    console.error("Delete user error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete user",
+      error: error.message,
     });
   }
 };
