@@ -379,6 +379,9 @@ import AxiosToastError from "../utils/network/AxiosToastError";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { useDispatch } from "react-redux";
+import { setUserDetails } from "../Store/userSlice";
+import fetchUserDetails from "../utils/auth/fetchUserDetails";
 
 const Register = () => {
   const [data, setData] = useState({
@@ -387,6 +390,7 @@ const Register = () => {
     password: "",
     mobile: "",
   });
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -431,23 +435,62 @@ const Register = () => {
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await Axios({ ...SummaryApi.register, data });
+  //     if (response.data.error) {
+  //       toast.error(response.data.message);
+  //       return;
+  //     }
+  //     toast.success(response.data.message);
+  //     navigate("/login");
+  //   } catch (error) {
+  //     AxiosToastError(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const response = await Axios({ ...SummaryApi.register, data });
-      if (response.data.error) {
-        toast.error(response.data.message);
-        return;
-      }
-      toast.success(response.data.message);
-      navigate("/login");
-    } catch (error) {
-      AxiosToastError(error);
-    } finally {
-      setIsLoading(false);
+  e.preventDefault();
+  setIsLoading(true);
+
+  try {
+    const response = await Axios({ ...SummaryApi.register, data });
+
+    if (response.data.error) {
+      toast.error(response.data.message);
+      return;
     }
-  };
+
+    const { accessToken, refreshToken, user } = response.data.data;
+
+    // ✅ Save tokens
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+
+    // ✅ Set redux user immediately
+    if (user) dispatch(setUserDetails(user));
+
+    // ✅ Optional: fetch full user profile
+    const userDetails = await fetchUserDetails();
+    if (userDetails?.data) {
+      dispatch(setUserDetails(userDetails.data));
+    }
+
+    toast.success("Welcome! Your account is ready 🚀");
+
+    // 🔥 AUTO LOGIN REDIRECT
+    navigate("/", { replace: true });
+
+  } catch (error) {
+    AxiosToastError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleGoogleSuccess = async (token) => {
     setIsGoogleLoading(true);
@@ -503,7 +546,7 @@ const Register = () => {
 
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-white p-4">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-amber-50 to-white p-4">
         <Toaster position="top-center" />
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -660,7 +703,7 @@ const Register = () => {
               whileTap={isFormValid ? { scale: 0.98 } : {}}
               className={`w-full py-3 rounded-xl font-semibold text-white transition-all cursor-pointer ${
                 isFormValid && !isLoading
-                  ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-lg"
+                  ? "bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-lg"
                   : "bg-gray-300 cursor-not-allowed"
               }`}
             >

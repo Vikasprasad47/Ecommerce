@@ -178,7 +178,7 @@ const Login = () => {
 
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-100 via-white to-amber-200 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-amber-100 via-white to-amber-200 p-4">
         <Toaster
           position="top-center"
           toastOptions={{
@@ -207,7 +207,7 @@ const Login = () => {
           {/* Left section - Form */}
           <div className="p-4 sm:p-8 lg:p-12 flex flex-col justify-center">
             <div className="text-center mb-8">
-              <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 bg-linear-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
                 Welcome Back
               </h1>
               <p className="text-gray-600 text-sm sm:text-base">
@@ -319,7 +319,7 @@ const Login = () => {
   </div>
 
   <span className="text-sm text-gray-700">Remember me</span>
-</label>
+                </label>
 
 
                 <button
@@ -328,7 +328,7 @@ const Login = () => {
                   className={`px-8 py-3 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 w-full flex items-center justify-center ${
                     !validateForm || isLoading
                       ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                      : "bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
                   }`}
                 >
                   {isLoading ? (
@@ -411,7 +411,7 @@ const Login = () => {
               alt="Welcome illustration"
               className="w-full h-full object-cover transform transition-transform duration-700 hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 via-orange-900/20 to-amber-800/30"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-amber-900/10 via-orange-900/20 to-amber-800/30"></div>
             <div className="absolute bottom-8 left-8 right-8 text-white drop-shadow-lg">
               <h2 className="text-2xl font-bold mb-2">Join Our Community</h2>
               <p className="text-amber-100">

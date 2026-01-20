@@ -15,73 +15,163 @@ import axios from 'axios'
 dotenv.config();
 
 
+// export async function registerUserController(req, res) {
+//     try {
+//         const { name, email, password, mobile  } = req.body;
+
+//         // Step 1: Validate input
+//         if (!name || !email || !password) {
+//             return res.status(400).json({
+//                 message: "Please provide name, email, and password.",
+//                 error: true,
+//                 success: false,
+//             });
+//         }
+
+//         // Step 1.1: Validate mobile number format (Indian 10-digit starting with 6-9)
+//         if (!/^[6-9]\d{9}$/.test(mobile)) {
+//             return res.status(400).json({
+//                 message: "Invalid phone number. Please enter a 10-digit Indian number starting with 6-9.",
+//                 error: true,
+//                 success: false,
+//             });
+//         }
+
+//         // Step 2: Check if user already exists 
+//         const existingUser = await UserModel.findOne({ email });
+//         if (existingUser) {
+//             return res.status(409).json({
+//                 message: "User with this email already exists.",
+//                 error: true,
+//                 success: false,
+//             });
+//         }
+
+//         // Step 3: Hash password
+//         const salt = await bcryptjs.genSalt(10);
+//         const hashedPassword = await bcryptjs.hash(password, salt);
+
+//         // Step 4: Create and save user
+//         const newUser = new UserModel({
+//             name,
+//             email,
+//             password: hashedPassword,
+//             mobile
+//         });
+
+//         const savedUser = await newUser.save();
+
+//         // Step 5: Success response
+//         return res.status(201).json({
+//             message: "User registered successfully!",
+//             error: false,
+//             success: true,
+//             data: {
+//                 _id: savedUser._id,
+//                 name: savedUser.name,
+//                 email: savedUser.email,
+//             },
+//         });
+
+//     } catch (error) {
+//         console.error("❌ Register Error:", error);
+//         return res.status(500).json({
+//             message: error?.message || "Internal Server Error",
+//             error: true,
+//             success: false,
+//         });
+//     }
+// }
+
 export async function registerUserController(req, res) {
-    try {
-        const { name, email, password, mobile  } = req.body;
+  try {
+    const { name, email, password, mobile } = req.body;
 
-        // Step 1: Validate input
-        if (!name || !email || !password) {
-            return res.status(400).json({
-                message: "Please provide name, email, and password.",
-                error: true,
-                success: false,
-            });
-        }
-
-        // Step 1.1: Validate mobile number format (Indian 10-digit starting with 6-9)
-        if (!/^[6-9]\d{9}$/.test(mobile)) {
-            return res.status(400).json({
-                message: "Invalid phone number. Please enter a 10-digit Indian number starting with 6-9.",
-                error: true,
-                success: false,
-            });
-        }
-
-        // Step 2: Check if user already exists 
-        const existingUser = await UserModel.findOne({ email });
-        if (existingUser) {
-            return res.status(409).json({
-                message: "User with this email already exists.",
-                error: true,
-                success: false,
-            });
-        }
-
-        // Step 3: Hash password
-        const salt = await bcryptjs.genSalt(10);
-        const hashedPassword = await bcryptjs.hash(password, salt);
-
-        // Step 4: Create and save user
-        const newUser = new UserModel({
-            name,
-            email,
-            password: hashedPassword,
-            mobile
-        });
-
-        const savedUser = await newUser.save();
-
-        // Step 5: Success response
-        return res.status(201).json({
-            message: "User registered successfully!",
-            error: false,
-            success: true,
-            data: {
-                _id: savedUser._id,
-                name: savedUser.name,
-                email: savedUser.email,
-            },
-        });
-
-    } catch (error) {
-        console.error("❌ Register Error:", error);
-        return res.status(500).json({
-            message: error?.message || "Internal Server Error",
-            error: true,
-            success: false,
-        });
+    // 1️⃣ Validate
+    if (!name || !email || !password || !mobile) {
+      return res.status(400).json({
+        message: "All fields are required.",
+        error: true,
+        success: false,
+      });
     }
+
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+      return res.status(400).json({
+        message: "Invalid Indian mobile number.",
+        error: true,
+        success: false,
+      });
+    }
+
+    const sanitizedEmail = email.toLowerCase().trim();
+
+    // 2️⃣ Check existing user
+    const existingUser = await UserModel.findOne({ email: sanitizedEmail });
+    if (existingUser) {
+      return res.status(409).json({
+        message: "User already exists.",
+        error: true,
+        success: false,
+      });
+    }
+
+    // 3️⃣ Hash password
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
+    // 4️⃣ Create user
+    const user = await UserModel.create({
+      name,
+      email: sanitizedEmail,
+      password: hashedPassword,
+      mobile,
+      status: "Active",
+    });
+
+    // 5️⃣ Generate tokens (🔥 SAME AS LOGIN)
+    const accessToken = await generateAccessToken(user._id);
+    const refreshToken = await generateRefreshToken(user._id);
+
+    // 6️⃣ Set cookies
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
+
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
+    // 7️⃣ Response (MATCH LOGIN FORMAT)
+    return res.status(201).json({
+      message: "Registration successful",
+      error: false,
+      success: true,
+      data: {
+        accessToken,
+        refreshToken,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          mobile: user.mobile,
+          role: user.role,
+          status: user.status,
+        },
+      },
+    });
+
+  } catch (error) {
+    console.error("Register error:", error);
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+      error: true,
+      success: false,
+    });
+  }
 }
+
 
 export async function verifyEmailController(req, res) {
     try {
