@@ -1015,7 +1015,7 @@ const ConfirmationModal = ({
   const variant = variantClasses[confirmVariant] || variantClasses.danger;
 
   return (
-    <div className="fixed inset-0 bg-black/55 z-[110] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/55 z-110 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg max-w-xl w-full shadow-xl border border-slate-100">
         <div className="p-5 border-b border-slate-100 flex items-start gap-3">
           <div
@@ -1050,7 +1050,7 @@ const ConfirmationModal = ({
 
         {children && <div className="px-5 pt-3 pb-1">{children}</div>}
 
-        <div className="flex gap-3 px-5 py-4 border-t border-slate-100 bg-slate-50">
+        <div className="flex gap-3 px-5 py-4 border-t border-slate-100 bg-slate-50 rounded-lg">
           <button
             onClick={onClose}
             disabled={loading}

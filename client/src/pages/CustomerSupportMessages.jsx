@@ -486,7 +486,7 @@ const ConfirmationModal = ({
   const variant = variantClasses[confirmVariant] || variantClasses.danger;
 
   return (
-    <div className="fixed inset-0 bg-black/55 z-[110] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/55 z-110 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg max-w-xl w-full shadow-xl border border-slate-100">
         <div className="p-5 border-b border-slate-100 flex items-start gap-3">
           <div
@@ -521,7 +521,7 @@ const ConfirmationModal = ({
 
         {children && <div className="px-5 pt-3 pb-1">{children}</div>}
 
-        <div className="flex gap-3 px-5 py-4 border-t border-slate-100 bg-slate-50">
+        <div className="flex gap-3 px-5 py-4 border-t border-slate-100 bg-slate-50 rounded-lg">
           <button
             onClick={onClose}
             disabled={loading}
@@ -575,7 +575,7 @@ const InfoModal = ({ isOpen, onClose }) => {
           </div>
         </div>
         <div className="mt-1 rounded-lg bg-amber-50 border border-amber-100 px-3 py-2 flex items-start gap-2">
-          <FiAlertCircle className="text-amber-600 mt-[2px] text-sm" />
+          <FiAlertCircle className="text-amber-600 mt-0.5 text-sm" />
           <p className="text-[11px] sm:text-xs text-amber-900 leading-relaxed">
             Always resolve messages only after the customer’s issue is actually
             addressed in your support system or helpdesk.
@@ -602,12 +602,12 @@ const MessageDetailModal = ({
   const isResolved = status === "resolved";
 
   return (
-    <div className="fixed inset-0 z-[105] bg-black/55 flex items-center justify-center px-3 sm:px-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl shadow-2xl border border-slate-200 flex flex-col h-[480px]">
+    <div className="fixed inset-0 z-105 bg-black/55 flex items-center justify-center px-3 sm:px-4">
+      <div className="bg-white rounded-lg w-full max-w-2xl shadow-2xl border border-slate-200 flex flex-col h-120">
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
               <FiInbox className="text-amber-700 text-base" />
             </div>
             <div className="space-y-0.5 min-w-0">
@@ -696,7 +696,7 @@ const MessageDetailModal = ({
             </div>
 
             {/* Footer actions */}
-            <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg">
               <p className="text-[11px] sm:text-xs text-slate-500">
                 Status:{" "}
                 <span className="font-medium text-slate-700">
@@ -1191,7 +1191,7 @@ const CustomerSupportMessages = () => {
                                 </p>
                                 <p className="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1">
                                   <FiMail className="text-[10px]" />
-                                  <span className="truncate max-w-[140px] sm:max-w-[220px]">
+                                  <span className="truncate max-w-35 sm:max-w-55">
                                     {msg.email}
                                   </span>
                                 </p>

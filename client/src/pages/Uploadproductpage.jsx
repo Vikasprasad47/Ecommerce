@@ -121,7 +121,7 @@ const Productpage = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [slugPreview, setSlugPreview] = useState("");
-
+    const freeShipping = watch("shipping.freeShipping");
     // Watch form values
     const watchedValues = watch();
 
@@ -335,14 +335,14 @@ const Productpage = () => {
                         <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <label htmlFor="name" className="font-medium flex items-center gap-2">
-                                    <BiDetail /> Product Name
+                                    <BiDetail /> Product Name <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     id="name"
                                     type="text"
                                     placeholder="Enter Product Name"
                                     {...register("name")}
-                                    className={`bg-gray-100 outline-none p-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
+                                    className={`bg-slate-50 outline-none p-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
                                 />
                                 {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
                                 
@@ -356,13 +356,10 @@ const Productpage = () => {
                             <div className="grid gap-2">
                                 <label htmlFor="description" className="font-medium flex items-center gap-2">
                                     <BiDetail />
-                                    Description
+                                    Description <span className="text-red-500">*</span>
                                 </label>
 
                                 <div className="mb-6">
-                                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                                    Product Description <span className="text-red-500">*</span>
-                                    </label>
 
                                     <textarea
                                     id="description"
@@ -387,7 +384,7 @@ const Productpage = () => {
 
                             <div>
                                 <p className="font-medium flex items-center gap-2">
-                                    <RiFolderUploadLine /> Product Images
+                                    <RiFolderUploadLine /> Product Images <span className="text-red-500">*</span>
                                 </p>
                                 <label htmlFor="productImage" className="bg-gray-100 h-24 md:h-28 border border-dashed border-gray-400 rounded-md flex justify-center items-center cursor-pointer hover:bg-gray-200 transition">
                                     <div className="flex flex-col items-center">
@@ -436,7 +433,7 @@ const Productpage = () => {
                         <div className="grid gap-4">
                             <div className='grid gap-2'>
                                 <label className="font-medium flex items-center gap-2">
-                                    <BiCategory /> Categories
+                                    <BiCategory /> Categories <span className="text-red-500">*</span>
                                 </label>
                                 <div>
                                     <div className='flex flex-wrap gap-2 mb-2'>
@@ -452,7 +449,7 @@ const Productpage = () => {
                                         ))}
                                     </div>
                                     <select
-                                        className='bg-gray-100 border w-full outline-none p-2 rounded'
+                                        className='bg-gray-50 border w-full outline-none p-2 rounded'
                                         value={selectedCategory}
                                         onChange={handleAddCategory}
                                     >
@@ -467,7 +464,7 @@ const Productpage = () => {
 
                             <div className='grid gap-2'>
                                 <label className="font-medium flex items-center gap-2">
-                                    <BiCategory /> Sub Categories
+                                    <BiCategory /> Sub Categories <span className="text-red-500">*</span>
                                 </label>
                                 <div>
                                     <div className='flex flex-wrap gap-2 mb-2'>
@@ -483,7 +480,7 @@ const Productpage = () => {
                                         ))}
                                     </div>
                                     <select
-                                        className='bg-gray-100 border w-full outline-none p-2 rounded'
+                                        className='bg-gray-50 border w-full outline-none p-2 rounded'
                                         value={selectedSubCategory}
                                         onChange={handleAddSubCategory}
                                     >
@@ -541,12 +538,12 @@ const Productpage = () => {
                         <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <label htmlFor="unit" className="font-medium flex items-center gap-2">
-                                    <FiPackage /> Unit
+                                    <FiPackage /> Unit <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     id="unit"
                                     {...register("unit")}
-                                    className={`bg-gray-100 outline-none p-3 border ${errors.unit ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
+                                    className={`bg-gray-50 outline-none p-3 border ${errors.unit ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
                                 >
                                     <option value="">Select Unit</option>
                                     <option value="kg">Kilogram (kg)</option>
@@ -563,28 +560,28 @@ const Productpage = () => {
 
                             <div className="grid gap-2">
                                 <label htmlFor="stock" className="font-medium flex items-center gap-2">
-                                    <BsBoxSeam /> Stock Quantity
+                                    <BsBoxSeam /> Stock Quantity <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     id="stock"
                                     type="number"
                                     placeholder="Enter Product Stock"
                                     {...register("stock")}
-                                    className={`bg-gray-100 outline-none p-3 border ${errors.stock ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
+                                    className={`bg-gray-50 outline-none p-3 border ${errors.stock ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
                                 />
                                 {errors.stock && <p className="text-red-500 text-sm">{errors.stock.message}</p>}
                             </div>
 
                             <div className="grid gap-2">
                                 <label htmlFor="price" className="font-medium flex items-center gap-2">
-                                    <MdCurrencyRupee /> Price
+                                    <MdCurrencyRupee /> Price <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     id="price"
                                     type="number"
                                     placeholder="Enter Product Price"
                                     {...register("price")}
-                                    className={`bg-gray-100 outline-none p-3 border ${errors.price ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
+                                    className={`bg-gray-50 outline-none p-3 border ${errors.price ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
                                 />
                                 {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
                             </div>
@@ -598,7 +595,7 @@ const Productpage = () => {
                                     type="number"
                                     placeholder="Enter Product Discount"
                                     {...register("discount")}
-                                    className={`bg-gray-100 outline-none p-3 border ${errors.discount ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
+                                    className={`bg-gray-50 outline-none p-3 border ${errors.discount ? 'border-red-500' : 'border-gray-300'} focus:border-amber-300 rounded-md`}
                                 />
                                 {errors.discount && <p className="text-red-500 text-sm">{errors.discount.message}</p>}
                                 
@@ -839,17 +836,51 @@ const Productpage = () => {
                                     </div>
                                 </div>
                                 
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        id="freeShipping"
-                                        {...register("shipping.freeShipping")}
-                                        className="h-4 w-4 text-amber-500 focus:ring-amber-400 border-gray-300 rounded"
-                                    />
-                                    <label htmlFor="freeShipping" className="text-sm text-gray-600">
-                                        Free Shipping
-                                    </label>
-                                </div>
+                                <div className="flex items-center gap-3">
+  {/* real checkbox (kept for form submission) */}
+  <input
+    type="checkbox"
+    id="freeShipping"
+    {...register("shipping.freeShipping")}
+    className="absolute opacity-0 w-0 h-0"
+  />
+
+  {/* custom checkbox UI */}
+  <label
+    htmlFor="freeShipping"
+    className={`flex items-center justify-center
+      w-5 h-5 rounded-md cursor-pointer
+      border-2 transition-all
+      ${
+        freeShipping
+          ? "bg-amber-500 border-amber-500"
+          : "bg-white border-gray-300"
+      }
+    `}
+  >
+    {freeShipping && (
+      <svg
+        viewBox="0 0 24 24"
+        className="w-4 h-4 text-white"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+    )}
+  </label>
+
+  <label
+    htmlFor="freeShipping"
+    className="text-sm text-gray-600 cursor-pointer select-none"
+  >
+    Free Shipping
+  </label>
+</div>
+
                             </div>
                         </div>
                     </>
@@ -902,7 +933,7 @@ const Productpage = () => {
     };
 
     return (
-        <section className="w-full p-4">
+        <section className="max-w-6xl mx-auto mt-3">
             <div className='flex items-center justify-between gap-3 bg-white border border-gray-200 rounded-2xl p-5 mb-3 shadow-sm'>
                 <h2 className='font-semibold lg:text-2xl text-neutral-800'>Upload Product</h2>
                 <button 
@@ -912,7 +943,7 @@ const Productpage = () => {
                     className={`relative px-6 py-3 font-semibold text-white transition-all duration-200 transform hover:scale-105 active:scale-95 ${
                         isSubmitting 
                             ? 'bg-gray-400 cursor-not-allowed' 
-                            : 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg hover:shadow-xl'
+                            : 'bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg hover:shadow-xl'
                     } rounded-xl`}
                 >
                     {isSubmitting ? (
@@ -963,7 +994,7 @@ const Productpage = () => {
                             className={`group relative px-6 py-3 font-semibold text-white rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 ${
                                 isSubmitting 
                                     ? 'bg-gray-400 cursor-not-allowed' 
-                                    : 'bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 shadow-md hover:shadow-lg'
+                                    : 'bg-linear-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 shadow-md hover:shadow-lg'
                             }`}
                         >
                             {isSubmitting ? (

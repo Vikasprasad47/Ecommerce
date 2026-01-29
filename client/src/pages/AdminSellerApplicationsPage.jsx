@@ -1236,7 +1236,7 @@ const ConfirmationModal = ({
 
         {children && <div className="px-5 pt-3 pb-1">{children}</div>}
 
-        <div className="flex gap-3 px-5 py-4 border-t border-slate-100 bg-slate-50">
+        <div className="flex gap-3 px-5 py-4 border-t border-slate-100 bg-slate-50 rounded-lg">
           <button
             onClick={onClose}
             disabled={loading}
@@ -1599,7 +1599,7 @@ const SellerDetailModal = ({
             </div>
 
             {/* Footer actions */}
-            <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
+            <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3 rounded-lg">
               <p className="text-[11px] sm:text-xs text-slate-500">
                 Status:{" "}
                 <span className="font-medium text-slate-700">
