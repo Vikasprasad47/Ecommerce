@@ -1575,6 +1575,7 @@ const StepBusiness = ({ application, goNext, onSaved }) => {
           />
 
           <Input
+            required
             label="Business Type"
             placeholder="Proprietorship / Pvt Ltd"
             value={form.businessType}
@@ -1582,13 +1583,15 @@ const StepBusiness = ({ application, goNext, onSaved }) => {
           />
 
           <Input
+            required
             label="GST Number"
-            placeholder="Optional"
+            placeholder="27ABCDE1234XXXX"
             value={form.gstNumber}
             onChange={(v) => setForm({ ...form, gstNumber: v })}
           />
 
           <Input
+            required
             label="PAN Number"
             placeholder="ABCDE1234F"
             value={form.panNumber}
@@ -1596,6 +1599,7 @@ const StepBusiness = ({ application, goNext, onSaved }) => {
           />
 
           <Input
+            required
             label="Annual Turnover"
             placeholder="e.g., 10L–50L"
             value={form.turnover}
@@ -2401,7 +2405,7 @@ export default function SellerOnboarding() {
   const showIntro = !application && !hasStartedOnboarding;
 
   return (
-    <div className="max-w-full mx-auto px-4 py-5 sm:py-6">
+    <div className="max-w-7xl mx-auto px-4 py-5 sm:py-6">
       {loadingApp ? (
         <SellerOnboardingLoader />
       ) : showIntro ? (
