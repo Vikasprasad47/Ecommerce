@@ -24,8 +24,8 @@ const addressSchema = new mongoose.Schema({
         type: String,
     },
     mobile: {
-        type: Number,
-        default: null
+        type: String,
+        default: ""
     },
     status: {
         type: Boolean,
@@ -33,7 +33,7 @@ const addressSchema = new mongoose.Schema({
     },
     address_type: {
         type: String,
-        enum: ['Home', 'Work', 'Other'],
+        enum: ['home', 'office', 'other'],
         default: 'Home'
     },
     userId:{

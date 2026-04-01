@@ -412,11 +412,11 @@ const AddAddress = ({ close }) => {
           <div className="sm:col-span-2">
             <label className="text-sm font-medium mb-1 block">Address Type</label>
             <div className="flex gap-3 flex-wrap">
-              {["Home", "Work", "Other"].map((type) => (
+              {["Home", "office", "Other"].map((type) => (
                 <button
                   key={type}
                   type="button"
-                  className={`flex-1 min-w-[80px] text-center border px-4 py-2 rounded-lg text-sm transition-all duration-200 ${
+                  className={`flex-1 min-w-20 text-center border px-4 py-2 rounded-lg text-sm transition-all duration-200 ${
                     addressType === type
                       ? "bg-amber-500 text-white border-amber-500"
                       : "bg-white border-gray-300 text-gray-700 hover:border-amber-500"

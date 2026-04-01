@@ -488,7 +488,7 @@ const EditAddressDetails = ({ close, data }) => {
           <div className="sm:col-span-2">
             <label className="text-sm font-medium mb-1 block">Address Type</label>
             <div className="flex gap-3 flex-wrap">
-              {["Home", "Work", "Other"].map((type) => (
+              {["home", "office", "other"].map((type) => (
                 <button
                   key={type}
                   type="button"
