@@ -2,17 +2,18 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
+
 import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
+
 import connectDB from './config/connectDB.js';
 import { runtimeStats } from './utils/runtimeStats.js';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './docs/swagger.js';
+import { validateRequiredEnv } from './utils/validateEnv.js';
 
-// routes
-import userRouter from './route/user.route.js'; 
+import userRouter from './route/user.route.js';
 import categoryRouter from './route/category.route.js';
 import uploadRouter from './route/uploadimage.route.js';
 import subCategoryRouter from './route/subCategory.route.js';
@@ -22,33 +23,37 @@ import addressRouter from './route/address.route.js';
 import OrderRouter from './route/order.route.js';
 import reviewRouter from './route/review.route.js';
 import analyticsRouter from './route/analytics.route.js';
-import couponRouter from './route/coupon.route.js'
+import couponRouter from './route/coupon.route.js';
 import subscribeNewsletterRouter from './route/newsletter.routes.js';
 import Contactrouter from './route/contact.routes.js';
 import sellerRouter from './route/seller.routes.js';
-import dashboardRouter from './route/dashboard.route.js';
+
+validateRequiredEnv();
 
 const app = express();
+
 app.use(cors({
-    credentials: true,
-    origin: process.env.FRONTED_URL,
+  credentials: true,
+  origin: process.env.FRONTED_URL,
 }));
+
 app.use((req, res, next) => {
   runtimeStats.totalRequests++;
   runtimeStats.lastRequestAt = new Date();
   next();
 });
-app.use(express.json());
+
+app.use('/api/order/webhook', express.raw({ type: 'application/json' }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('common'));
 app.use(helmet({
-    crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
 }));
 
-const PORT = process.env.PORT || 8080;
+const PORT = Number(process.env.PORT || 8080);
 
-
-// all routes
 app.use('/', dashboardRouter);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/user', userRouter);
@@ -62,32 +67,32 @@ app.use('/api/address', addressRouter);
 app.use('/api/order', OrderRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/analytics', analyticsRouter);
-app.use('/api/newsletter', subscribeNewsletterRouter)
-app.use('/api/contact', Contactrouter)
-app.use('/api/seller', sellerRouter)
+app.use('/api/newsletter', subscribeNewsletterRouter);
+app.use('/api/contact', Contactrouter);
+app.use('/api/seller', sellerRouter);
 
-// 404 handler
-app.use((req, res, next) => {
-    res.status(404).json({
-        success: false,
-        message: "404 - Page Not Found Or Api Does Not Exist"
-    });
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: '404 - Page Not Found Or Api Does Not Exist',
+  });
 });
 
-// 500 error handler
 app.use((err, req, res, next) => {
-    console.error("Server Error:", err.stack);
-    res.status(500).json({
-        success: false,
-        message: "500 - Internal Server Error"
-    });
+  console.error('Server Error:', err.stack || err);
+  res.status(500).json({
+    success: false,
+    message: '500 - Internal Server Error',
+  });
 });
- 
-// connect to DB and start server
+
 connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`✅ Server is running: http://localhost:${PORT}`);
-    });
+  app.listen(PORT, () => {
+    console.log(`✅ Server is running: http://localhost:${PORT}`);
+  });
+}).catch((error) => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
 });
 
 export default app;

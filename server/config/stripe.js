@@ -1,8 +1,15 @@
-import stripe from 'stripe'
-import dotenv from 'dotenv'
-dotenv.config()
+import stripe from 'stripe';
+import dotenv from 'dotenv';
 
+dotenv.config();
 
-const Stripe = stripe(process.env.STRIPE_SECRET_KEY)
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-export default Stripe
+if (!stripeSecretKey) {
+  throw new Error('Missing STRIPE_SECRET_KEY in environment variables');
+}
+
+const Stripe = stripe(stripeSecretKey);
+
+export const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+export default Stripe;
